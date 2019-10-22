@@ -1,0 +1,52 @@
+version: '3'
+services:
+  cryptovote1:
+    image: nelo/cryptovote
+    container_name: cryptovote1
+    environment:
+      "Miner:Address": "QXuwUXRhANuouMkHTc2tbcZhkcucShZQKEhs7XSfseSd6Rq8q2G3sSZc1Q1z5jdj4Nz8dQuieiiyDVLiKWDmtJVp"
+      "Miner:Interval": "60000"
+      "Blockchain:Dificulty": "2"
+      "TcpChannel:Host": "cryptovote2"
+      "TcpChannel:Port": "13000"
+      "Peer:Host": "cryptovote2"
+      "Peer:Port": "13000"
+    ports:
+    - "13001:13000"
+    networks:
+    - cryptonet
+
+  cryptovote2:
+    image: nelo/cryptovote
+    container_name: cryptovote2
+    environment:
+      "Miner:Address": "QXuwUXRhANuouMkHTc2tbcZhkcucShZQKEhs7XSfseSd6Rq8q2G3sSZc1Q1z5jdj4Nz8dQuieiiyDVLiKWDmtJVp"
+      "Miner:Interval": "5000"
+      "Blockchain:Dificulty": "2"
+      "TcpChannel:Host": "cryptovote2"
+      "TcpChannel:Port": "13000"
+      "Peer:Host": "cryptovote1"
+      "Peer:Port": "13000"
+    ports:
+    - "13002:13000"
+    networks:
+    - cryptonet
+
+  cryptovote3:
+    image: nelo/cryptovote
+    container_name: cryptovote3
+    environment:
+      "Miner:Address": "QXuwUXRhANuouMkHTc2tbcZhkcucShZQKEhs7XSfseSd6Rq8q2G3sSZc1Q1z5jdj4Nz8dQuieiiyDVLiKWDmtJVp"
+      "Miner:Interval": "17000"
+      "Blockchain:Dificulty": "2"
+      "TcpChannel:Host": "cryptovote3"
+      "TcpChannel:Port": "13000"
+      "Peer:Host": "cryptovote1"
+      "Peer:Port": "13000"
+    ports:
+    - "13003:13000"
+    networks:
+    - cryptonet
+
+networks:
+  cryptonet:
