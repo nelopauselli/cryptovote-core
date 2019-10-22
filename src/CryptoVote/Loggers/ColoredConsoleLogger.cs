@@ -1,7 +1,7 @@
 ﻿using System;
 using Domain;
 using Domain.Channels;
-using Domain.Scrutiny;
+using Domain.Elections;
 
 namespace CryptoVote.Loggers
 {

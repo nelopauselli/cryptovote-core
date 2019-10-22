@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Domain.Utils;
 
-namespace Domain.Scrutiny
+namespace Domain.Elections
 {
 	public class Recount : BlockItem
 	{

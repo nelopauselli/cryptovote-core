@@ -7,7 +7,7 @@ using Domain.Channels;
 using Domain.Crypto;
 using Domain.Protocol;
 using Domain.Queries;
-using Domain.Scrutiny;
+using Domain.Elections;
 using NUnit.Framework;
 using Tests.Mocks;
 

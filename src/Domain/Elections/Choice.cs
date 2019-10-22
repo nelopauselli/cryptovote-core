@@ -2,7 +2,7 @@ using System;
 using System.Text;
 using Domain.Utils;
 
-namespace Domain.Scrutiny
+namespace Domain.Elections
 {
 	public class Choice
 	{

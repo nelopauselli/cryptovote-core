@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Domain.Crypto;
-using Domain.Scrutiny;
+using Domain.Elections;
 using Domain.Utils;
 
 namespace DataSample

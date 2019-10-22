@@ -1,6 +1,6 @@
 using System;
 
-namespace Domain.Scrutiny
+namespace Domain.Elections
 {
 	public class BlockBuilder : IBlockBuilder
 	{

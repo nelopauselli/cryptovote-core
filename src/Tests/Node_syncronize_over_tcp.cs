@@ -4,7 +4,7 @@ using System.Threading;
 using Domain;
 using Domain.Channels;
 using Domain.Crypto;
-using Domain.Scrutiny;
+using Domain.Elections;
 using NUnit.Framework;
 using Tests.Mocks;
 

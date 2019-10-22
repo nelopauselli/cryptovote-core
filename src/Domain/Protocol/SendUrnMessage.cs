@@ -1,5 +1,5 @@
 using System.Text;
-using Domain.Scrutiny;
+using Domain.Elections;
 using Newtonsoft.Json;
 
 namespace Domain.Protocol

@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Linq;
-using Domain.Scrutiny;
+using Domain.Elections;
 
 namespace Domain.Queries
 {

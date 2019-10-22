@@ -1,7 +1,7 @@
 using System;
 using System.Linq;
 using System.Text;
-using Domain.Scrutiny;
+using Domain.Elections;
 using Domain.Utils;
 using NUnit.Framework;
 

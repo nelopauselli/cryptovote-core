@@ -4,7 +4,7 @@ using System.Text;
 using Domain;
 using Domain.Crypto;
 using Domain.Queries;
-using Domain.Scrutiny;
+using Domain.Elections;
 using NUnit.Framework;
 
 namespace Tests

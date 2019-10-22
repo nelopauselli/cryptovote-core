@@ -1,6 +1,6 @@
 using System;
 using Domain;
-using Domain.Scrutiny;
+using Domain.Elections;
 using Newtonsoft.Json;
 using NUnit.Framework;
 

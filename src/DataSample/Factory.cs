@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Domain.Converters;
 using Domain.Crypto;
-using Domain.Scrutiny;
+using Domain.Elections;
 using Domain.Utils;
 using Newtonsoft.Json;
 

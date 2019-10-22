@@ -1,7 +1,7 @@
 using System.Linq;
 using Domain;
 using Domain.Crypto;
-using Domain.Scrutiny;
+using Domain.Elections;
 using NUnit.Framework;
 
 namespace Tests

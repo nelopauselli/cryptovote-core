@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using Domain.Protocol;
 using Domain.Queries;
-using Domain.Scrutiny;
+using Domain.Elections;
 
 namespace Web.Controllers
 {

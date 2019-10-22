@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Domain.Protocol;
 using Domain.Queries;
-using Domain.Scrutiny;
+using Domain.Elections;
 using Newtonsoft.Json;
 
 namespace Web.Controllers

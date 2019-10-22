@@ -1,5 +1,5 @@
 ﻿using System;
-using Domain.Scrutiny;
+using Domain.Elections;
 
 namespace Domain.Queries
 {

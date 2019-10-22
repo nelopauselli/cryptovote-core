@@ -1,7 +1,7 @@
 using System;
 using System.Text;
 using Domain.Protocol;
-using Domain.Scrutiny;
+using Domain.Elections;
 using Newtonsoft.Json;
 
 namespace Domain.Queries

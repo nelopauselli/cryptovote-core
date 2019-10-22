@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Domain.Channels;
 using Domain.Protocol;
 using Domain.Queries;
-using Domain.Scrutiny;
+using Domain.Elections;
 
 namespace Domain
 {

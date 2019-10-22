@@ -5,7 +5,7 @@ using System.Threading;
 using Domain;
 using Domain.Channels;
 using Domain.Protocol;
-using Domain.Scrutiny;
+using Domain.Elections;
 using Moq;
 using NUnit.Framework;
 

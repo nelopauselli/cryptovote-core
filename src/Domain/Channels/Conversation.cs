@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Domain.Protocol;
 using Domain.Queries;
-using Domain.Scrutiny;
+using Domain.Elections;
 using Domain.Utils;
 using Newtonsoft.Json;
 

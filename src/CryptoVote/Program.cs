@@ -4,7 +4,7 @@ using CryptoVote.Loggers;
 using Domain;
 using Domain.Channels;
 using Domain.Converters;
-using Domain.Scrutiny;
+using Domain.Elections;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 

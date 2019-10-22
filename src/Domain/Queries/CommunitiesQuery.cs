@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using Domain.Scrutiny;
+using Domain.Elections;
 
 namespace Domain.Queries
 {
