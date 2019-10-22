@@ -105,12 +105,12 @@ namespace Tests
 		{
 			RegistrandoComunidad();
 
-			var eleccion = new Issue
+			var eleccion = new Question
 			{
 				Id = eleccionId,
 				Name = "Elecciones Nacionales a Presidente",
 				CommunityId = communityId,
-				Type = IssueType.Recount,
+				Type = QuestionType.Recount,
 				Choices = new[]
 				{
 					new Choice {Id = espertChoideId, Text = "Espert, José Luis", GuardianAddress = apoderadoFrenteDespertar.PublicKey},
@@ -127,7 +127,7 @@ namespace Tests
 
 			var block = blockchain.MineNextBlock(new BlockItem[] { eleccion });
 			Assert.IsNotNull(block);
-			Assert.AreEqual(1, block.Issues.Count);
+			Assert.AreEqual(1, block.Questions.Count);
 		}
 
 		[Test]
@@ -135,10 +135,10 @@ namespace Tests
 		{
 			RegistrandoEleccionPresidencial();
 
-			var urna0001 = new Urn {Id = mesa0001Id, IssueId = eleccionId, Name = "0001", Authorities = new[] {julio.PublicKey, albin.PublicKey}};
+			var urna0001 = new Urn {Id = mesa0001Id, QuestionId = eleccionId, Name = "0001", Authorities = new[] {julio.PublicKey, albin.PublicKey}};
 			signer.Sign(urna0001, camaraElectoral);
 
-			var urna5468 = new Urn {Id = mesa5468Id, IssueId = eleccionId, Name = "5468", Authorities = new[] {nelo.PublicKey, ana.PublicKey}};
+			var urna5468 = new Urn {Id = mesa5468Id, QuestionId = eleccionId, Name = "5468", Authorities = new[] {nelo.PublicKey, ana.PublicKey}};
 			signer.Sign(urna5468, camaraElectoral);
 
 			var block = blockchain.MineNextBlock(new BlockItem[] {urna0001, urna5468});
@@ -151,19 +151,19 @@ namespace Tests
 		{
 			RegistrandoUrnas();
 
-			var fiscalFrenteDesperar0001 = new Fiscal {IssueId = eleccionId, ChoiceId = espertChoideId, Address = sofia.PublicKey};
+			var fiscalFrenteDesperar0001 = new Fiscal {QuestionId = eleccionId, ChoiceId = espertChoideId, Address = sofia.PublicKey};
 			signer.Sign(fiscalFrenteDesperar0001, apoderadoFrenteDespertar);
-			var fiscalFrenteDesperar5468 = new Fiscal {IssueId = eleccionId, ChoiceId = espertChoideId, Address = santiago.PublicKey};
+			var fiscalFrenteDesperar5468 = new Fiscal {QuestionId = eleccionId, ChoiceId = espertChoideId, Address = santiago.PublicKey};
 			signer.Sign(fiscalFrenteDesperar5468, apoderadoFrenteDespertar);
 
-			var fiscalJuntosPorElCambio0001 = new Fiscal {IssueId = eleccionId, ChoiceId = macriChoiceId, Address = maria.PublicKey};
+			var fiscalJuntosPorElCambio0001 = new Fiscal {QuestionId = eleccionId, ChoiceId = macriChoiceId, Address = maria.PublicKey};
 			signer.Sign(fiscalJuntosPorElCambio0001, apoderadoJuntosPorElCambio);
-			var fiscalJuntosPorElCambio5468 = new Fiscal {IssueId = eleccionId, ChoiceId = macriChoiceId, Address = mateo.PublicKey};
+			var fiscalJuntosPorElCambio5468 = new Fiscal {QuestionId = eleccionId, ChoiceId = macriChoiceId, Address = mateo.PublicKey};
 			signer.Sign(fiscalJuntosPorElCambio5468, apoderadoJuntosPorElCambio);
 
-			var fiscalFrenteDeTodos0001 = new Fiscal {IssueId = eleccionId, ChoiceId = fernandezChoiceId, Address = lucia.PublicKey};
+			var fiscalFrenteDeTodos0001 = new Fiscal {QuestionId = eleccionId, ChoiceId = fernandezChoiceId, Address = lucia.PublicKey};
 			signer.Sign(fiscalFrenteDeTodos0001, apoderadorFrenteDeTodos);
-			var fiscalFrenteDeTodos5468 = new Fiscal {IssueId = eleccionId, ChoiceId = fernandezChoiceId, Address = juan.PublicKey};
+			var fiscalFrenteDeTodos5468 = new Fiscal {QuestionId = eleccionId, ChoiceId = fernandezChoiceId, Address = juan.PublicKey};
 			signer.Sign(fiscalFrenteDeTodos5468, apoderadorFrenteDeTodos);
 
 			var block = blockchain.MineNextBlock(new BlockItem[]
@@ -398,7 +398,7 @@ namespace Tests
 
 			var result = blockchain.GetResult(eleccionId);
 
-			Assert.AreEqual(eleccionId, result.IssueId);
+			Assert.AreEqual(eleccionId, result.QuestionId);
 			Assert.AreEqual(espertChoideId, result.Choices[0].ChoiceId);
 			Assert.AreEqual(10+12, result.Choices[0].Votes);
 			Assert.AreEqual(macriChoiceId, result.Choices[1].ChoiceId);

@@ -20,7 +20,7 @@ namespace Tests
 		{
 			var factory = new CommunitiesQueryMessage();
 			var message = factory.GetBytes();
-			Assert.AreEqual(Encoding.UTF8.GetBytes("Q:00011|Communities"), message);
+			Assert.AreEqual(Encoding.UTF8.GetBytes("?:00011|Communities"), message);
 		}
 	}
 
@@ -30,7 +30,7 @@ namespace Tests
 		private KeysPair miner, root, nelo;
 		private Signer signer;
 
-		private Guid cryptoVoteId, issueId, neloId;
+		private Guid cryptoVoteId, questionId, neloId;
 		private byte[] block1Hash;
 
 		[OneTimeSetUp]
@@ -43,7 +43,7 @@ namespace Tests
 			signer = new Signer(CryptoService.Instance);
 
 			cryptoVoteId = Guid.NewGuid();
-			issueId = Guid.NewGuid();
+			questionId = Guid.NewGuid();
 			neloId = Guid.NewGuid();
 		}
 
@@ -58,14 +58,14 @@ namespace Tests
 			var copperadora = new Community {Id = Guid.NewGuid(), Name = "Cooperadora X"};
 			signer.Sign(copperadora, root);
 
-			var issue = new Issue {Id = issueId, CommunityId = cryptoVote.Id, Name = "¿el nodo debe poder ejecutarse en una Raspberry?", Choices = new[] {new Choice {Id = Guid.NewGuid(), Text = "SI"}, new Choice {Id = Guid.NewGuid(), Text = "NO"}}};
-			signer.Sign(issue, nelo);
+			var question = new Question {Id = questionId, CommunityId = cryptoVote.Id, Name = "¿el nodo debe poder ejecutarse en una Raspberry?", Choices = new[] {new Choice {Id = Guid.NewGuid(), Text = "SI"}, new Choice {Id = Guid.NewGuid(), Text = "NO"}}};
+			signer.Sign(question, nelo);
 
 			var member = new Member { Id = neloId, CommunityId = cryptoVote.Id, Name = "Nelo" };
 			signer.Sign(member, nelo);
 
 			blockchain.MineNextBlock(new BlockItem[] {cryptoVote, copperadora});
-			var block1 = blockchain.MineNextBlock(new BlockItem[] {issue, member });
+			var block1 = blockchain.MineNextBlock(new BlockItem[] {question, member });
 			block1Hash = block1.Hash;
 		}
 
@@ -92,7 +92,7 @@ namespace Tests
 				
 				var block = factory.Parse(reader);
 				Assert.IsNotNull(block);
-				Assert.AreEqual(1, block.Issues.Count);
+				Assert.AreEqual(1, block.Questions.Count);
 				Assert.AreEqual(1, block.Members.Count);
 			}
 		}
@@ -120,7 +120,7 @@ namespace Tests
 
 				var block = factory.Parse(reader);
 				Assert.IsNotNull(block);
-				Assert.AreEqual(1, block.Issues.Count);
+				Assert.AreEqual(1, block.Questions.Count);
 				Assert.AreEqual(1, block.Members.Count);
 			}
 		}
@@ -173,10 +173,10 @@ namespace Tests
 		}
 
 		[Test]
-		public void Issues_list()
+		public void Questions_list()
 		{
 			var conversation = new Conversation(blockchain, new IEventListener[] {new ConsoleListener()}, new ConsoleListener(), new MockChannel());
-			var factory = new IssuesQueryMessage(cryptoVoteId);
+			var factory = new QuestionsQueryMessage(cryptoVoteId);
 
 			using (var stream = new MemoryStream())
 			{
@@ -190,20 +190,20 @@ namespace Tests
 				conversation.Talk(new ProtocolMessageChannel(stream));
 
 				stream.Seek(position, SeekOrigin.Begin);
-				var issues = factory.Parse(new ProtocolMessageChannel(stream));
-				Assert.AreEqual(1, issues.Length);
+				var questions = factory.Parse(new ProtocolMessageChannel(stream));
+				Assert.AreEqual(1, questions.Length);
 
-				var issue = issues[0];
-				Assert.IsNotNull(issue);
-				Assert.AreEqual("¿el nodo debe poder ejecutarse en una Raspberry?", issue.Name);
+				var question = questions[0];
+				Assert.IsNotNull(question);
+				Assert.AreEqual("¿el nodo debe poder ejecutarse en una Raspberry?", question.Name);
 			}
 		}
 
 		[Test]
-		public void Issue_get()
+		public void Question_get()
 		{
 			var conversation = new Conversation(blockchain, new IEventListener[] { new ConsoleListener() }, new ConsoleListener(), new MockChannel());
-			var factory = new IssueQueryMessage(cryptoVoteId, issueId);
+			var factory = new QuestionQueryMessage(cryptoVoteId, questionId);
 
 			using (var stream = new MemoryStream())
 			{
@@ -217,9 +217,9 @@ namespace Tests
 				conversation.Talk(new ProtocolMessageChannel(stream));
 
 				stream.Seek(position, SeekOrigin.Begin);
-				var issue = factory.Parse(new ProtocolMessageChannel(stream));
-				Assert.IsNotNull(issue);
-				Assert.AreEqual("¿el nodo debe poder ejecutarse en una Raspberry?", issue.Name);
+				var question = factory.Parse(new ProtocolMessageChannel(stream));
+				Assert.IsNotNull(question);
+				Assert.AreEqual("¿el nodo debe poder ejecutarse en una Raspberry?", question.Name);
 			}
 		}
 
@@ -268,9 +268,9 @@ namespace Tests
 				conversation.Talk(new ProtocolMessageChannel(stream));
 
 				stream.Seek(position, SeekOrigin.Begin);
-				var issue = factory.Parse(new ProtocolMessageChannel(stream));
-				Assert.IsNotNull(issue);
-				Assert.AreEqual("Nelo", issue.Name);
+				var question = factory.Parse(new ProtocolMessageChannel(stream));
+				Assert.IsNotNull(question);
+				Assert.AreEqual("Nelo", question.Name);
 			}
 		}
 	}

@@ -28,7 +28,7 @@ namespace Web.Controllers
 
 		public NodeAdapterBlocks Blocks => new NodeAdapterBlocks(this);
 		public NodeAdapterCommunities Communities => new NodeAdapterCommunities(this);
-		public NodeAdapterIssues Issues => new NodeAdapterIssues(this);
+		public NodeAdapterQuestions Questions => new NodeAdapterQuestions(this);
 		public NodeAdapterMembers Members => new NodeAdapterMembers(this);
 		public NodeAdapterVotes Votes => new NodeAdapterVotes(this);
 		public NodeAdapterUrns Urns => new NodeAdapterUrns(this);

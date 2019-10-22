@@ -42,31 +42,31 @@ namespace DataSample
 			});
 
 			var tasks = new List<Task>();
-			tasks.Add(factory.Issue(cryptoVoteId, "El nodo debe correr en un container de Docker", new[]
+			tasks.Add(factory.Question(cryptoVoteId, "El nodo debe correr en un container de Docker", new[]
 			{
 				new Choice {Id = Guid.NewGuid(), Color = 0x673ab7, Text = "Si"},
 				new Choice {Id = Guid.NewGuid(), Color = 0xe91e63, Text = "No"},
-			}, IssueType.DirectVote, nelo));
-			tasks.Add(factory.Issue(cryptoVoteId, "Método de Encriptación para la Firma", new[]
+			}, QuestionType.DirectVote, nelo));
+			tasks.Add(factory.Question(cryptoVoteId, "Método de Encriptación para la Firma", new[]
 			{
 				new Choice {Id = Guid.NewGuid(), Color = 0x673ab7, Text = "secp256k1"},
 				new Choice {Id = Guid.NewGuid(), Color = 0xe91e63, Text = "RSA"},
 				new Choice {Id = Guid.NewGuid(), Color = 0xff5722, Text = "YAK"},
 				new Choice {Id = Guid.NewGuid(), Color = 0x4caf50, Text = "ElGamal"},
-			}, IssueType.DirectVote, nelo));
-			tasks.Add(factory.Issue(cryptoVoteId, "¿Cómo se dan de alta las Organizaciones?", new[]
+			}, QuestionType.DirectVote, nelo));
+			tasks.Add(factory.Question(cryptoVoteId, "¿Cómo se dan de alta las Organizaciones?", new[]
 			{
 				new Choice {Id = Guid.NewGuid(), Color = 0x673ab7, Text = "Cualquiera puede registrar una organización"},
 				new Choice {Id = Guid.NewGuid(), Color = 0xe91e63, Text = "Solo el dueño de la Blockchain puede"},
 				new Choice {Id = Guid.NewGuid(), Color = 0xff5722, Text = "Cualquier otra Organizaciones"},
 				new Choice {Id = Guid.NewGuid(), Color = 0x4caf50, Text = "Cualquier que pague"},
-			}, IssueType.DirectVote, nelo));
-			tasks.Add(factory.Issue(cryptoVoteId, "¿Quién se dan de alta los temas a votar?", new[]
+			}, QuestionType.DirectVote, nelo));
+			tasks.Add(factory.Question(cryptoVoteId, "¿Quién se dan de alta los temas a votar?", new[]
 			{
 				new Choice {Id = Guid.NewGuid(), Color = 0x673ab7, Text = "Cualquier miembro de una organización"},
 				new Choice {Id = Guid.NewGuid(), Color = 0xe91e63, Text = "Solo el dueño de la organización"},
 				new Choice {Id = Guid.NewGuid(), Color = 0x4caf50, Text = "Cualquier que pague"},
-			}, IssueType.DirectVote, nelo));
+			}, QuestionType.DirectVote, nelo));
 			Task.WaitAll(tasks.ToArray());
 
 			var eantId = await factory.Community("EANT", martin);
@@ -78,13 +78,13 @@ namespace DataSample
 				factory.Member(eantId, "Romina", romina.PublicKey, martin),
 			});
 
-			await factory.Issue(eantId, "Nuevo Curso 2019 Q1", new[]
+			await factory.Question(eantId, "Nuevo Curso 2019 Q1", new[]
 			{
 				new Choice {Id = Guid.NewGuid(), Color = 0x673ab7, Text = "Blockchain"},
 				new Choice {Id = Guid.NewGuid(), Color = 0xe91e63, Text = "Bitcoin"},
 				new Choice {Id = Guid.NewGuid(), Color = 0xff5722, Text = "Smart Contract"},
 				new Choice {Id = Guid.NewGuid(), Color = 0x4caf50, Text = "Arduino Intermedio"},
-			}, IssueType.DirectVote, martin);
+			}, QuestionType.DirectVote, martin);
 
 			/* ELECCIONES NACIONALES */
 			var cne = crypto.GeneratePair();
@@ -101,14 +101,14 @@ namespace DataSample
 				delcanoChoiceId = Guid.NewGuid();
 
 			var argentinaId = await factory.Community("Argentina", cne);
-			var eleccionesNacionalesId = await factory.Issue(argentinaId, "Elecciones Nacionales 2019", new[]
+			var eleccionesNacionalesId = await factory.Question(argentinaId, "Elecciones Nacionales 2019", new[]
 			{
 				new Choice {Id = espertChoideId, Color = 0xf05c15, Text = "Espert, José Luis", GuardianAddress = apoderadoFrenteDespertar.PublicKey},
 				new Choice {Id = macriChoiceId, Color = 0xffd204, Text = "Macri, Mauricio", GuardianAddress = apoderadoJuntosPorElCambio.PublicKey},
 				new Choice {Id = fernandezChoiceId, Color = 0x59b6eb, Text = "Fernandez, Alberto", GuardianAddress = apoderadorFrenteDeTodos.PublicKey},
 				new Choice {Id = lavagnaChoiceId, Color = 0xa900fd, Text = "Lavagna, Roberto", GuardianAddress = apoderadoConsensoFederal.PublicKey},
 				new Choice {Id = delcanoChoiceId, Color = 0xfe0500, Text = "Del Caño, Nicolás", GuardianAddress = apoderadoFIT.PublicKey}
-			}, IssueType.Recount, cne);
+			}, QuestionType.Recount, cne);
 
 			Task.WaitAll(new[]
 			{

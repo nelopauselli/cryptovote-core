@@ -4,16 +4,16 @@ using Domain.Elections;
 
 namespace Domain.Queries
 {
-	public class IssueQuery
+	public class QuestionQuery
 	{
 		private readonly Blockchain blockchain;
 
-		public IssueQuery(Blockchain blockchain)
+		public QuestionQuery(Blockchain blockchain)
 		{
 			this.blockchain = blockchain;
 		}
 
-		public Issue Execute(string content)
+		public Question Execute(string content)
 		{
 			var chunks = content.Split('#');
 
@@ -21,13 +21,13 @@ namespace Domain.Queries
 				return null;
 			if (!Guid.TryParse(chunks[0], out var communityId))
 				return null;
-			if (!Guid.TryParse(chunks[1], out var issueId))
+			if (!Guid.TryParse(chunks[1], out var questionId))
 				return null;
 
 			foreach (var block in blockchain.Trunk)
 			{
-				foreach (var issue in block.Issues.Where(i => i.CommunityId == communityId && i.Id == issueId))
-					return issue;
+				foreach (var question in block.Questions.Where(i => i.CommunityId == communityId && i.Id == questionId))
+					return question;
 			}
 
 			return null;

@@ -48,13 +48,13 @@ namespace Tests
 
 			juanId = Guid.NewGuid();
 			joseId = Guid.NewGuid();
-			var issues = new BlockItem[]
+			var questions = new BlockItem[]
 			{
-				new Issue { CommunityId = community.Id, Id = Guid.NewGuid(), Name = "Elección de Presidente",
+				new Question { CommunityId = community.Id, Id = Guid.NewGuid(), Name = "Elección de Presidente",
 					Choices = new [] {new Choice{ Id = juanId, Text = "Juan"}, new Choice { Id = joseId, Text = "Jose" } }},
 			};
-			signer.Sign(issues[0], pedro);
-			blockchain.MineNextBlock(issues);
+			signer.Sign(questions[0], pedro);
+			blockchain.MineNextBlock(questions);
 
 			var members = new BlockItem[]
 			{
@@ -73,13 +73,13 @@ namespace Tests
 		[Test]
 		public void Count_3_votes()
 		{
-			var issueId = Guid.NewGuid();
+			var questionId = Guid.NewGuid();
 
 			var pendings = new BlockItem[]
 			{
-				new Vote {IssueId = issueId, ChoiceId = juanId},
-				new Vote {IssueId = issueId, ChoiceId = joseId},
-				new Vote {IssueId = issueId, ChoiceId = juanId},
+				new Vote {QuestionId = questionId, ChoiceId = juanId},
+				new Vote {QuestionId = questionId, ChoiceId = joseId},
+				new Vote {QuestionId = questionId, ChoiceId = juanId},
 			};
 
 			signer.Sign(pendings[0], alicia);
@@ -97,13 +97,13 @@ namespace Tests
 		[Test]
 		public void Count_votes_with_repeated()
 		{
-			var issueId = Guid.NewGuid();
+			var questionId = Guid.NewGuid();
 
 			var pendings = new BlockItem[]
 			{
-				new Vote {IssueId = issueId, ChoiceId = juanId},
-				new Vote {IssueId = issueId, ChoiceId = joseId},
-				new Vote {IssueId = issueId, ChoiceId = juanId},
+				new Vote {QuestionId = questionId, ChoiceId = juanId},
+				new Vote {QuestionId = questionId, ChoiceId = joseId},
+				new Vote {QuestionId = questionId, ChoiceId = juanId},
 			};
 
 			signer.Sign(pendings[0], alicia);

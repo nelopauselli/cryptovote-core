@@ -16,12 +16,12 @@ namespace Domain.Queries
 
 		public IEnumerable<Fiscal> Execute(string content)
 		{
-			if (!Guid.TryParse(content, out var issueId))
+			if (!Guid.TryParse(content, out var questionId))
 				yield break;
 
 			foreach (var block in blockchain.Trunk)
 			{
-				foreach (var Fiscal in block.Fiscals.Where(i => i.IssueId == issueId))
+				foreach (var Fiscal in block.Fiscals.Where(i => i.QuestionId == questionId))
 					yield return Fiscal;
 			}
 		}

@@ -11,7 +11,7 @@ namespace DataSample
 	internal class FileAdapter : IPublisher
 	{
 		private readonly IList<Community> communities = new List<Community>();
-		private readonly IList<Issue> issues = new List<Issue>();
+		private readonly IList<Question> questions = new List<Question>();
 		private readonly IList<Member> members = new List<Member>();
 		private readonly IList<Urn> urns = new List<Urn>();
 		private readonly IList<Fiscal> fiscals = new List<Fiscal>();
@@ -22,10 +22,10 @@ namespace DataSample
 			communities.Add(community);
 		}
 
-		public async Task Add(Issue issue)
+		public async Task Add(Question question)
 		{
-			await File.WriteAllTextAsync($"issue-{issues.Count+1}.json", JsonConvert.SerializeObject(issue));
-			issues.Add(issue);
+			await File.WriteAllTextAsync($"question-{questions.Count+1}.json", JsonConvert.SerializeObject(question));
+			questions.Add(question);
 		}
 
 		public async Task Add(Member member)
@@ -51,9 +51,9 @@ namespace DataSample
 			return Task.FromResult(communities.ToArray());
 		}
 
-		public Task<Issue[]> ListIssues(Guid communityId)
+		public Task<Question[]> ListQuestions(Guid communityId)
 		{
-			return Task.FromResult(issues.ToArray());
+			return Task.FromResult(questions.ToArray());
 		}
 
 		public Task<Member[]> ListMembers(Guid communityId)

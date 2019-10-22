@@ -42,9 +42,9 @@ namespace Tests.Signatures
 		}
 
 		[Test]
-		public void Issue()
+		public void Question()
 		{
-			var issue1 = new Issue
+			var question1 = new Question
 			{
 				Id = new Guid("bd746b3b276e454a8B1e041cf53a8747"),
 				CommunityId = new Guid("4814e8f885f74230b04d2daa4e2d88a4"),
@@ -60,25 +60,25 @@ namespace Tests.Signatures
 			var keys = service.GeneratePair();
 
 			var signer = new Signer(service);
-			issue1.Signature = signer.Sign(issue1.GetData(), keys);
-			var signatureBase58 = Base58.Encode(issue1.Signature);
-			issue1.PublicKey = new byte[keys.PublicKey.Length];
-			Buffer.BlockCopy(keys.PublicKey, 0, issue1.PublicKey, 0, keys.PublicKey.Length);
+			question1.Signature = signer.Sign(question1.GetData(), keys);
+			var signatureBase58 = Base58.Encode(question1.Signature);
+			question1.PublicKey = new byte[keys.PublicKey.Length];
+			Buffer.BlockCopy(keys.PublicKey, 0, question1.PublicKey, 0, keys.PublicKey.Length);
 
-			var json = JsonConvert.SerializeObject(issue1);
+			var json = JsonConvert.SerializeObject(question1);
 			Console.WriteLine(json);
 
-			var issue2 = JsonConvert.DeserializeObject<Issue>(json);
-			var publicKeyBase58 = Base58.Encode(issue2.PublicKey);
+			var question2 = JsonConvert.DeserializeObject<Question>(json);
+			var publicKeyBase58 = Base58.Encode(question2.PublicKey);
 
 			var verifier = new SignatureVerify(service);
-			Assert.IsTrue(verifier.Verify(issue1));
+			Assert.IsTrue(verifier.Verify(question1));
 
-			Console.WriteLine(BitConverter.ToString(issue1.GetData()));
-			Console.WriteLine(BitConverter.ToString(issue2.GetData()));
-			Assert.IsTrue(verifier.Verify(issue2.GetData(), Base58.Decode(publicKeyBase58), Base58.Decode(signatureBase58)));
-			Assert.IsTrue(verifier.Verify(issue2.GetData(), Base58.Decode(publicKeyBase58), issue2.Signature));
-			Assert.IsTrue(verifier.Verify(issue2));
+			Console.WriteLine(BitConverter.ToString(question1.GetData()));
+			Console.WriteLine(BitConverter.ToString(question2.GetData()));
+			Assert.IsTrue(verifier.Verify(question2.GetData(), Base58.Decode(publicKeyBase58), Base58.Decode(signatureBase58)));
+			Assert.IsTrue(verifier.Verify(question2.GetData(), Base58.Decode(publicKeyBase58), question2.Signature));
+			Assert.IsTrue(verifier.Verify(question2));
 		}
 
 		[Test]
@@ -116,7 +116,7 @@ namespace Tests.Signatures
 		{
 			var vote1 = new Vote
 			{
-				IssueId = new Guid("bd746b3b276e454a8B1e041cf53a8747"),
+				QuestionId = new Guid("bd746b3b276e454a8B1e041cf53a8747"),
 				ChoiceId = Guid.NewGuid(),
 				Time = DateTimeOffset.Now.ToUnixTimeMilliseconds()
 			};

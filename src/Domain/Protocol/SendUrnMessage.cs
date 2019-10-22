@@ -6,7 +6,7 @@ namespace Domain.Protocol
 {
 	public class SendUrnMessage : ProtocolMessage
 	{
-		public const char CommandId = 'U';
+		public const char CommandId = SendUrnCommandId;
 
 		private readonly Urn urn;
 

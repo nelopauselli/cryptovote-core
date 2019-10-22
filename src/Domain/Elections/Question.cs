@@ -6,7 +6,7 @@ using Domain.Utils;
 
 namespace Domain.Elections
 {
-	public class Issue : BlockItem
+	public class Question : BlockItem
 	{
 		public Guid Id { get; set; }
 		public Guid CommunityId { get; set; }
@@ -54,9 +54,9 @@ namespace Domain.Elections
 			return BuildKey(CommunityId, Id);
 		}
 
-		public static string BuildKey(Guid communityId, Guid issueId)
+		public static string BuildKey(Guid communityId, Guid questionId)
 		{
-			return $"{communityId:n}:{issueId:n}";
+			return $"{communityId:n}:{questionId:n}";
 		}
 
 		public override bool IsValid(IList<Block> chain)
@@ -69,7 +69,7 @@ namespace Domain.Elections
 		}
 	}
 
-	public static class IssueType
+	public static class QuestionType
 	{
 		public static byte DirectVote = 1;
 		public static byte Recount = 2;

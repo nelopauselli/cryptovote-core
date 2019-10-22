@@ -15,7 +15,7 @@ namespace DataSample
 		private readonly ICryptoService service;
 		private readonly IPublisher publisher;
 		private readonly List<Community> communities = new List<Community>();
-		private readonly List<Issue> issues = new List<Issue>();
+		private readonly List<Question> questions = new List<Question>();
 		private readonly List<Member> members = new List<Member>();
 		private readonly List<Urn> urns = new List<Urn>();
 		private readonly List<Fiscal> fiscals = new List<Fiscal>();
@@ -56,12 +56,12 @@ namespace DataSample
 			return community.Id;
 		}
 
-		public async Task<Guid> Issue(Guid communityId, string name, Choice[] choices, byte type, KeysPair keys)
+		public async Task<Guid> Question(Guid communityId, string name, Choice[] choices, byte type, KeysPair keys)
 		{
-			var exist = issues.SingleOrDefault(o => o.CommunityId == communityId && o.Name == name);
+			var exist = questions.SingleOrDefault(o => o.CommunityId == communityId && o.Name == name);
 			if (exist != null) return exist.Id;
 
-			var issue = new Issue
+			var question = new Question
 			{
 				Id = Guid.NewGuid(),
 				CommunityId = communityId,
@@ -72,14 +72,14 @@ namespace DataSample
 			};
 
 			var signer = new Signer(service);
-			issue.Signature = signer.Sign(issue.GetData(), keys);
-			issue.PublicKey = new byte[keys.PublicKey.Length];
-			Buffer.BlockCopy(keys.PublicKey, 0, issue.PublicKey, 0, keys.PublicKey.Length);
+			question.Signature = signer.Sign(question.GetData(), keys);
+			question.PublicKey = new byte[keys.PublicKey.Length];
+			Buffer.BlockCopy(keys.PublicKey, 0, question.PublicKey, 0, keys.PublicKey.Length);
 
-			await publisher.Add(issue);
-			issues.Add(issue);
+			await publisher.Add(question);
+			questions.Add(question);
 
-			return issue.Id;
+			return question.Id;
 		}
 
 		public async Task<Guid> Member(Guid communityId, string name, byte[] address, KeysPair keys)
@@ -107,15 +107,15 @@ namespace DataSample
 			return member.Id;
 		}
 
-		public async Task<Guid> Urn(Guid issueId, string name, byte[][] authorities, KeysPair keys)
+		public async Task<Guid> Urn(Guid questionId, string name, byte[][] authorities, KeysPair keys)
 		{
-			var exist = urns.SingleOrDefault(o => o.IssueId == issueId && o.Name == name);
+			var exist = urns.SingleOrDefault(o => o.QuestionId == questionId && o.Name == name);
 			if (exist != null) return exist.Id;
 
 			var urn = new Urn
 			{
 				Id = Guid.NewGuid(),
-				IssueId = issueId,
+				QuestionId = questionId,
 				Name = name,
 				Authorities = authorities
 			};
@@ -130,15 +130,15 @@ namespace DataSample
 			return urn.Id;
 		}
 
-		public async Task<Guid> Fiscal(Guid issueId, Guid choiceId, byte[] fiscalAddress, KeysPair guardianKey)
+		public async Task<Guid> Fiscal(Guid questionId, Guid choiceId, byte[] fiscalAddress, KeysPair guardianKey)
 		{
-			var exist = fiscals.SingleOrDefault(o => o.IssueId == issueId && o.ChoiceId == choiceId && o.Address == fiscalAddress);
+			var exist = fiscals.SingleOrDefault(o => o.QuestionId == questionId && o.ChoiceId == choiceId && o.Address == fiscalAddress);
 			if (exist != null) return exist.Id;
 
 			var fiscal = new Fiscal
 			{
 				Id = Guid.NewGuid(),
-				IssueId = issueId,
+				QuestionId = questionId,
 				ChoiceId = choiceId,
 				Address = fiscalAddress
 			};
@@ -155,7 +155,7 @@ namespace DataSample
 		{
 			var vote1 = new Vote
 			{
-				IssueId = new Guid("bd746b3b276e454a8B1e041cf53a8747"),
+				QuestionId = new Guid("bd746b3b276e454a8B1e041cf53a8747"),
 				ChoiceId = Guid.NewGuid(),
 				Time = DateTimeOffset.Now.ToUnixTimeMilliseconds()
 			};
@@ -186,11 +186,11 @@ namespace DataSample
 			foreach (var community in communities)
 			{
 
-				var issueTask = publisher.ListIssues(community.Id);
+				var questionTask = publisher.ListQuestions(community.Id);
 				var memberTask = publisher.ListMembers(community.Id);
 
-				Task.WaitAll(issueTask, memberTask);
-				issues.AddRange(issueTask.Result);
+				Task.WaitAll(questionTask, memberTask);
+				questions.AddRange(questionTask.Result);
 				members.AddRange(memberTask.Result);
 			}
 

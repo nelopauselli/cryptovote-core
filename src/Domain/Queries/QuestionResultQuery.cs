@@ -3,16 +3,16 @@ using Domain.Elections;
 
 namespace Domain.Queries
 {
-	public class IssueResultQuery
+	public class QuestionResultQuery
 	{
 		private readonly Blockchain blockchain;
 
-		public IssueResultQuery(Blockchain blockchain)
+		public QuestionResultQuery(Blockchain blockchain)
 		{
 			this.blockchain = blockchain;
 		}
 
-		public IssueResult Execute(string content)
+		public QuestionResult Execute(string content)
 		{
 			var chunks = content.Split('#');
 
@@ -20,10 +20,10 @@ namespace Domain.Queries
 				return null;
 			if (!Guid.TryParse(chunks[0], out var communityId))
 				return null;
-			if (!Guid.TryParse(chunks[1], out var issueId))
+			if (!Guid.TryParse(chunks[1], out var questionId))
 				return null;
 
-			return blockchain.GetResult(issueId);
+			return blockchain.GetResult(questionId);
 		}
 	}
 }

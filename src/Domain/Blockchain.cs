@@ -193,31 +193,31 @@ namespace Domain
 			return branch[index];
 		}
 
-		public long GetRecountFor(Guid issueId, Guid choiceId)
+		public long GetRecountFor(Guid questionId, Guid choiceId)
 		{
-			Issue issue = null;
+			Question question = null;
 			var urns = new List<Guid>();
 			var recounts = new List<Recount>();
 
 			foreach (var block in trunk)
 			{
-				if (issue == null)
+				if (question == null)
 				{
-					foreach (var i in block.Issues)
+					foreach (var i in block.Questions)
 					{
-						if (i.Id == issueId)
+						if (i.Id == questionId)
 						{
-							issue = i;
+							question = i;
 							break;
 						}
 					}
 				}
 
-				if (issue != null)
+				if (question != null)
 				{
 					foreach (var urn in block.Urns)
 					{
-						if (urn.IssueId == issueId)
+						if (urn.QuestionId == questionId)
 						{
 							urns.Add(urn.Id);
 						}
@@ -294,7 +294,7 @@ namespace Domain
 								}
 								else
 								{
-									var choiceId = GetChoiceFromSigner(urn.IssueId, recognition.PublicKey);
+									var choiceId = GetChoiceFromSigner(urn.QuestionId, recognition.PublicKey);
 									if (choiceId.HasValue && !choices.Contains(choiceId.Value))
 									{
 										choices.Add(choiceId.Value);
@@ -315,20 +315,20 @@ namespace Domain
 			return recognitions;
 		}
 
-		public Guid? GetChoiceFromSigner(Guid issueId, byte[] publicKey)
+		public Guid? GetChoiceFromSigner(Guid questionId, byte[] publicKey)
 		{
-			Issue issue = null;
+			Question question = null;
 			foreach (var block in trunk)
 			{
-				if (issue == null)
-					issue = block.Issues.SingleOrDefault(i => i.Id == issueId);
+				if (question == null)
+					question = block.Questions.SingleOrDefault(i => i.Id == questionId);
 
-				if (issue != null)
+				if (question != null)
 				{
-					var fiscal = block.Fiscals.SingleOrDefault(f => f.IssueId == issueId && f.Address.SequenceEqual(publicKey));
+					var fiscal = block.Fiscals.SingleOrDefault(f => f.QuestionId == questionId && f.Address.SequenceEqual(publicKey));
 					if (fiscal != null)
 					{
-						foreach (var choice in issue.Choices)
+						foreach (var choice in question.Choices)
 						{
 							if (fiscal.PublicKey.SequenceEqual(choice.GuardianAddress))
 								return fiscal.ChoiceId;
@@ -342,22 +342,22 @@ namespace Domain
 			return null;
 		}
 
-		public IssueResult GetResult(Guid issueId)
+		public QuestionResult GetResult(Guid questionId)
 		{
-			IssueResult result = null;
+			QuestionResult result = null;
 			var urns = new List<Guid>();
 
 			foreach (var block in trunk)
 			{
 				if (result == null)
 				{
-					var issue = block.Issues.SingleOrDefault(i => i.Id == issueId);
-					if (issue != null)
-						result = new IssueResult
+					var question = block.Questions.SingleOrDefault(i => i.Id == questionId);
+					if (question != null)
+						result = new QuestionResult
 						{
-							IssueId = issue.Id,
-							Type = issue.Type,
-							Choices = issue.Choices.Select(c => new ChoiceResult
+							QuestionId = question.Id,
+							Type = question.Type,
+							Choices = question.Choices.Select(c => new ChoiceResult
 							{
 								ChoiceId = c.Id,
 								Text = c.Text,
@@ -369,9 +369,9 @@ namespace Domain
 
 				if (result != null)
 				{
-					if (result.Type == IssueType.DirectVote)
+					if (result.Type == QuestionType.DirectVote)
 					{
-						var votesGroups = block.Votes.Where(v => v.IssueId == result.IssueId).GroupBy(v => v.ChoiceId);
+						var votesGroups = block.Votes.Where(v => v.QuestionId == result.QuestionId).GroupBy(v => v.ChoiceId);
 						foreach (var votes in votesGroups)
 						{
 							var choice = result.Choices.SingleOrDefault(c => c.ChoiceId == votes.Key);
@@ -379,9 +379,9 @@ namespace Domain
 								choice.Votes += votes.Count();
 						}
 					}
-					else if (result.Type == IssueType.Recount)
+					else if (result.Type == QuestionType.Recount)
 					{
-						urns.AddRange(block.Urns.Where(u => u.IssueId == issueId).Select(u => u.Id));
+						urns.AddRange(block.Urns.Where(u => u.QuestionId == questionId).Select(u => u.Id));
 
 						var recounts = block.Recounts.Where(r => urns.Contains(r.UrnId));
 						foreach (var recount in recounts)

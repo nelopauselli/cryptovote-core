@@ -21,10 +21,10 @@ namespace Web.Controllers
 			this.node = node;
 		}
 
-		[HttpGet("{issueId}")]
-		public async Task<ActionResult<IEnumerable<Fiscal>>> Get(Guid issueId)
+		[HttpGet("{questionId}")]
+		public async Task<ActionResult<IEnumerable<Fiscal>>> Get(Guid questionId)
 		{
-			var fiscals = await node.Fiscals.List(issueId);
+			var fiscals = await node.Fiscals.List(questionId);
 			return Ok(fiscals);
 		}
 
@@ -35,7 +35,7 @@ namespace Web.Controllers
 
 			await node.Fiscals.Add(fiscal);
 
-			var url = Url.Action("Get", new { communityId = fiscal.IssueId, FiscalId = fiscal.Id });
+			var url = Url.Action("Get", new { communityId = fiscal.QuestionId, FiscalId = fiscal.Id });
 			return Accepted(url);
 		}
 	}

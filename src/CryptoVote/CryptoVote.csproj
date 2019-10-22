@@ -14,7 +14,7 @@
     <ProjectReference Include="..\Domain\Domain.csproj" />
   </ItemGroup>
 
-  <ItemGroup> 
+  <ItemGroup>
     <None Update="genesis.block">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

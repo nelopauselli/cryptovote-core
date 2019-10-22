@@ -18,7 +18,7 @@ namespace Domain.Queries
 		public byte[] GetBytes()
 		{
 			var message = $"Members#{communityId}";
-			return Encoding.UTF8.GetBytes($"Q:{message.Length:D5}|{message}");
+			return Encoding.UTF8.GetBytes($"{QueryCommand.CommandId}:{message.Length:D5}|{message}");
 		}
 
 		public Member[] Parse(ProtocolMessageChannel channel)

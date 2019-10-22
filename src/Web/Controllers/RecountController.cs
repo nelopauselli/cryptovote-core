@@ -25,8 +25,8 @@ namespace Web.Controllers
 		[HttpGet("{urnId}")]
 		public async Task<ActionResult<Recount>> Get(Guid urnId)
 		{
-			var issues = await nodeAdapter.Recounts.Get(urnId);
-			return Ok(issues);
+			var questions = await nodeAdapter.Recounts.Get(urnId);
+			return Ok(questions);
 		}
 
 		// POST api/values

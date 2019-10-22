@@ -25,16 +25,16 @@ namespace Web.Controllers
 		}
 
 		// GET api/values
-		[HttpGet("{issueId}")]
-		public async Task<ActionResult<IEnumerable<Vote>>> Get(Guid issueId)
+		[HttpGet("{questionId}")]
+		public async Task<ActionResult<IEnumerable<Vote>>> Get(Guid questionId)
 		{
-			var issues = await nodeAdapter.Votes.List(issueId);
-			return Ok(issues);
+			var questions = await nodeAdapter.Votes.List(questionId);
+			return Ok(questions);
 		}
 
 		// GET api/values/5
-		[HttpGet("{issueId}/{publicKey}")]
-		public ActionResult<Vote> Get(Guid issueId, string publicKey)
+		[HttpGet("{questionId}/{publicKey}")]
+		public ActionResult<Vote> Get(Guid questionId, string publicKey)
 		{
 			throw new NotImplementedException();
 		}
@@ -47,7 +47,7 @@ namespace Web.Controllers
 
 			await nodeAdapter.Votes.Add(vote);
 
-			var url = Url.Action("Get", new {issueId = vote.IssueId, publicKey = vote.PublicKey});
+			var url = Url.Action("Get", new {questionId = vote.QuestionId, publicKey = vote.PublicKey});
 			return Created(url, vote);
 		}
 	}

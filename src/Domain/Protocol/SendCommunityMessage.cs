@@ -6,7 +6,7 @@ namespace Domain.Protocol
 {
 	public class SendCommunityMessage : ProtocolMessage
 	{
-		public const char CommandId = 'C';
+		public const char CommandId = SendCommunityCommandId;
 
 		private readonly Community community;
 

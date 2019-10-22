@@ -15,9 +15,9 @@ namespace Web.Controllers
 			this.nodeAdapter = nodeAdapter;
 		}
 
-		public async Task<Fiscal[]> List(Guid issueId)
+		public async Task<Fiscal[]> List(Guid questionId)
 		{
-			var command = new FiscalsQueryMessage(issueId);
+			var command = new FiscalsQueryMessage(questionId);
 			return await nodeAdapter.GetResponse(command);
 		}
 

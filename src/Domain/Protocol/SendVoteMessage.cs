@@ -6,7 +6,7 @@ namespace Domain.Protocol
 {
 	public class SendVoteMessage : ProtocolMessage
 	{
-		public const char CommandId = 'V';
+		public const char CommandId = SendVoteCommandId;
 
 		private readonly Vote vote;
 

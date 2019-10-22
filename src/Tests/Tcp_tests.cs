@@ -100,11 +100,11 @@ namespace Tests
 		}
 
 		[Test]
-		public void Send_issue()
+		public void Send_question()
 		{
 			var node = new Mock<INode>();
-			Issue issueInNode = null;
-			node.Setup(n => n.Add(It.IsAny<Issue>())).Callback<Issue>(v => issueInNode = v);
+			Question questionInNode = null;
+			node.Setup(n => n.Add(It.IsAny<Question>())).Callback<Question>(v => questionInNode = v);
 			var channel = new TcpChannel(node.Object, port1, new ConsoleListener());
 
 			try
@@ -114,7 +114,7 @@ namespace Tests
 
 				var client = new TcpPeer(address.ToString(), port1, new MockChannel());
 
-				var issue = new Issue
+				var question = new Question
 				{
 					CommunityId = Guid.NewGuid(), Choices = new[]
 					{
@@ -122,18 +122,18 @@ namespace Tests
 						new Choice {Text = "Opción Azul"}
 					}
 				};
-				var command = new SendIssueMessage(issue);
+				var command = new SendQuestionMessage(question);
 
 				var sendTask = client.SendAsync(command.GetBytes(), CancellationToken.None);
 				sendTask.Wait(DefaultSendTaskTimeout);
 
-				node.Verify(n => n.Add(It.IsAny<Issue>()), Times.Once);
+				node.Verify(n => n.Add(It.IsAny<Question>()), Times.Once);
 
-				Assert.IsNotNull(issueInNode);
-				Assert.AreEqual(issue.CommunityId, issueInNode.CommunityId);
-				Assert.AreEqual(2, issueInNode.Choices.Length);
-				Assert.AreEqual(issue.Choices[0].Text, issue.Choices[0].Text);
-				Assert.AreEqual(issue.Choices[1].Text, issue.Choices[1].Text);
+				Assert.IsNotNull(questionInNode);
+				Assert.AreEqual(question.CommunityId, questionInNode.CommunityId);
+				Assert.AreEqual(2, questionInNode.Choices.Length);
+				Assert.AreEqual(question.Choices[0].Text, question.Choices[0].Text);
+				Assert.AreEqual(question.Choices[1].Text, question.Choices[1].Text);
 
 			}
 			finally

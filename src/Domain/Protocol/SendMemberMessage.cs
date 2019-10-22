@@ -6,7 +6,7 @@ namespace Domain.Protocol
 {
 	public class SendMemberMessage : ProtocolMessage
 	{
-		public const char CommandId = 'M';
+		public const char CommandId = SendMemberCommandId;
 		
 		private readonly Member member;
 

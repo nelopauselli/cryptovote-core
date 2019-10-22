@@ -182,17 +182,17 @@ namespace Domain
 			Peers.Broadcast(community);
 		}
 
-		public void Add(Issue issue)
+		public void Add(Question question)
 		{
 			lock (semaphore)
 			{
-				if (pendings.ContainsKey(issue.GetKey()))
+				if (pendings.ContainsKey(question.GetKey()))
 					return;
 
-				pendings.Add(issue.GetKey(), issue);
+				pendings.Add(question.GetKey(), question);
 			}
 
-			Peers.Broadcast(issue);
+			Peers.Broadcast(question);
 		}
 
 		public void Add(Member member)

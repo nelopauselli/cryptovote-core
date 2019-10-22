@@ -8,15 +8,15 @@ namespace Domain.Queries
 {
 	public class FiscalsQueryMessage : IMessage<Fiscal[]>
 	{
-		private readonly Guid issueId;
+		private readonly Guid questionId;
 
-		public FiscalsQueryMessage(Guid issueId)
+		public FiscalsQueryMessage(Guid questionId)
 		{
-			this.issueId = issueId;
+			this.questionId = questionId;
 		}
 		public byte[] GetBytes()
 		{
-			var message = $"Fiscals#{issueId}";
+			var message = $"Fiscals#{questionId}";
 			return Encoding.UTF8.GetBytes($"{QueryCommand.CommandId}:{message.Length:D5}|{message}");
 		}
 

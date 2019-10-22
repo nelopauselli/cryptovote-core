@@ -8,15 +8,15 @@ namespace Domain.Queries
 {
 	public class VotesQueryMessage : IMessage<Vote[]>
 	{
-		private readonly Guid issueId;
+		private readonly Guid questionId;
 
-		public VotesQueryMessage(Guid issueId)
+		public VotesQueryMessage(Guid questionId)
 		{
-			this.issueId = issueId;
+			this.questionId = questionId;
 		}
 		public byte[] GetBytes()
 		{
-			var message = $"votes#{issueId}";
+			var message = $"votes#{questionId}";
 			return Encoding.UTF8.GetBytes($"{QueryCommand.CommandId}:{message.Length:D5}|{message}");
 		}
 

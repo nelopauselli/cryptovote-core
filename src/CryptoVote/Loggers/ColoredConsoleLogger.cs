@@ -35,10 +35,10 @@ namespace CryptoVote.Loggers
 			Console.ResetColor();
 		}
 
-		public void Incomming(Issue issue)
+		public void Incomming(Question question)
 		{
 			Console.ForegroundColor = ConsoleColor.Green;
-			Console.WriteLine($"[Incoming issue] {issue}");
+			Console.WriteLine($"[Incoming question] {question}");
 			Console.ResetColor();
 		}
 

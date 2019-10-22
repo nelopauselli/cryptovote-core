@@ -15,7 +15,7 @@ namespace Domain
 			Documents = new List<Document>();
 			Communities = new List<Community>();
 			Members = new List<Member>();
-			Issues = new List<Issue>();
+			Questions = new List<Question>();
 			Urns = new List<Urn>();
 			Fiscals = new List<Fiscal>();
 			Votes = new List<Vote>();
@@ -29,7 +29,7 @@ namespace Domain
 		public IList<Document> Documents { get; }
 		public IList<Community> Communities { get; }
 		public IList<Member> Members { get; }
-		public IList<Issue> Issues { get; }
+		public IList<Question> Questions { get; }
 		public IList<Urn> Urns { get; }
 		public IList<Fiscal> Fiscals { get; }
 		public IList<Vote> Votes { get; }
@@ -47,7 +47,7 @@ namespace Domain
 			transactions.AddRange(Documents);
 			transactions.AddRange(Communities);
 			transactions.AddRange(Members);
-			transactions.AddRange(Issues);
+			transactions.AddRange(Questions);
 			transactions.AddRange(Urns);
 			transactions.AddRange(Fiscals);
 			transactions.AddRange(Recounts);
@@ -107,7 +107,7 @@ namespace Domain
 
 		public bool IsNotEmpty()
 		{
-			return Documents.Any() || Communities.Any() || Members.Any() || Issues.Any() || Urns.Any() || Fiscals.Any() || Votes.Any() || Recounts.Any() || Recognitions.Any();
+			return Documents.Any() || Communities.Any() || Members.Any() || Questions.Any() || Urns.Any() || Fiscals.Any() || Votes.Any() || Recounts.Any() || Recognitions.Any();
 		}
 
 		public override string ToString()

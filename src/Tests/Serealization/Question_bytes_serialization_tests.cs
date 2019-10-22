@@ -7,19 +7,19 @@ using NUnit.Framework;
 
 namespace Tests.Serealization
 {
-	public class Issue_bytes_serialization_tests
+	public class Question_bytes_serialization_tests
 	{
-		private readonly Issue issue;
+		private readonly Question question;
 
-		public Issue_bytes_serialization_tests()
+		public Question_bytes_serialization_tests()
 		{
-			issue = new Issue
+			question = new Question
 			{
 				CommunityId = Guid.NewGuid(),
 				Id = Guid.NewGuid(),
 				EndTime = DateTimeOffset.Now.ToUnixTimeMilliseconds(),
 				Type = 1,
-				Name = "Test Issue",
+				Name = "Test Question",
 				Choices = new[]
 				{
 					new Choice {Id = Guid.NewGuid(), Color = 0x673ab7, Text = "Opción 1"},
@@ -31,52 +31,52 @@ namespace Tests.Serealization
 		}
 
 		[Test]
-		public void IssueId_in_data()
+		public void QuestionId_in_data()
 		{
-			var data = issue.GetData();
+			var data = question.GetData();
 
 			var buffer = new byte[16];
 			Array.Copy(data, 0, buffer, 0, 16);
-			Assert.IsTrue(issue.Id.ToOrderByteArray().SequenceEqual(buffer));
+			Assert.IsTrue(question.Id.ToOrderByteArray().SequenceEqual(buffer));
 		}
 
 		[Test]
 		public void CommunityId_in_data()
 		{
-			var data = issue.GetData();
+			var data = question.GetData();
 
 			var buffer = new byte[16];
 			Array.Copy(data, 16, buffer, 0, 16);
-			Assert.IsTrue(issue.CommunityId.ToOrderByteArray().SequenceEqual(buffer));
+			Assert.IsTrue(question.CommunityId.ToOrderByteArray().SequenceEqual(buffer));
 		}
 
 		[Test]
 		public void Name_in_data()
 		{
-			var data = issue.GetData();
+			var data = question.GetData();
 
-			var name = Encoding.UTF8.GetString(data, 32, issue.Name.Length).Trim();
-			Assert.AreEqual(issue.Name, name);
+			var name = Encoding.UTF8.GetString(data, 32, question.Name.Length).Trim();
+			Assert.AreEqual(question.Name, name);
 		}
 
 		[Test]
 		public void EndTime_in_data()
 		{
-			var data = issue.GetData();
+			var data = question.GetData();
 
 			var buffer = new byte[8];
-			Array.Copy(data, 16 + 16 + issue.Name.Length + 1, buffer, 0, 8);
+			Array.Copy(data, 16 + 16 + question.Name.Length + 1, buffer, 0, 8);
 
 			Array.Reverse(buffer);
-			Assert.AreEqual(issue.EndTime, BitConverter.ToInt64(buffer));
+			Assert.AreEqual(question.EndTime, BitConverter.ToInt64(buffer));
 		}
 
 		[Test]
 		public void Type_in_data()
 		{
-			var data = issue.GetData();
+			var data = question.GetData();
 
-			var offset = 16 + 16 + issue.Name.Length;
+			var offset = 16 + 16 + question.Name.Length;
 
 			Assert.AreEqual(1, data[offset]);
 		}
@@ -84,13 +84,13 @@ namespace Tests.Serealization
 		[Test]
 		public void Choice_in_data()
 		{
-			var data = issue.GetData();
+			var data = question.GetData();
 			Console.WriteLine(BitConverter.ToString(data));
 
 			var buffer = new byte[16 + 4 + 9];
-			Array.Copy(data, 16 + 16 + issue.Name.Length + 1 + 8, buffer, 0, 29);
+			Array.Copy(data, 16 + 16 + question.Name.Length + 1 + 8, buffer, 0, 29);
 
-			var choice = issue.Choices[0];
+			var choice = question.Choices[0];
 			Console.WriteLine(BitConverter.ToString(choice.Id.ToOrderByteArray()));
 			Console.WriteLine(BitConverter.ToString(buffer.Take(16).ToArray()));
 			Assert.IsTrue(choice.Id.ToOrderByteArray().SequenceEqual(buffer.Take(16).ToArray()));

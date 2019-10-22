@@ -38,9 +38,9 @@ namespace Domain
 			Broadcast(new SendVoteMessage(vote));
 		}
 
-		public void Broadcast(Issue issue)
+		public void Broadcast(Question question)
 		{
-			Broadcast(new SendIssueMessage(issue));
+			Broadcast(new SendQuestionMessage(question));
 		}
 
 		public void Broadcast(Community community)

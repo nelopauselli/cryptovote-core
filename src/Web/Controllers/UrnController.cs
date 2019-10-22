@@ -21,10 +21,10 @@ namespace Web.Controllers
 			this.node = node;
 		}
 
-		[HttpGet("{issueId}")]
-		public async Task<ActionResult<IEnumerable<Urn>>> Get(Guid issueId)
+		[HttpGet("{questionId}")]
+		public async Task<ActionResult<IEnumerable<Urn>>> Get(Guid questionId)
 		{
-			var Urns = await node.Urns.List(issueId);
+			var Urns = await node.Urns.List(questionId);
 			return Ok(Urns);
 		}
 
@@ -35,7 +35,7 @@ namespace Web.Controllers
 
 			await node.Urns.Add(urn);
 
-			var url = Url.Action("Get", new { communityId = urn.IssueId, UrnId = urn.Id });
+			var url = Url.Action("Get", new { communityId = urn.QuestionId, UrnId = urn.Id });
 			return Accepted(url);
 		}
 	}

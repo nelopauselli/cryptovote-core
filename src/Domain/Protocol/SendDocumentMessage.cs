@@ -5,7 +5,7 @@ namespace Domain.Protocol
 {
 	public class SendDocumentMessage : ProtocolMessage
 	{
-		public const char CommandId = 'D';
+		public const char CommandId = SendDocumentCommandId;
 
 		private readonly Document document;
 

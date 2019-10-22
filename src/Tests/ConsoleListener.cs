@@ -38,9 +38,9 @@ namespace Tests
 			logger.Information($"Incoming vote: {vote}");
 		}
 
-		public void Incomming(Issue issue)
+		public void Incomming(Question question)
 		{
-			logger.Information($"Incoming issue: {issue}");
+			logger.Information($"Incoming question: {question}");
 		}
 
 		public void Incomming(Member member)

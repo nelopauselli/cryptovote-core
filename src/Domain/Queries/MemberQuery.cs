@@ -26,8 +26,8 @@ namespace Domain.Queries
 
 			foreach (var block in blockchain.Trunk)
 			{
-				foreach (var issue in block.Members.Where(i => i.CommunityId == communityId && i.Id == memberId))
-					return issue;
+				foreach (var question in block.Members.Where(i => i.CommunityId == communityId && i.Id == memberId))
+					return question;
 			}
 
 			return null;

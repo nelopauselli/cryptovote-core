@@ -31,9 +31,9 @@ namespace Domain.Channels
 			node.Add(vote);
 		}
 
-		public void Incomming(Issue issue)
+		public void Incomming(Question question)
 		{
-			node.Add(issue);
+			node.Add(question);
 		}
 
 		public void Incomming(Member member)

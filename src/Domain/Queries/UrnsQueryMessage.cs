@@ -8,15 +8,15 @@ namespace Domain.Queries
 {
 	public class UrnsQueryMessage : IMessage<Urn[]>
 	{
-		private readonly Guid issueId;
+		private readonly Guid questionId;
 
-		public UrnsQueryMessage(Guid issueId)
+		public UrnsQueryMessage(Guid questionId)
 		{
-			this.issueId = issueId;
+			this.questionId = questionId;
 		}
 		public byte[] GetBytes()
 		{
-			var message = $"Urns#{issueId}";
+			var message = $"Urns#{questionId}";
 			return Encoding.UTF8.GetBytes($"{QueryCommand.CommandId}:{message.Length:D5}|{message}");
 		}
 

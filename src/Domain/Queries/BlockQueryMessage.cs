@@ -7,7 +7,7 @@ namespace Domain.Queries
 {
 	public class BlockQueryMessage : ProtocolMessage, IMessage<Block>
 	{
-		public const char CommandId ='X';
+		public const char CommandId = BlockQueryCommandId;
 
 		private readonly byte[] hash;
 

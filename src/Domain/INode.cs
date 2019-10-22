@@ -9,7 +9,7 @@ namespace Domain
 		void Add(Document document);
 		void Add(Community community);
 		void Add(Member member);
-		void Add(Issue issue);
+		void Add(Question question);
 		void Add(Vote vote);
 		void Add(Fiscal fiscal);
 		void Add(Urn urn);

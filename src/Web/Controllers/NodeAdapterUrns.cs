@@ -15,9 +15,9 @@ namespace Web.Controllers
 			this.nodeAdapter = nodeAdapter;
 		}
 
-		public async Task<Urn[]> List(Guid issueId)
+		public async Task<Urn[]> List(Guid questionId)
 		{
-			var command = new UrnsQueryMessage(issueId);
+			var command = new UrnsQueryMessage(questionId);
 			return await nodeAdapter.GetResponse(command);
 		}
 

@@ -8,7 +8,7 @@ namespace Domain.Channels
 		void Incomming(Fiscal fiscal);
 		void Incomming(Urn urn);
 		void Incomming(Vote vote);
-		void Incomming(Issue issue);
+		void Incomming(Question question);
 		void Incomming(Member member);
 		void Incomming(Community community);
 		void Incomming(Document document);

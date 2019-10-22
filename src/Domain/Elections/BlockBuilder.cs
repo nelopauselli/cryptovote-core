@@ -19,8 +19,8 @@ namespace Domain.Elections
 					block.Communities.Add(transaction as Community);
 				else if (transaction.GetType() == typeof(Member))
 					block.Members.Add(transaction as Member);
-				else if (transaction.GetType() == typeof(Issue))
-					block.Issues.Add(transaction as Issue);
+				else if (transaction.GetType() == typeof(Question))
+					block.Questions.Add(transaction as Question);
 				else if (transaction.GetType() == typeof(Urn))
 					block.Urns.Add(transaction as Urn);
 				else if (transaction.GetType() == typeof(Fiscal))

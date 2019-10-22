@@ -40,15 +40,15 @@ namespace DataSample
 			return await Get<Community>("/api/community");
 		}
 
-		public async Task Add(Issue issue)
+		public async Task Add(Question question)
 		{
-			var body = JsonConvert.SerializeObject(issue);
-			await Post("/api/issue", body);
+			var body = JsonConvert.SerializeObject(question);
+			await Post("/api/question", body);
 		}
 
-		public async Task<Issue[]> ListIssues(Guid communityId)
+		public async Task<Question[]> ListQuestions(Guid communityId)
 		{
-			return await Get<Issue>($"/api/issue/{communityId}");
+			return await Get<Question>($"/api/question/{communityId}");
 		}
 
 		public async Task Add(Member member)

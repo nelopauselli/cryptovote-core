@@ -6,7 +6,7 @@ namespace Domain.Queries
 {
 	public class LastBlockQueryMessage : ProtocolMessage, IMessage<Block>
 	{
-		public const char CommandId ='L';
+		public const char CommandId = LastBlockQueryCommandId;
 
 		public override byte[] GetBytes()
 		{

@@ -5,7 +5,7 @@ namespace Domain.Protocol
 {
 	public class SendBlockMessage : ProtocolMessage
 	{
-		public const char CommandId = 'B';
+		public const char CommandId = SendBlockCommandId;
 
 		private readonly Block block;
 

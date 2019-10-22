@@ -27,9 +27,9 @@ namespace CryptoVote.Loggers
 			Console.WriteLine($"[Incoming vote] {vote}");
 		}
 
-		public void Incomming(Issue issue)
+		public void Incomming(Question question)
 		{
-			Console.WriteLine($"[Incoming issue] {issue}");
+			Console.WriteLine($"[Incoming question] {question}");
 		}
 
 		public void Incomming(Member member)

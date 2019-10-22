@@ -6,7 +6,7 @@ namespace Domain.Protocol
 {
 	public class SendRecountMessage : ProtocolMessage
 	{
-		public const char CommandId = 'R';
+		public const char CommandId = SendRecountCommandId;
 
 		private readonly Recount recount;
 

@@ -5,7 +5,7 @@ namespace Domain.Protocol
 {
 	public class SendPeerInfoMessage : ProtocolMessage
 	{
-		public const char CommandId ='P';
+		public const char CommandId =SendPeerCommandId;
 
 		private readonly PeerInfo peer;
 

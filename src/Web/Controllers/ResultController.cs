@@ -19,10 +19,10 @@ namespace Web.Controllers
 			this.node = node;
 		}
 
-		[HttpGet("{communityId}/{issueId}")]
-		public async Task<ActionResult<IssueResult>> Get(Guid communityId, Guid issueId)
+		[HttpGet("{communityId}/{questionId}")]
+		public async Task<ActionResult<QuestionResult>> Get(Guid communityId, Guid questionId)
 		{
-			var result = await node.Issues.Result(communityId, issueId);
+			var result = await node.Questions.Result(communityId, questionId);
 			if (result == null)
 				return NotFound();
 			return Ok(result);

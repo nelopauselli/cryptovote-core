@@ -10,7 +10,7 @@ namespace DataSample
 	internal class ConsoleAdapter : IPublisher
 	{
 		private readonly IList<Community> communities = new List<Community>();
-		private readonly IList<Issue> issues = new List<Issue>();
+		private readonly IList<Question> questions = new List<Question>();
 		private readonly IList<Member> members = new List<Member>();
 		private readonly IList<Urn> urns = new List<Urn>();
 		private readonly IList<Fiscal> fiscals = new List<Fiscal>();
@@ -22,10 +22,10 @@ namespace DataSample
 			return Task.FromResult(0);
 		}
 
-		public Task Add(Issue issue)
+		public Task Add(Question question)
 		{
-			Console.WriteLine(JsonConvert.SerializeObject(issue));
-			issues.Add(issue);
+			Console.WriteLine(JsonConvert.SerializeObject(question));
+			questions.Add(question);
 			return Task.FromResult(0);
 		}
 
@@ -55,9 +55,9 @@ namespace DataSample
 			return Task.FromResult(communities.ToArray());
 		}
 
-		public Task<Issue[]> ListIssues(Guid communityId)
+		public Task<Question[]> ListQuestions(Guid communityId)
 		{
-			return Task.FromResult(issues.Where(i=>i.CommunityId==communityId).ToArray());
+			return Task.FromResult(questions.Where(i=>i.CommunityId==communityId).ToArray());
 
 		}
 

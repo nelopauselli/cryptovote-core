@@ -6,27 +6,28 @@ using Newtonsoft.Json;
 
 namespace Domain.Queries
 {
-	public class IssuesQueryMessage : IMessage<Issue[]>
+	public class QuestionQueryMessage : IMessage<Question>
 	{
 		private readonly Guid communityId;
+		private readonly Guid questionId;
 
-		public IssuesQueryMessage(Guid communityId)
+		public QuestionQueryMessage(Guid communityId, Guid questionId)
 		{
 			this.communityId = communityId;
+			this.questionId = questionId;
 		}
 		public byte[] GetBytes()
 		{
-			var message = $"Issues#{communityId}";
+			var message = $"Question#{communityId}#{questionId}";
 			return Encoding.UTF8.GetBytes($"{QueryCommand.CommandId}:{message.Length:D5}|{message}");
 		}
 
-		public Issue[] Parse(ProtocolMessageChannel channel)
+		public Question Parse(ProtocolMessageChannel channel)
 		{
 			var body = channel.GetBody();
 			if (!string.IsNullOrWhiteSpace(body))
-				return JsonConvert.DeserializeObject<Issue[]>(body);
-
-			return Array.Empty<Issue>();
+				return JsonConvert.DeserializeObject<Question>(body);
+			return null;
 		}
 	}
 }

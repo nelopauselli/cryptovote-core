@@ -85,7 +85,7 @@ namespace Tests
 		}
 
 		[Test]
-		public void Issue_register()
+		public void Question_register()
 		{
 			//Community_register();
 			var clubPepito = new Community
@@ -105,12 +105,12 @@ namespace Tests
 
 			var pendings = new BlockItem[]
 			{
-				new Issue
+				new Question
 				{
 					CommunityId = community.Id, Id = Guid.NewGuid(), Name = "Elección de Presidente",
 					Choices = new[] {new Choice {Id = Guid.NewGuid(), Text = "Juan"}, new Choice {Id = Guid.NewGuid(), Text = "Jose"}}
 				},
-				new Issue
+				new Question
 				{
 					CommunityId = community.Id, Id = Guid.NewGuid(), Name = "Color de la bandera",
 					Choices = new[] {new Choice {Id = Guid.NewGuid(), Text = "Rojo y Azul"}, new Choice {Id = Guid.NewGuid(), Text = "Rojo y Verde"}, new Choice {Id = Guid.NewGuid(), Text = "Amarillo y Verde"}, new Choice {Id = Guid.NewGuid(), Text = "Rojo, Amarillo y Verde"}}
@@ -122,7 +122,7 @@ namespace Tests
 
 			var block = blockchain.MineNextBlock(pendings);
 			Assert.IsNotNull(block);
-			Assert.AreEqual(2, block.Issues.Count);
+			Assert.AreEqual(2, block.Questions.Count);
 			Assert.AreEqual(3, blockchain.Trunk.Count());
 
 			var previousBlock = blockchain.GetBlock(1);
@@ -131,18 +131,18 @@ namespace Tests
 		}
 
 		[Test]
-		public void Issue_list()
+		public void Question_list()
 		{
-			Issue_register();
+			Question_register();
 
-			var issues = blockchain.Trunk.SelectMany(c=>c.Issues);
-			Assert.AreEqual(2, issues.Count());
+			var questions = blockchain.Trunk.SelectMany(c=>c.Questions);
+			Assert.AreEqual(2, questions.Count());
 		}
 
 		[Test]
 		public void Members_Register()
 		{
-			Issue_register();
+			Question_register();
 			var community = blockchain.Trunk.SelectMany(c => c.Communities).First();
 
 			var pendings = new BlockItem[]
@@ -183,13 +183,13 @@ namespace Tests
 		public void Vote_Add()
 		{
 			Members_Register();
-			var issue = blockchain.Trunk.SelectMany(c => c.Issues).First();
+			var question = blockchain.Trunk.SelectMany(c => c.Questions).First();
 
 			var pendings = new BlockItem[]
 			{
-				new Vote {IssueId = issue.Id, ChoiceId = issue.Choices[0].Id},
-				new Vote {IssueId = issue.Id, ChoiceId = issue.Choices[1].Id},
-				new Vote {IssueId = issue.Id, ChoiceId = issue.Choices[0].Id},
+				new Vote {QuestionId = question.Id, ChoiceId = question.Choices[0].Id},
+				new Vote {QuestionId = question.Id, ChoiceId = question.Choices[1].Id},
+				new Vote {QuestionId = question.Id, ChoiceId = question.Choices[0].Id},
 			};
 
 			signer.Sign(pendings[0], alicia);
@@ -219,12 +219,12 @@ namespace Tests
 		public void Vote_duplicated()
 		{
 			Members_Register();
-			var issue = blockchain.Trunk.SelectMany(c => c.Issues).First();
+			var question = blockchain.Trunk.SelectMany(c => c.Questions).First();
 
 			var pendings1 = new BlockItem[]
 			{
-				new Vote {IssueId = issue.Id, ChoiceId = issue.Choices[0].Id},
-				new Vote {IssueId = issue.Id, ChoiceId = issue.Choices[1].Id} 
+				new Vote {QuestionId = question.Id, ChoiceId = question.Choices[0].Id},
+				new Vote {QuestionId = question.Id, ChoiceId = question.Choices[1].Id} 
 			};
 
 			signer.Sign(pendings1[0], alicia);
@@ -234,8 +234,8 @@ namespace Tests
 
 			var pendings2 = new BlockItem[]
 			{
-				new Vote {IssueId = issue.Id, ChoiceId = issue.Choices[1].Id}, // este voto está repetido
-				new Vote {IssueId = issue.Id, ChoiceId = issue.Choices[0].Id}
+				new Vote {QuestionId = question.Id, ChoiceId = question.Choices[1].Id}, // este voto está repetido
+				new Vote {QuestionId = question.Id, ChoiceId = question.Choices[0].Id}
 			};
 			signer.Sign(pendings2[0], roberto);
 			signer.Sign(pendings2[1], camila);
@@ -243,7 +243,7 @@ namespace Tests
 			blockchain.MineNextBlock(pendings2);
 
 			var query = new VotesQuery(blockchain);
-			var result = query.Execute(issue.Id.ToString("n")).ToArray();
+			var result = query.Execute(question.Id.ToString("n")).ToArray();
 
 			Assert.AreEqual(3, result.Length);
 		}
@@ -270,23 +270,23 @@ namespace Tests
 		}
 
 		[Test]
-		public void Ghost_signing_issue()
+		public void Ghost_signing_question()
 		{
 			Community_register();
 
 			var community = blockchain.Trunk.SelectMany(c => c.Communities).First();
 
-			var issue = new Issue
+			var question = new Question
 			{
 				CommunityId = community.Id, Id = Guid.NewGuid(), Name = "Elección de Presidente",
 				Choices = new[] {new Choice { Id = Guid.NewGuid(), Text = "Juan"}, new Choice { Id = Guid.NewGuid(), Text = "Jose"}}
 			};
 
-			signer.Sign(issue, ghost);
+			signer.Sign(question, ghost);
 
 			var previousLength = blockchain.Trunk.Count();
 
-			var block = blockchain.MineNextBlock(new BlockItem[] {issue});
+			var block = blockchain.MineNextBlock(new BlockItem[] {question});
 			Assert.IsNull(block);
 
 			Assert.AreEqual(previousLength, blockchain.Trunk.Count());
@@ -320,12 +320,12 @@ namespace Tests
 		{
 			Members_Register();
 
-			var issue = blockchain.Trunk.SelectMany(c => c.Issues).First();
+			var question = blockchain.Trunk.SelectMany(c => c.Questions).First();
 
 			var vote = new Vote
 			{
-				IssueId = issue.Id,
-				ChoiceId = issue.Choices[0].Id,
+				QuestionId = question.Id,
+				ChoiceId = question.Choices[0].Id,
 				Time = DateTimeOffset.Now.ToUnixTimeMilliseconds()
 			};
 

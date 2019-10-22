@@ -45,8 +45,8 @@ namespace Domain.Channels
 					case SendUrnMessage.CommandId:
 						ProcessUrn(channel);
 						break;
-					case SendIssueMessage.CommandId:
-						ProcessIssue(channel);
+					case SendQuestionMessage.CommandId:
+						ProcessQuestion(channel);
 						break;
 					case SendMemberMessage.CommandId:
 						ProcessMember(channel);
@@ -159,7 +159,7 @@ namespace Domain.Channels
 			}
 		}
 
-		private void ProcessIssue(ProtocolMessageChannel channel)
+		private void ProcessQuestion(ProtocolMessageChannel channel)
 		{
 			var body = channel.GetBody();
 
@@ -168,9 +168,9 @@ namespace Domain.Channels
 				foreach (var listener in listeners)
 					listener.Debug($"Incomming message: {body}");
 
-				var issue = JsonConvert.DeserializeObject<Issue>(body);
+				var question = JsonConvert.DeserializeObject<Question>(body);
 				foreach (var listener in listeners)
-					listener.Incomming(issue);
+					listener.Incomming(question);
 				channel.Write(Encoding.UTF8.GetBytes("OK" + Environment.NewLine));
 			}
 		}
@@ -285,23 +285,23 @@ namespace Domain.Channels
 						var dataCommunity = commandCommunity.GetBytes();
 						channel.Write(dataCommunity);
 						break;
-					case "issues":
-						var queryIssues = new IssuesQuery(blockchain);
-						var commandIssues = new SendQueryResponseMessage<IEnumerable<Issue>>(queryIssues.Execute(content));
-						var dataIssues = commandIssues.GetBytes();
-						channel.Write(dataIssues);
+					case "questions":
+						var queryQuestions = new QuestionsQuery(blockchain);
+						var commandQuestions = new SendQueryResponseMessage<IEnumerable<Question>>(queryQuestions.Execute(content));
+						var dataQuestions = commandQuestions.GetBytes();
+						channel.Write(dataQuestions);
 						break;
-					case "issue":
-						var queryIssue = new IssueQuery(blockchain);
-						var commandIssue = new SendQueryResponseMessage<Issue>(queryIssue.Execute(content));
-						var dataIssue = commandIssue.GetBytes();
-						channel.Write(dataIssue);
+					case "question":
+						var queryQuestion = new QuestionQuery(blockchain);
+						var commandQuestion = new SendQueryResponseMessage<Question>(queryQuestion.Execute(content));
+						var dataQuestion = commandQuestion.GetBytes();
+						channel.Write(dataQuestion);
 						break;
-					case "issue-result":
-						var queryIssueResult = new IssueResultQuery(blockchain);
-						var commandIssueResult = new SendQueryResponseMessage<IssueResult>(queryIssueResult.Execute(content));
-						var dataIssueResult = commandIssueResult.GetBytes();
-						channel.Write(dataIssueResult);
+					case "question-result":
+						var queryQuestionResult = new QuestionResultQuery(blockchain);
+						var commandQuestionResult = new SendQueryResponseMessage<QuestionResult>(queryQuestionResult.Execute(content));
+						var dataQuestionResult = commandQuestionResult.GetBytes();
+						channel.Write(dataQuestionResult);
 						break;
 					case "members":
 						var queryMembers = new MembersQuery(blockchain);

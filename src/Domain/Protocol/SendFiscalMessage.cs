@@ -6,7 +6,7 @@ namespace Domain.Protocol
 {
 	public class SendFiscalMessage : ProtocolMessage
 	{
-		public const char CommandId = 'F';
+		public const char CommandId = SendFiscalCommandId;
 
 		private readonly Fiscal fiscal;
 

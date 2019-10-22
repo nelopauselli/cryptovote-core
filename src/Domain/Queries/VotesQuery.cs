@@ -16,12 +16,12 @@ namespace Domain.Queries
 
 		public IEnumerable<Vote> Execute(string content)
 		{
-			if (!Guid.TryParse(content, out var issueId))
+			if (!Guid.TryParse(content, out var questionId))
 				yield break;
 
 			foreach (var block in blockchain.Trunk)
 			{
-				foreach (var vote in block.Votes.Where(i => i.IssueId == issueId))
+				foreach (var vote in block.Votes.Where(i => i.QuestionId == questionId))
 					yield return vote;
 			}
 		}
