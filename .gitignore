@@ -4,4 +4,4 @@ obj
 /src/.vs
 *.user
 /external
-/src/publish
+/publish
