@@ -15,8 +15,6 @@ namespace CryptoVote
 
 		static void Main(string[] args)
 		{
-			Console.WriteLine("Hello Crypto Node!");
-
 			JsonConvert.DefaultSettings = () =>
 			{
 				var settings = new JsonSerializerSettings();
@@ -33,6 +31,7 @@ namespace CryptoVote
 			var configuration = new NodeConfiguration(builder.Build());
 			
 			var logger = configuration.ConsoleColored ? (INodeLogger)new ColoredConsoleLogger(configuration.Verbosity) : new ConsoleLogger(configuration.Verbosity);
+			logger.Information("Hello Crypto Node!");
 			logger.Information($"name: {configuration.Name}");
 			logger.Information($"miner:address: {configuration.MinerAddress}");
 			logger.Information($"miner:interval: {configuration.MinerInterval} ms");
