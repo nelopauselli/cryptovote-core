@@ -25,7 +25,7 @@ namespace Domain.Channels
 			try
 			{
 				char commandType = messageChannel.GetCommandId();
-				logger.Debug($"Recibiendo comando {commandType}");
+				logger.Information($"Recibiendo comando {commandType}");
 
 				switch (commandType)
 				{
@@ -93,7 +93,7 @@ namespace Domain.Channels
 
 			if (!string.IsNullOrWhiteSpace(body))
 			{
-				logger.Debug($"Incomming message: {body}");
+				logger.Information($"Incomming message body: {body}");
 
 				var vote = JsonConvert.DeserializeObject<Vote>(body);
 				node.Add(vote);
@@ -107,7 +107,7 @@ namespace Domain.Channels
 
 			if (!string.IsNullOrWhiteSpace(body))
 			{
-				logger.Debug($"Incomming message: {body}");
+				logger.Information($"Incomming message body: {body}");
 
 				var recount = JsonConvert.DeserializeObject<Recount>(body);
 				node.Add(recount);
@@ -121,7 +121,7 @@ namespace Domain.Channels
 
 			if (!string.IsNullOrWhiteSpace(body))
 			{
-				logger.Debug($"Incomming message: {body}");
+				logger.Information($"Incomming message body: {body}");
 
 				var urn = JsonConvert.DeserializeObject<Urn>(body);
 				node.Add(urn);
@@ -135,7 +135,7 @@ namespace Domain.Channels
 
 			if (!string.IsNullOrWhiteSpace(body))
 			{
-				logger.Debug($"Incomming message: {body}");
+				logger.Information($"Incomming message body: {body}");
 
 				var fiscal = JsonConvert.DeserializeObject<Fiscal>(body);
 				node.Add(fiscal);
@@ -149,7 +149,7 @@ namespace Domain.Channels
 
 			if (!string.IsNullOrWhiteSpace(body))
 			{
-				logger.Debug($"Incomming message: {body}");
+				logger.Information($"Incomming message body: {body}");
 
 				var question = JsonConvert.DeserializeObject<Question>(body);
 				node.Add(question);
@@ -163,7 +163,7 @@ namespace Domain.Channels
 
 			if (!string.IsNullOrWhiteSpace(body))
 			{
-				logger.Debug($"Incomming message: {body}");
+				logger.Information($"Incomming message body: {body}");
 
 				var community = JsonConvert.DeserializeObject<Community>(body);
 				node.Add(community);
@@ -177,7 +177,7 @@ namespace Domain.Channels
 
 			if (!string.IsNullOrWhiteSpace(body))
 			{
-				logger.Debug($"Incomming message: {body}");
+				logger.Information($"Incomming message body: {body}");
 
 				var document = JsonConvert.DeserializeObject<Document>(body);
 				node.Add(document);
@@ -191,7 +191,7 @@ namespace Domain.Channels
 
 			if (!string.IsNullOrWhiteSpace(body))
 			{
-				logger.Debug($"Incomming message: {body}");
+				logger.Information($"Incomming message body: {body}");
 
 				var member = JsonConvert.DeserializeObject<Member>(body);
 				node.Add(member);
@@ -205,7 +205,7 @@ namespace Domain.Channels
 
 			if (!string.IsNullOrWhiteSpace(body))
 			{
-				logger.Debug($"Incomming message: {body}");
+				logger.Information($"Incomming message body: {body}");
 
 				var block = JsonConvert.DeserializeObject<Block>(body);
 				node.Add(block);

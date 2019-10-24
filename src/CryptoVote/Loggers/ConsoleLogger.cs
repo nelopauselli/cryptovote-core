@@ -1,79 +1,38 @@
 ﻿using System;
 using Domain;
-using Domain.Channels;
-using Domain.Elections;
 
 namespace CryptoVote.Loggers
 {
-	public class ConsoleLogger : IEventListener
+	public class ConsoleLogger : INodeLogger
 	{
-		public void Incomming(Recount recount)
-		{
-			Console.WriteLine($"[Incoming recount] {recount}");
-		}
+		private readonly VerbosityEnum verbosity;
 
-		public void Incomming(Fiscal fiscal)
+		public ConsoleLogger(VerbosityEnum verbosity)
 		{
-			Console.WriteLine($"[Incoming fiscal] {fiscal}");
-		}
-
-		public void Incomming(Urn urn)
-		{
-			Console.WriteLine($"[Incoming urn] {urn}");
-		}
-
-		public void Incomming(Vote vote)
-		{
-			Console.WriteLine($"[Incoming vote] {vote}");
-		}
-
-		public void Incomming(Question question)
-		{
-			Console.WriteLine($"[Incoming question] {question}");
-		}
-
-		public void Incomming(Member member)
-		{
-			Console.WriteLine($"[Incoming member] {member}");
-		}
-
-		public void Incomming(Community community)
-		{
-			Console.WriteLine($"[Incoming community] {community}");
-		}
-
-		public void Incomming(Document document)
-		{
-			Console.WriteLine($"[Incoming document] {document}");
-		}
-
-		public void Incomming(Block block)
-		{
-			Console.WriteLine($"[Incoming block] {block}");
-		}
-
-		public void Incomming(IPeer peer)
-		{
-			Console.WriteLine($"[Incoming peer] {peer}");
+			this.verbosity = verbosity;
 		}
 
 		public void Debug(string message)
 		{
-			Console.WriteLine($"[DEBG] {message}");
+			if (verbosity < VerbosityEnum.DEBUG) return;
+			Console.WriteLine($"[DEBUG] {message}");
 		}
 
 		public void Information(string message)
 		{
+			if (verbosity < VerbosityEnum.INFO) return;
 			Console.WriteLine($"[INFO] {message}");
 		}
 
 		public void Warning(string message)
 		{
+			if (verbosity < VerbosityEnum.WARN) return;
 			Console.WriteLine($"[WARN] {message}");
 		}
 
 		public void Error(string message)
 		{
+			if (verbosity < VerbosityEnum.ERROR) return;
 			Console.WriteLine($"[ERROR] {message}");
 		}
 	}

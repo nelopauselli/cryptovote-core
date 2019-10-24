@@ -86,17 +86,16 @@ namespace Domain
 		{
 			if (hosts.Count == 0)
 			{
-				logger.Debug($"El nodo '{nodeName}' no tiene pareas a quienes enviar el comando '{Encoding.UTF8.GetString(message.GetBytes())}'");
+				logger.Warning($"El nodo '{nodeName}' no tiene pareas a quienes enviar el comando '{Encoding.UTF8.GetString(message.GetBytes())}'");
 				return;
 			}
 
-			logger.Debug($"Enviando comando '{Encoding.UTF8.GetString(message.GetBytes())}' desde el nodo '{nodeName}' a {hosts.Count} nodos");
+			logger.Information($"Enviando comando '{Encoding.UTF8.GetString(message.GetBytes())}' desde el nodo '{nodeName}' a {hosts.Count} nodos");
 
 			var data = message.GetBytes();
 
 			foreach (var peer in hosts)
 			{
-				logger.Debug($"Enviando mensaje al nodo #{peer}");
 
 				Task task = Send(peer, data);
 				tasks.Add(task);

@@ -22,7 +22,7 @@ namespace Tests.Mocks
 
 		public void Debug(string message)
 		{
-			Console.WriteLine($"[{Tag}][DEBG] {message}");
+			Console.WriteLine($"[{Tag}][DEBUG] {message}");
 		}
 
 		public string Tag { get; set; }

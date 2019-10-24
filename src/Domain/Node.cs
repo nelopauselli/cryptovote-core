@@ -98,7 +98,7 @@ namespace Domain
 
 		public void MinePendingTransactions()
 		{
-			logger.Debug("Buscando transacciones que minar");
+			logger.Information("Buscando transacciones que minar");
 			BlockItem[] pendingsToMine;
 			lock (semaphore)
 			{
@@ -107,7 +107,7 @@ namespace Domain
 
 			if (pendingsToMine.Length > 0)
 			{
-				logger.Debug($"Minando {pendingsToMine.Length} transacciones");
+				logger.Information($"Minando {pendingsToMine.Length} transacciones");
 
 				var block = blockchain.MineNextBlock(pendingsToMine);
 
@@ -261,8 +261,8 @@ namespace Domain
 				//TODO: stop miner
 				stop = true;
 
-				logger.Information("Quitando transacciones pendientes");
 				var transactions = block.GetTransactions();
+				logger.Information($"Quitando {transactions.Length} transacciones pendientes");
 
 				foreach (var item in transactions)
 				{
@@ -298,7 +298,7 @@ namespace Domain
 			var peer = new TcpPeer(host, port, channel);
 			if (Peers.Contains(peer))
 			{
-				logger.Information($"Ya tenemos al peer ${peer.Host}:{peer.Port} entre los pares");
+				logger.Information($"Ya tenemos a ${peer.Host}:{peer.Port} entre los pares");
 				return;
             }
 
@@ -308,7 +308,7 @@ namespace Domain
 				return;
 			}
 
-			logger.Information($"Registrando el par: {peer}");
+			logger.Information($"Registrando el par: {peer.Host}:{peer.Port}");
 
 			Peers.Add(peer);
 

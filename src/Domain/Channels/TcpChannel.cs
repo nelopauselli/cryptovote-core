@@ -46,9 +46,9 @@ namespace Domain.Channels
 
 					while (!stop)
 					{
-						logger.Information("Waiting for a connection... ");
+						logger.Debug("Waiting for a connection... ");
 						TcpClient client = await server.AcceptTcpClientAsync();
-						logger.Information("Connected!");
+						logger.Debug("Connected!");
 
 						Task.Run(() =>
 						{
@@ -90,7 +90,7 @@ namespace Domain.Channels
 			finally
 			{
 				// Shutdown and end connection
-				logger.Information("Shutdown and end connection");
+				logger.Debug("Shutdown and end connection");
 
 			}
 		}

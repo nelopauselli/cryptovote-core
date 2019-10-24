@@ -1,108 +1,62 @@
 ﻿using System;
 using Domain;
-using Domain.Channels;
-using Domain.Elections;
 
 namespace CryptoVote.Loggers
 {
-	public class ColoredConsoleLogger : IEventListener
+	public class ColoredConsoleLogger : INodeLogger
 	{
-		public void Incomming(Recount recount)
-		{
-			Console.ForegroundColor = ConsoleColor.Green;
-			Console.WriteLine($"[Incoming recount] {recount}");
-			Console.ResetColor();
-		}
+		private readonly VerbosityEnum verbosity;
+		private object semaphore = new object();
 
-		public void Incomming(Fiscal fiscal)
+		public ColoredConsoleLogger(VerbosityEnum verbosity)
 		{
-			Console.ForegroundColor = ConsoleColor.Green;
-			Console.WriteLine($"[Incoming fiscal] {fiscal}");
-			Console.ResetColor();
-		}
-
-		public void Incomming(Urn urn)
-		{
-			Console.ForegroundColor = ConsoleColor.Green;
-			Console.WriteLine($"[Incoming urn] {urn}");
-			Console.ResetColor();
-		}
-
-		public void Incomming(Vote vote)
-		{
-			Console.ForegroundColor = ConsoleColor.Green;
-			Console.WriteLine($"[Incoming vote] {vote}");
-			Console.ResetColor();
-		}
-
-		public void Incomming(Question question)
-		{
-			Console.ForegroundColor = ConsoleColor.Green;
-			Console.WriteLine($"[Incoming question] {question}");
-			Console.ResetColor();
-		}
-
-		public void Incomming(Member member)
-		{
-			Console.ForegroundColor = ConsoleColor.Green;
-			Console.WriteLine($"[Incoming member] {member}");
-			Console.ResetColor();
-		}
-
-		public void Incomming(Community community)
-		{
-			Console.ForegroundColor = ConsoleColor.Green;
-			Console.WriteLine($"[Incoming community] {community}");
-			Console.ResetColor();
-		}
-
-		public void Incomming(Document document)
-		{
-			Console.ForegroundColor = ConsoleColor.Green;
-			Console.WriteLine($"[Incoming document] {document}");
-			Console.ResetColor();
-		}
-
-		public void Incomming(Block block)
-		{
-			Console.ForegroundColor = ConsoleColor.DarkGreen;
-			Console.WriteLine($"[Incoming block] {block}");
-			Console.ResetColor();
-		}
-
-		public void Incomming(IPeer peer)
-		{
-			Console.ForegroundColor = ConsoleColor.Green;
-			Console.WriteLine($"[Incoming peer] {peer}");
-			Console.ResetColor();
+			this.verbosity = verbosity;
 		}
 
 		public void Debug(string message)
 		{
-			Console.ForegroundColor = ConsoleColor.DarkGray;
-			Console.WriteLine($"[DEBG] {message}");
-			Console.ResetColor();
+			if (verbosity < VerbosityEnum.DEBUG) return;
+
+			lock (semaphore)
+			{
+				Console.ForegroundColor = ConsoleColor.DarkGray;
+				Console.WriteLine($"[DEBUG] {message}");
+				Console.ResetColor();
+			}
 		}
 
 		public void Information(string message)
 		{
-			Console.ForegroundColor = ConsoleColor.White;
-			Console.WriteLine($"[INFO] {message}");
-			Console.ResetColor();
+			if (verbosity < VerbosityEnum.INFO) return;
+
+			lock (semaphore)
+			{
+				Console.ForegroundColor = ConsoleColor.White;
+				Console.WriteLine($"[INFO] {message}");
+				Console.ResetColor();
+			}
 		}
 
 		public void Warning(string message)
 		{
-			Console.ForegroundColor = ConsoleColor.DarkYellow;
-			Console.WriteLine($"[WARN] {message}");
-			Console.ResetColor();
+			if (verbosity < VerbosityEnum.WARN) return;
+			lock (semaphore)
+			{
+				Console.ForegroundColor = ConsoleColor.DarkYellow;
+				Console.WriteLine($"[WARN] {message}");
+				Console.ResetColor();
+			}
 		}
 
 		public void Error(string message)
 		{
-			Console.ForegroundColor = ConsoleColor.Red;
-			Console.WriteLine($"[ERROR] {message}");
-			Console.ResetColor();
+			if (verbosity < VerbosityEnum.ERROR) return;
+			lock (semaphore)
+			{
+				Console.ForegroundColor = ConsoleColor.Red;
+				Console.WriteLine($"[ERROR] {message}");
+				Console.ResetColor();
+			}
 		}
 	}
 }

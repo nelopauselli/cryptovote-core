@@ -2,7 +2,6 @@
 using System.Threading;
 using CryptoVote.Loggers;
 using Domain;
-using Domain.Channels;
 using Domain.Converters;
 using Domain.Elections;
 using Microsoft.Extensions.Configuration;
@@ -33,16 +32,17 @@ namespace CryptoVote
 
 			var configuration = new NodeConfiguration(builder.Build());
 			
-			var logger = configuration.ConsoleColored ?  (IEventListener)new ColoredConsoleLogger() : new ConsoleLogger();
-			logger.Information($"Name: {configuration.Name}");
-			logger.Information($"Miner:Address: {configuration.MinerAddress}");
-			logger.Information($"Miner:Interval: {configuration.MinerInterval} ms");
-			logger.Information($"Blockchain:Dificulty: {configuration.BlockchainDificulty}");
-			logger.Information($"My:Host: {configuration.MyHost}");
-			logger.Information($"My:Port: {configuration.MyPort}");
-			logger.Information($"Peer:Host: {configuration.PeerHost}");
-			logger.Information($"Peer:Port: {configuration.PeerPort}");
-			logger.Information($"Console:Colored: {configuration.ConsoleColored}");
+			var logger = configuration.ConsoleColored ? (INodeLogger)new ColoredConsoleLogger(configuration.Verbosity) : new ConsoleLogger(configuration.Verbosity);
+			logger.Information($"name: {configuration.Name}");
+			logger.Information($"miner:address: {configuration.MinerAddress}");
+			logger.Information($"miner:interval: {configuration.MinerInterval} ms");
+			logger.Information($"blockchain:dificulty: {configuration.BlockchainDificulty}");
+			logger.Information($"my:host: {configuration.MyHost}");
+			logger.Information($"my:port: {configuration.MyPort}");
+			logger.Information($"peer:host: {configuration.PeerHost}");
+			logger.Information($"peer:port: {configuration.PeerPort}");
+			logger.Information($"console:colored: {configuration.ConsoleColored}");
+			logger.Information($"verbosity: {configuration.Verbosity}");
 			
 			var node = new Node(configuration, new BlockBuilder(), logger);
 
