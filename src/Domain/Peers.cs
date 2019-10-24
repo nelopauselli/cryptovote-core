@@ -94,7 +94,8 @@ namespace Domain
 
 			var data = message.GetBytes();
 
-			foreach (var peer in hosts)
+			var peers = hosts.ToArray();
+			foreach (var peer in peers)
 			{
 
 				Task task = Send(peer, data);
