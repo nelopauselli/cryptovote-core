@@ -1,6 +1,5 @@
 using System;
 using System.Linq;
-using System.Text;
 using Domain;
 using Domain.Crypto;
 using Domain.Queries;

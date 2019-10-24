@@ -12,11 +12,11 @@ using Tests.Mocks;
 
 namespace Tests
 {
-	public class Tcp_tests:TcpTestBase
+	public class Tcp_tests : TcpTestBase
 	{
 		private const int DefaultSendTaskTimeout = 2000;
 		private const int DefaultStartTaskTimeout = 2000;
-		
+
 		private string WorkingFolder => TestContext.CurrentContext.TestDirectory;
 
 		private readonly IPAddress address = new IPAddress(new byte[] {127, 0, 0, 1});
@@ -63,11 +63,11 @@ namespace Tests
 				var sendTask = client.SendAsync(command.GetBytes(), CancellationToken.None);
 				sendTask.Wait(DefaultSendTaskTimeout);
 
-				node.Verify(n=>n.Add(It.IsAny<Vote>()), Times.Once);
+				node.Verify(n => n.Add(It.IsAny<Vote>()), Times.Once);
 			}
 			finally
 			{
-				if (channel.State== ChannelState.Listening)
+				if (channel.State == ChannelState.Listening)
 					channel.Stop();
 			}
 		}
@@ -164,12 +164,12 @@ namespace Tests
 					Id = Guid.NewGuid(),
 					Name = "My Company"
 				};
-				
+
 				var command = new SendCommunityMessage(community);
 				var sendTask = client.SendAsync(command.GetBytes(), CancellationToken.None);
 				sendTask.Wait(DefaultSendTaskTimeout);
 
-				node.Verify(n=>n.Add(It.IsAny<Community>()), Times.Once);
+				node.Verify(n => n.Add(It.IsAny<Community>()), Times.Once);
 				Assert.IsNotNull(communityInNode);
 				Assert.AreEqual(community.Name, communityInNode.Name);
 			}
@@ -316,7 +316,7 @@ namespace Tests
 				var sendTask = client.SendAsync(command.GetBytes(), CancellationToken.None);
 				sendTask.Wait(4000);
 
-				node.Verify(n=>n.Add(It.IsAny<Document>()), Times.Once);
+				node.Verify(n => n.Add(It.IsAny<Document>()), Times.Once);
 				Assert.IsNotNull(documentInNode);
 				Assert.AreEqual(document.Text, documentInNode.Text);
 			}
@@ -352,7 +352,7 @@ namespace Tests
 				var sendTask = client.SendAsync(command.GetBytes(), CancellationToken.None);
 				sendTask.Wait(4000);
 
-				node.Verify(n=>n.Add(It.IsAny<Document>()), Times.Once);
+				node.Verify(n => n.Add(It.IsAny<Document>()), Times.Once);
 				Assert.IsNotNull(documentInNode);
 				Assert.AreEqual(document.Text, documentInNode.Text);
 			}

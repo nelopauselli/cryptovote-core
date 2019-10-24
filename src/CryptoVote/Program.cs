@@ -11,7 +11,7 @@ namespace CryptoVote
 {
 	class Program
 	{
-		private static bool stop = false;
+		private static bool stop;
 
 		static void Main(string[] args)
 		{

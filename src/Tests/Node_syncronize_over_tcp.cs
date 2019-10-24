@@ -2,7 +2,6 @@ using System;
 using System.Linq;
 using System.Threading;
 using Domain;
-using Domain.Channels;
 using Domain.Crypto;
 using Domain.Elections;
 using NUnit.Framework;
@@ -10,16 +9,9 @@ using Tests.Mocks;
 
 namespace Tests
 {
-	public class Node_syncronize_over_tcp
+	public class Node_syncronize_over_tcp : TcpTestBase
 	{
 		private readonly Signer signer = new Signer(CryptoService.Instance);
-		
-
-		private const string host1= "127.0.0.1";
-		private const int port1 = 14001;
-
-		private const string host2= "127.0.0.1";
-		private const int port2 = 14002;
 		
 		[Test]
 		public void Copiar_blockchain_de_otro_nodo_en_ejecucion_con_2_bloques()
@@ -51,8 +43,8 @@ namespace Tests
 
 			Assert.AreEqual(2, node2.ChainLength);
 
-			node1.Stop(1000);
-			node2.Stop(1000);
+			node1.Stop();
+			node2.Stop();
 		}
 
 		[Test]
@@ -73,8 +65,8 @@ namespace Tests
 			Assert.AreEqual(1, node1.Peers.Count, $"Pares: {string.Join(", ", node1.Peers.Hosts.Select(p => $"{p.Host}:{p.Port}"))}");
 			Assert.AreEqual(1, node2.Peers.Count, $"Pares: {string.Join(", ", node2.Peers.Hosts.Select(p => $"{p.Host}:{p.Port}"))}");
 
-			node1.Stop(1000);
-			node2.Stop(1000);
+			node1.Stop();
+			node2.Stop();
 		}
 	}
 }
