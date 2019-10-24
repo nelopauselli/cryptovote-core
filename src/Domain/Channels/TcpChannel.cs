@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
@@ -17,13 +16,10 @@ namespace Domain.Channels
 		private CancellationTokenSource cancellation;
 		private TcpListener server;
 		private readonly INode node;
-		private readonly IList<IEventListener> listeners = new List<IEventListener>();
 
 		public TcpChannel(INode node, int port, INodeLogger logger)
 		{
 			this.node = node ?? throw new ArgumentNullException(nameof(node));
-			AddListener(new NodeListener(node));
-
 			this.port = port;
 			this.logger = logger;
 
@@ -32,40 +28,27 @@ namespace Domain.Channels
 
 		public ChannelState State { get; set; }
 
-		public void AddListener(IEventListener listener)
-		{
-			listeners.Add(listener);
-		}
-		
 		public Task Start(int timeout)
 		{
 			cancellation = new CancellationTokenSource();
 
 			var address = new IPAddress(new byte[] {0, 0, 0, 0});
-			foreach (var listener in listeners)
-				listener.Information($"Listening in {address}:{port}");
+			logger.Information($"Listening in {address}:{port}");
 
-			var task= Task.Run(async () =>
+			var task = Task.Run(async () =>
 			{
 				try
 				{
 					server = new TcpListener(address, port);
 
-					// Start listening for client requests.
 					server.Start();
 					State = ChannelState.Listening;
-					// Buffer for reading data
 
-					// Enter the listening loop.
 					while (!stop)
 					{
-						foreach (var listener in listeners)
-							listener.Information("Waiting for a connection... ");
-						// Perform a blocking call to accept requests.
-						// You could also user server.AcceptSocket() here.
+						logger.Information("Waiting for a connection... ");
 						TcpClient client = await server.AcceptTcpClientAsync();
-						foreach (var listener in listeners)
-							listener.Information("Connected!");
+						logger.Information("Connected!");
 
 						Task.Run(() =>
 						{
@@ -76,8 +59,7 @@ namespace Domain.Channels
 				}
 				catch (SocketException e)
 				{
-					foreach (var listener in listeners)
-						listener.Error($"SocketException: {e}");
+					logger.Error($"SocketException: {e}");
 				}
 				finally
 				{
@@ -90,7 +72,7 @@ namespace Domain.Channels
 			var timeLimit = DateTime.Now.AddMilliseconds(timeout);
 			while (State != ChannelState.Listening)
 			{
-				if(DateTime.Now> timeLimit)
+				if (DateTime.Now > timeLimit)
 					break;
 				Thread.Sleep(10);
 			}
@@ -102,15 +84,14 @@ namespace Domain.Channels
 		{
 			try
 			{
-				var conversation = new Conversation(node.Blockchain, listeners, logger, this);
+				var conversation = new Conversation(node, logger);
 				conversation.Talk(new ProtocolMessageChannel(stream));
 			}
 			finally
 			{
 				// Shutdown and end connection
-				foreach (var listener in listeners)
-					listener.Information("Shutdown and end connection");
-				
+				logger.Information("Shutdown and end connection");
+
 			}
 		}
 
@@ -118,8 +99,7 @@ namespace Domain.Channels
 		{
 			cancellation?.Cancel();
 
-			foreach (var listener in listeners)
-				listener.Information("Say NO MORE");
+			logger.Information("Say NO MORE");
 			server?.Stop();
 			State = ChannelState.Stop;
 		}

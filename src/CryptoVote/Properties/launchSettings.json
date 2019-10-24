@@ -2,7 +2,7 @@
   "profiles": {
     "CryptoVote": {
       "commandName": "Project",
-      "commandLineArgs": "Miner:Address=QXuwUXRhANuouMkHTc2tbcZhkcucShZQKEhs7XSfseSd6Rq8q2G3sSZc1Q1z5jdj4Nz8dQuieiiyDVLiKWDmtJVp Miner:Interval=1000 Blockchain:Dificulty=2 Peer:Host=192.168.0.127 Peer:Port=13000 My:Host=192.168.0.11 My:Port=13000 Console:Colored=true"
+      "commandLineArgs": "Miner:Address=QXuwUXRhANuouMkHTc2tbcZhkcucShZQKEhs7XSfseSd6Rq8q2G3sSZc1Q1z5jdj4Nz8dQuieiiyDVLiKWDmtJVp  Peer:Host=192.168.0.127 Peer:Port=13000 My:Host=192.168.0.11 My:Port=13000 Console:Colored=true"
     }
   }
 }

@@ -27,7 +27,7 @@ namespace Tests
 			var logger1 = new ConsoleLogger {Tag = "node-1"};
 			var logger2 = new ConsoleLogger {Tag = "node-2" };
 
-			var node1 = new Node(new NodeConfiguration("Nodo 1", "1234", "1", "2000", port:port1), new BlockBuilder(), logger1);
+			var node1 = new Node(new NodeConfiguration("Nodo 1", "1234", 1, 2000, port:port1), new BlockBuilder(), logger1);
 			node1.Listen();
 			Assert.AreEqual(1, node1.ChainLength);
 
@@ -40,7 +40,7 @@ namespace Tests
 
 			Assert.AreEqual(2, node1.ChainLength);
 
-			var node2 = new Node(new NodeConfiguration("Nodo 2", "1234", "1", "2000", port: port2), new BlockBuilder(), logger2);
+			var node2 = new Node(new NodeConfiguration("Nodo 2", "1234", 1, 2000, port: port2), new BlockBuilder(), logger2);
 			node2.Listen();
 			Assert.AreEqual(1, node2.ChainLength);
 			node2.Register(host1, port1);
@@ -60,11 +60,11 @@ namespace Tests
 		{
 			var logger1 = new ConsoleLogger {Tag = "node-1"};
 
-			var node1 = new Node(new NodeConfiguration("Nodo 1", "1234", "1", "2000", port: port1), new BlockBuilder(), logger1);
+			var node1 = new Node(new NodeConfiguration("Nodo 1", "1234", 1, 2000, port: port1), new BlockBuilder(), logger1);
 			node1.Listen();
 
 			var logger2 = new ConsoleLogger {Tag = "node-2"};
-			var node2 = new Node(new NodeConfiguration("Nodo 2", "1234", "1", "2000", port: port2), new BlockBuilder(), logger2);
+			var node2 = new Node(new NodeConfiguration("Nodo 2", "1234", 1, 2000, port: port2), new BlockBuilder(), logger2);
 			node2.Listen();
 			node2.Register(host1, port1);
 

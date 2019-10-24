@@ -1,6 +1,5 @@
 using System;
 using System.IO;
-using System.Net.Sockets;
 using System.Text;
 using Domain;
 using Domain.Channels;
@@ -8,6 +7,7 @@ using Domain.Crypto;
 using Domain.Protocol;
 using Domain.Queries;
 using Domain.Elections;
+using Moq;
 using NUnit.Framework;
 using Tests.Mocks;
 
@@ -72,7 +72,10 @@ namespace Tests
 		[Test]
 		public void Get_last_block()
 		{
-			var conversation = new Conversation(blockchain, new IEventListener[] { new ConsoleListener() }, new ConsoleListener(), new MockChannel());
+			var node = new Mock<INode>();
+			node.SetupGet(n => n.Blockchain).Returns(blockchain);
+			var conversation = new Conversation(node.Object, new ConsoleLogger());
+
 			var factory = new LastBlockQueryMessage();
 
 			using (var stream = new MemoryStream())
@@ -100,7 +103,10 @@ namespace Tests
 		[Test]
 		public void Get_block()
 		{
-			var conversation = new Conversation(blockchain, new IEventListener[] { new ConsoleListener() }, new ConsoleListener(), new MockChannel());
+			var node = new Mock<INode>();
+			node.SetupGet(n => n.Blockchain).Returns(blockchain);
+			var conversation = new Conversation(node.Object, new ConsoleLogger());
+
 			var factory = new BlockQueryMessage(block1Hash);
 
 			using (var stream = new MemoryStream())
@@ -128,7 +134,10 @@ namespace Tests
 		[Test]
 		public void Communities_list()
 		{
-			var conversation = new Conversation(blockchain, new IEventListener[] {new ConsoleListener()}, new ConsoleListener(), new MockChannel());
+			var node = new Mock<INode>();
+			node.SetupGet(n => n.Blockchain).Returns(blockchain);
+			var conversation = new Conversation(node.Object, new ConsoleLogger());
+
 			var factory = new CommunitiesQueryMessage();
 
 			using (var stream = new MemoryStream())
@@ -151,7 +160,10 @@ namespace Tests
 		[Test]
 		public void Community_get()
 		{
-			var conversation = new Conversation(blockchain, new IEventListener[] { new ConsoleListener() }, new ConsoleListener(), new MockChannel());
+			var node = new Mock<INode>();
+			node.SetupGet(n => n.Blockchain).Returns(blockchain);
+			var conversation = new Conversation(node.Object, new ConsoleLogger());
+
 			var factory = new CommunityQueryMessage(cryptoVoteId);
 
 			using (var stream = new MemoryStream())
@@ -175,7 +187,10 @@ namespace Tests
 		[Test]
 		public void Questions_list()
 		{
-			var conversation = new Conversation(blockchain, new IEventListener[] {new ConsoleListener()}, new ConsoleListener(), new MockChannel());
+			var node = new Mock<INode>();
+			node.SetupGet(n => n.Blockchain).Returns(blockchain);
+			var conversation = new Conversation(node.Object, new ConsoleLogger());
+
 			var factory = new QuestionsQueryMessage(cryptoVoteId);
 
 			using (var stream = new MemoryStream())
@@ -202,7 +217,10 @@ namespace Tests
 		[Test]
 		public void Question_get()
 		{
-			var conversation = new Conversation(blockchain, new IEventListener[] { new ConsoleListener() }, new ConsoleListener(), new MockChannel());
+			var node = new Mock<INode>();
+			node.SetupGet(n => n.Blockchain).Returns(blockchain);
+			var conversation = new Conversation(node.Object, new ConsoleLogger());
+
 			var factory = new QuestionQueryMessage(cryptoVoteId, questionId);
 
 			using (var stream = new MemoryStream())
@@ -226,7 +244,10 @@ namespace Tests
 		[Test]
 		public void Members_list()
 		{
-			var conversation = new Conversation(blockchain, new IEventListener[] { new ConsoleListener() }, new ConsoleListener(), new MockChannel());
+			var node = new Mock<INode>();
+			node.SetupGet(n => n.Blockchain).Returns(blockchain);
+			var conversation = new Conversation(node.Object, new ConsoleLogger());
+
 			var factory = new MembersQueryMessage(cryptoVoteId);
 
 			using (var stream = new MemoryStream())
@@ -253,7 +274,10 @@ namespace Tests
 		[Test]
 		public void Member_get()
 		{
-			var conversation = new Conversation(blockchain, new IEventListener[] { new ConsoleListener() }, new ConsoleListener(), new MockChannel());
+			var node = new Mock<INode>();
+			node.SetupGet(n => n.Blockchain).Returns(blockchain);
+			var conversation = new Conversation(node.Object, new ConsoleLogger());
+			
 			var factory = new MemberQueryMessage(cryptoVoteId, neloId);
 
 			using (var stream = new MemoryStream())

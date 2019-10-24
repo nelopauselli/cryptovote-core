@@ -13,9 +13,18 @@ namespace CryptoVote
 		}
 
 		public string Name => configuration["Name"];
+
+		public byte BlockchainDificulty =>
+			byte.TryParse(configuration["Blockchain:Dificulty"], out var dificulty)
+				? dificulty
+				: (byte)2;
+
 		public string MinerAddress => configuration["Miner:Address"];
-		public string BlockchainDificulty => configuration["Blockchain:Dificulty"];
-		public string MinerInterval => configuration["Miner:Interval"];
+
+		public int MinerInterval => 
+			int.TryParse(configuration["Miner:Interval"], out var interval) 
+				? interval
+				: 60 * 1000;
 
 		public string MyHost => configuration["My:Host"];
 

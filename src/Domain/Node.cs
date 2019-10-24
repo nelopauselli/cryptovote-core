@@ -30,13 +30,12 @@ namespace Domain
 			this.logger = logger;
 			this.Peers = new Peers(configuration.Name, logger);
 
-			blockchain = new Blockchain(new Miner(AddressRewards), blockBuilder, Dificulty);
+			blockchain = new Blockchain(new Miner(AddressRewards), blockBuilder, configuration.BlockchainDificulty);
 
 			var path = "genesis.block";
 			blockchain.LoadGenesisBlock(path);
 
 			channel = new TcpChannel(this, configuration.MyPort, logger);
-
 			pendings = new Dictionary<string, BlockItem>();
 		}
 
@@ -67,40 +66,6 @@ namespace Domain
 			}
 		}
 
-		protected byte Dificulty
-		{
-			get
-			{
-				var dificultyAsString = configuration.BlockchainDificulty;
-
-				byte dificulty = 2;
-				if (string.IsNullOrWhiteSpace(dificultyAsString))
-					logger.Error($"Falta configurar 'Blockchain:Dificulty'. Se minará con una dificultad de {dificulty} zeros");
-				else if (!byte.TryParse(dificultyAsString, out dificulty))
-					logger.Error($"El valor de 'Blockchain:Dificulty' no es un número entero. Se minará con una dificultad de {dificulty} zeros");
-
-				return dificulty;
-			}
-		}
-
-		protected int MinerInterval
-		{
-			get
-			{
-				var intervalAsString = configuration.MinerInterval;
-
-				int interval = 10 * 60 * 1000;
-				if (string.IsNullOrWhiteSpace(intervalAsString))
-					logger.Warning($"Falta configurar 'Miner:Interval', se minará con un intervalo de {interval} ms");
-				else if (!int.TryParse(intervalAsString, out interval))
-					logger.Warning($"El valor de 'Miner:Interval' no es un número entero, se minará con un intervalo de {interval} ms");
-
-				return interval;
-			}
-		}
-
-		public string Name => configuration.Name;
-
 		public NodeState State { get; set; }
 
 		public IEnumerable<BlockItem> Pendings => pendings.Values;
@@ -117,7 +82,7 @@ namespace Domain
 				logger.Information("Inicializando Nodo de Blockchain");
 				while (!stop)
 				{
-					Thread.Sleep(MinerInterval);
+					Thread.Sleep(configuration.MinerInterval);
 					MinePendingTransactions();
 				}
 

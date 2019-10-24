@@ -11,260 +11,234 @@ namespace Domain.Channels
 {
 	public class Conversation
 	{
-		private readonly Blockchain blockchain;
-		private readonly IList<IEventListener> listeners;
+		private readonly INode node;
 		private readonly INodeLogger logger;
-		private readonly IChannel channel;
 
-		public Conversation(Blockchain blockchain, IList<IEventListener> listeners, INodeLogger logger, IChannel channel)
+		public Conversation(INode node, INodeLogger logger)
 		{
-			this.blockchain = blockchain;
-			this.listeners = listeners;
+			this.node = node;
 			this.logger = logger;
-			this.channel = channel;
 		}
 
-		public void Talk(ProtocolMessageChannel channel)
+		public void Talk(ProtocolMessageChannel messageChannel)
 		{
 			try
 			{
-				char commandType = channel.GetCommandId();
+				char commandType = messageChannel.GetCommandId();
 				logger.Debug($"Recibiendo comando {commandType}");
 
 				switch (commandType)
 				{
 					case SendVoteMessage.CommandId:
-						ProcessVote(channel);
+						ProcessVote(messageChannel);
 						break;
 					case SendRecountMessage.CommandId:
-						ProcessRecount(channel);
+						ProcessRecount(messageChannel);
 						break;
 					case SendFiscalMessage.CommandId:
-						ProcessFiscal(channel);
+						ProcessFiscal(messageChannel);
 						break;
 					case SendUrnMessage.CommandId:
-						ProcessUrn(channel);
+						ProcessUrn(messageChannel);
 						break;
 					case SendQuestionMessage.CommandId:
-						ProcessQuestion(channel);
+						ProcessQuestion(messageChannel);
 						break;
 					case SendMemberMessage.CommandId:
-						ProcessMember(channel);
+						ProcessMember(messageChannel);
 						break;
 					case SendCommunityMessage.CommandId:
-						ProcessCommunity(channel);
+						ProcessCommunity(messageChannel);
 						break;
 					case SendBlockMessage.CommandId:
-						ProcessBlock(channel);
+						ProcessBlock(messageChannel);
 						break;
 					case SendDocumentMessage.CommandId:
-						ProcessDocument(channel);
+						ProcessDocument(messageChannel);
 						break;
 					case SendPeerInfoMessage.CommandId:
-						ProcessPeer(channel);
+						ProcessPeer(messageChannel);
 						break;
 					case LastBlockQueryMessage.CommandId:
-						ProcessLastBlockRequest(channel);
+						ProcessLastBlockRequest(messageChannel);
 						break;
 					case BlockQueryMessage.CommandId:
-						ProcessBlockRequest(channel);
+						ProcessBlockRequest(messageChannel);
 						break;
 					case QueryCommand.CommandId:
-						ProcessQueryRequest(channel);
+						ProcessQueryRequest(messageChannel);
 						break;
 				}
 			}
 			catch (Exception ex)
 			{
-				foreach (var listener in listeners)
-					listener.Error($"ERROR: {ex.Message}");
+					logger.Error($"ERROR: {ex.Message}");
 			}
 		}
 
-		private void ProcessPeer(ProtocolMessageChannel protocolMessageChannel)
+		private void ProcessPeer(ProtocolMessageChannel messageChannel)
 		{
-			var body = protocolMessageChannel.GetBody();
+			var body = messageChannel.GetBody();
 
 			if (!string.IsNullOrWhiteSpace(body))
 			{
 				var peerInfo = JsonConvert.DeserializeObject<PeerInfo>(body);
-				
-				var peer = new TcpPeer(peerInfo.Host, peerInfo.Port, channel);
-				foreach (var listener in listeners)
-					listener.Incomming(peer);
+				node.Register(peerInfo.Host, peerInfo.Port);
 			}
 		}
 
-		private void ProcessVote(ProtocolMessageChannel channel)
+		private void ProcessVote(ProtocolMessageChannel messageChannel)
 		{
-			var body = channel.GetBody();
+			var body = messageChannel.GetBody();
 
 			if (!string.IsNullOrWhiteSpace(body))
 			{
-				foreach (var listener in listeners)
-					listener.Debug($"Incomming message: {body}");
+				logger.Debug($"Incomming message: {body}");
 
 				var vote = JsonConvert.DeserializeObject<Vote>(body);
-				foreach (var listener in listeners)
-					listener.Incomming(vote);
-				channel.Write(Encoding.UTF8.GetBytes("OK" + Environment.NewLine));
+				node.Add(vote);
+				messageChannel.Write(Encoding.UTF8.GetBytes("OK" + Environment.NewLine));
 			}
 		}
 
-		private void ProcessRecount(ProtocolMessageChannel channel)
+		private void ProcessRecount(ProtocolMessageChannel messageChannel)
 		{
-			var body = channel.GetBody();
+			var body = messageChannel.GetBody();
 
 			if (!string.IsNullOrWhiteSpace(body))
 			{
-				foreach (var listener in listeners)
-					listener.Debug($"Incomming message: {body}");
+				logger.Debug($"Incomming message: {body}");
 
 				var recount = JsonConvert.DeserializeObject<Recount>(body);
-				foreach (var listener in listeners)
-					listener.Incomming(recount);
-				channel.Write(Encoding.UTF8.GetBytes("OK" + Environment.NewLine));
+				node.Add(recount);
+				messageChannel.Write(Encoding.UTF8.GetBytes("OK" + Environment.NewLine));
 			}
 		}
 
-		private void ProcessUrn(ProtocolMessageChannel channel)
+		private void ProcessUrn(ProtocolMessageChannel messageChannel)
 		{
-			var body = channel.GetBody();
+			var body = messageChannel.GetBody();
 
 			if (!string.IsNullOrWhiteSpace(body))
 			{
-				foreach (var listener in listeners)
-					listener.Debug($"Incomming message: {body}");
+				logger.Debug($"Incomming message: {body}");
 
 				var urn = JsonConvert.DeserializeObject<Urn>(body);
-				foreach (var listener in listeners)
-					listener.Incomming(urn);
-				channel.Write(Encoding.UTF8.GetBytes("OK" + Environment.NewLine));
+				node.Add(urn);
+				messageChannel.Write(Encoding.UTF8.GetBytes("OK" + Environment.NewLine));
 			}
 		}
 
-		private void ProcessFiscal(ProtocolMessageChannel channel)
+		private void ProcessFiscal(ProtocolMessageChannel messageChannel)
 		{
-			var body = channel.GetBody();
+			var body = messageChannel.GetBody();
 
 			if (!string.IsNullOrWhiteSpace(body))
 			{
-				foreach (var listener in listeners)
-					listener.Debug($"Incomming message: {body}");
+				logger.Debug($"Incomming message: {body}");
 
 				var fiscal = JsonConvert.DeserializeObject<Fiscal>(body);
-				foreach (var listener in listeners)
-					listener.Incomming(fiscal);
-				channel.Write(Encoding.UTF8.GetBytes("OK" + Environment.NewLine));
+				node.Add(fiscal);
+				messageChannel.Write(Encoding.UTF8.GetBytes("OK" + Environment.NewLine));
 			}
 		}
 
-		private void ProcessQuestion(ProtocolMessageChannel channel)
+		private void ProcessQuestion(ProtocolMessageChannel messageChannel)
 		{
-			var body = channel.GetBody();
+			var body = messageChannel.GetBody();
 
 			if (!string.IsNullOrWhiteSpace(body))
 			{
-				foreach (var listener in listeners)
-					listener.Debug($"Incomming message: {body}");
+				logger.Debug($"Incomming message: {body}");
 
 				var question = JsonConvert.DeserializeObject<Question>(body);
-				foreach (var listener in listeners)
-					listener.Incomming(question);
-				channel.Write(Encoding.UTF8.GetBytes("OK" + Environment.NewLine));
+				node.Add(question);
+				messageChannel.Write(Encoding.UTF8.GetBytes("OK" + Environment.NewLine));
 			}
 		}
 
-		private void ProcessCommunity(ProtocolMessageChannel channel)
+		private void ProcessCommunity(ProtocolMessageChannel messageChannel)
 		{
-			var body = channel.GetBody();
+			var body = messageChannel.GetBody();
 
 			if (!string.IsNullOrWhiteSpace(body))
 			{
-				foreach (var listener in listeners)
-					listener.Debug($"Incomming message: {body}");
+				logger.Debug($"Incomming message: {body}");
 
 				var community = JsonConvert.DeserializeObject<Community>(body);
-				foreach (var listener in listeners)
-					listener.Incomming(community);
-				channel.Write(Encoding.UTF8.GetBytes("OK" + Environment.NewLine));
+				node.Add(community);
+				messageChannel.Write(Encoding.UTF8.GetBytes("OK" + Environment.NewLine));
 			}
 		}
 
-		private void ProcessDocument(ProtocolMessageChannel channel)
+		private void ProcessDocument(ProtocolMessageChannel messageChannel)
 		{
-			var body = channel.GetBody();
+			var body = messageChannel.GetBody();
 
 			if (!string.IsNullOrWhiteSpace(body))
 			{
-				foreach (var listener in listeners)
-					listener.Debug($"Incomming message: {body}");
+				logger.Debug($"Incomming message: {body}");
 
 				var document = JsonConvert.DeserializeObject<Document>(body);
-				foreach (var listener in listeners)
-					listener.Incomming(document);
-				channel.Write(Encoding.UTF8.GetBytes("OK" + Environment.NewLine));
+				node.Add(document);
+				messageChannel.Write(Encoding.UTF8.GetBytes("OK" + Environment.NewLine));
 			}
 		}
 
-		private void ProcessMember(ProtocolMessageChannel channel)
+		private void ProcessMember(ProtocolMessageChannel messageChannel)
 		{
-			var body = channel.GetBody();
+			var body = messageChannel.GetBody();
 
 			if (!string.IsNullOrWhiteSpace(body))
 			{
-				foreach (var listener in listeners)
-					listener.Debug($"Incomming message: {body}");
+				logger.Debug($"Incomming message: {body}");
 
 				var member = JsonConvert.DeserializeObject<Member>(body);
-				foreach (var listener in listeners)
-					listener.Incomming(member);
-				channel.Write(Encoding.UTF8.GetBytes("OK" + Environment.NewLine));
+				node.Add(member);
+				messageChannel.Write(Encoding.UTF8.GetBytes("OK" + Environment.NewLine));
 			}
 		}
 
-		private void ProcessBlock(ProtocolMessageChannel channel)
+		private void ProcessBlock(ProtocolMessageChannel messageChannel)
 		{
-			var body = channel.GetBody();
+			var body = messageChannel.GetBody();
 
 			if (!string.IsNullOrWhiteSpace(body))
 			{
-				foreach (var listener in listeners)
-					listener.Debug($"Incomming message: {body}");
+				logger.Debug($"Incomming message: {body}");
 
 				var block = JsonConvert.DeserializeObject<Block>(body);
-				foreach (var listener in listeners)
-					listener.Incomming(block);
-				channel.Write(Encoding.UTF8.GetBytes("OK" + Environment.NewLine));
+				node.Add(block);
+				messageChannel.Write(Encoding.UTF8.GetBytes("OK" + Environment.NewLine));
 			}
 		}
 
-		private void ProcessLastBlockRequest(ProtocolMessageChannel channel)
+		private void ProcessLastBlockRequest(ProtocolMessageChannel messageChannel)
 		{
 			logger.Debug("Enviando último bloque");
-			var lastBlock = blockchain.Last;
+			var lastBlock = node.Blockchain.Last;
 			var command = new SendBlockMessage(lastBlock);
 			var data = command.GetBytes();
-			channel.Write(data);
+			messageChannel.Write(data);
 		}
 
-		private void ProcessBlockRequest(ProtocolMessageChannel channel)
+		private void ProcessBlockRequest(ProtocolMessageChannel messageChannel)
 		{
-			var body = channel.GetBody();
+			var body = messageChannel.GetBody();
 
 			if (!string.IsNullOrWhiteSpace(body))
 			{
 				var hash = Base58.Decode(body);
-				var block = blockchain.GetBlock(hash);
+				var block = node.Blockchain.GetBlock(hash);
 				var command = new SendBlockMessage(block);
 				var data = command.GetBytes();
-				channel.Write(data);
+				messageChannel.Write(data);
 			}
 		}
 
-		private void ProcessQueryRequest(ProtocolMessageChannel channel)
+		private void ProcessQueryRequest(ProtocolMessageChannel messageChannel)
 		{
-			var body = channel.GetBody();
+			var body = messageChannel.GetBody();
 
 			if (!string.IsNullOrWhiteSpace(body))
 			{
@@ -274,73 +248,73 @@ namespace Domain.Channels
 				switch (entity.ToLower())
 				{
 					case "communities":
-						var queryCommunities = new CommunitiesQuery(blockchain);
+						var queryCommunities = new CommunitiesQuery(node.Blockchain);
 						var commandCommiunities = new SendQueryResponseMessage<IEnumerable<Community>>(queryCommunities.Execute());
 						var dataCommiunities = commandCommiunities.GetBytes();
-						channel.Write(dataCommiunities);
+						messageChannel.Write(dataCommiunities);
 						break;
 					case "community":
-						var queryCommunity = new CommunityQuery(blockchain);
+						var queryCommunity = new CommunityQuery(node.Blockchain);
 						var commandCommunity = new SendQueryResponseMessage<Community>(queryCommunity.Execute(content));
 						var dataCommunity = commandCommunity.GetBytes();
-						channel.Write(dataCommunity);
+						messageChannel.Write(dataCommunity);
 						break;
 					case "questions":
-						var queryQuestions = new QuestionsQuery(blockchain);
+						var queryQuestions = new QuestionsQuery(node.Blockchain);
 						var commandQuestions = new SendQueryResponseMessage<IEnumerable<Question>>(queryQuestions.Execute(content));
 						var dataQuestions = commandQuestions.GetBytes();
-						channel.Write(dataQuestions);
+						messageChannel.Write(dataQuestions);
 						break;
 					case "question":
-						var queryQuestion = new QuestionQuery(blockchain);
+						var queryQuestion = new QuestionQuery(node.Blockchain);
 						var commandQuestion = new SendQueryResponseMessage<Question>(queryQuestion.Execute(content));
 						var dataQuestion = commandQuestion.GetBytes();
-						channel.Write(dataQuestion);
+						messageChannel.Write(dataQuestion);
 						break;
 					case "question-result":
-						var queryQuestionResult = new QuestionResultQuery(blockchain);
+						var queryQuestionResult = new QuestionResultQuery(node.Blockchain);
 						var commandQuestionResult = new SendQueryResponseMessage<QuestionResult>(queryQuestionResult.Execute(content));
 						var dataQuestionResult = commandQuestionResult.GetBytes();
-						channel.Write(dataQuestionResult);
+						messageChannel.Write(dataQuestionResult);
 						break;
 					case "members":
-						var queryMembers = new MembersQuery(blockchain);
+						var queryMembers = new MembersQuery(node.Blockchain);
 						var commandMembers = new SendQueryResponseMessage<IEnumerable<Member>>(queryMembers.Execute(content));
 						var dataMembers = commandMembers.GetBytes();
-						channel.Write(dataMembers);
+						messageChannel.Write(dataMembers);
 						break;
 					case "member":
-						var queryMember = new MemberQuery(blockchain);
+						var queryMember = new MemberQuery(node.Blockchain);
 						var commandMember = new SendQueryResponseMessage<Member>(queryMember.Execute(content));
 						var dataMember = commandMember.GetBytes();
-						channel.Write(dataMember);
+						messageChannel.Write(dataMember);
 						break;
 					case "votes":
-						var queryVotes = new VotesQuery(blockchain);
+						var queryVotes = new VotesQuery(node.Blockchain);
 						var commandVotes = new SendQueryResponseMessage<IEnumerable<Vote>>(queryVotes.Execute(content));
 						var dataVotes = commandVotes.GetBytes();
-						channel.Write(dataVotes);
+						messageChannel.Write(dataVotes);
 						break;
 					case "fiscals":
-						var queryFiscals = new FiscalsQuery(blockchain);
+						var queryFiscals = new FiscalsQuery(node.Blockchain);
 						var commandFiscals = new SendQueryResponseMessage<IEnumerable<Fiscal>>(queryFiscals.Execute(content));
 						var dataFiscals = commandFiscals.GetBytes();
-						channel.Write(dataFiscals);
+						messageChannel.Write(dataFiscals);
 						break;
 					case "urns":
-						var queryUrns = new UrnsQuery(blockchain);
+						var queryUrns = new UrnsQuery(node.Blockchain);
 						var commandUrns = new SendQueryResponseMessage<IEnumerable<Urn>>(queryUrns.Execute(content));
 						var dataUrns = commandUrns.GetBytes();
-						channel.Write(dataUrns);
+						messageChannel.Write(dataUrns);
 						break;
 					case "recount":
-						var queryRecount = new RecountQuery(blockchain);
+						var queryRecount = new RecountQuery(node.Blockchain);
 						var commandRecount = new SendQueryResponseMessage<Recount>(queryRecount.Execute(content));
 						var dataRecount = commandRecount.GetBytes();
-						channel.Write(dataRecount);
+						messageChannel.Write(dataRecount);
 						break;
 					default:
-						channel.Write(Encoding.UTF8.GetBytes("Unknown Entity"));
+						messageChannel.Write(Encoding.UTF8.GetBytes("Unknown Entity"));
 						break;
 				}
 			}

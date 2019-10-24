@@ -16,7 +16,7 @@ namespace Tests
 		[Test]
 		public void Init_node()
 		{
-			var cfg = new NodeConfiguration("Nodo 1", "1234", "1", "2000", port1);
+			var cfg = new NodeConfiguration("Nodo 1", "1234", 1, 2000, port1);
 			var logger = new ConsoleLogger();
 			var node = new Node(cfg, new BlockBuilder(), logger);
 
@@ -29,7 +29,7 @@ namespace Tests
 		[Test]
 		public void Stop_node()
 		{
-			var cfg = new NodeConfiguration("Nodo 1", "1234", "1", "2000", port1);
+			var cfg = new NodeConfiguration("Nodo 1", "1234", 1, 2000, port1);
 			var logger = new ConsoleLogger();
 			var node = new Node(cfg, new BlockBuilder(), logger);
 
@@ -49,9 +49,9 @@ namespace Tests
 			var logger2 = new ConsoleLogger {Tag = "node-2"};
 			var logger3 = new ConsoleLogger {Tag = "node-3"};
 
-			var node1 = new Node(new NodeConfiguration("Nodo 1", "1111", "1", "2000", port1), new BlockBuilder(), logger1);
-			var node2 = new Node(new NodeConfiguration("Nodo 2", "2222", "1", "2000", port2), new BlockBuilder(), logger2);
-			var node3 = new Node(new NodeConfiguration("Nodo 3", "3333", "1", "2000", port3), new BlockBuilder(), logger3);
+			var node1 = new Node(new NodeConfiguration("Nodo 1", "1111", 1, 2000, port1), new BlockBuilder(), logger1);
+			var node2 = new Node(new NodeConfiguration("Nodo 2", "2222", 1, 2000, port2), new BlockBuilder(), logger2);
+			var node3 = new Node(new NodeConfiguration("Nodo 3", "3333", 1, 2000, port3), new BlockBuilder(), logger3);
 
 			node1.Listen();
 			WaitFor(() => node1.ChannelState == ChannelState.Listening);
@@ -85,9 +85,9 @@ namespace Tests
 			var logger2 = new ConsoleLogger {Tag = "node-2"};
 			var logger3 = new ConsoleLogger {Tag = "node-3"};
 
-			var node1 = new Node(new NodeConfiguration("Nodo 1", "1111", "1", "2000", port1), new BlockBuilder(), logger1);
-			var node2 = new Node(new NodeConfiguration("Nodo 2", "2222", "1", "2000", port2), new BlockBuilder(), logger2);
-			var node3 = new Node(new NodeConfiguration("Nodo 3", "3333", "1", "2000", port3), new BlockBuilder(), logger3);
+			var node1 = new Node(new NodeConfiguration("Nodo 1", "1111", 1, 2000, port1), new BlockBuilder(), logger1);
+			var node2 = new Node(new NodeConfiguration("Nodo 2", "2222", 1, 2000, port2), new BlockBuilder(), logger2);
+			var node3 = new Node(new NodeConfiguration("Nodo 3", "3333", 1, 2000, port3), new BlockBuilder(), logger3);
 			try
 			{
 				node1.Listen();
@@ -125,9 +125,9 @@ namespace Tests
 			var logger2 = new ConsoleLogger {Tag = "node-2"};
 			var logger3 = new ConsoleLogger {Tag = "node-3"};
 
-			var node1 = new Node(new NodeConfiguration("Nodo 1", "1111", "1", "2000", port1), new BlockBuilder(), logger1);
-			var node2 = new Node(new NodeConfiguration("Nodo 2", "2222", "1", "2000", port2), new BlockBuilder(), logger2);
-			var node3 = new Node(new NodeConfiguration("Nodo 3", "3333", "1", "2000", port3), new BlockBuilder(), logger3);
+			var node1 = new Node(new NodeConfiguration("Nodo 1", "1111", 1, 2000, port1), new BlockBuilder(), logger1);
+			var node2 = new Node(new NodeConfiguration("Nodo 2", "2222", 1, 2000, port2), new BlockBuilder(), logger2);
+			var node3 = new Node(new NodeConfiguration("Nodo 3", "3333", 1, 2000, port3), new BlockBuilder(), logger3);
 			
 			try
 			{
@@ -171,7 +171,7 @@ namespace Tests
 			var logger1 = new ConsoleLogger {Tag = "node-1"};
 			var logger2 = new ConsoleLogger {Tag = "node-2"};
 
-			var node1 = new Node(new NodeConfiguration("Nodo 1", "1111", "1", "2000", port1), new BlockBuilder(), logger1);
+			var node1 = new Node(new NodeConfiguration("Nodo 1", "1111", 1, 2000, port1), new BlockBuilder(), logger1);
 			node1.Listen();
 			WaitFor(() => node1.ChannelState == ChannelState.Listening);
 			WaitFor(() => node1.ChainLength == 1);
@@ -186,7 +186,7 @@ namespace Tests
 
 			Assert.AreEqual(2, node1.ChainLength);
 
-			var node2 = new Node(new NodeConfiguration("Nodo 2", "1234", "1", "2000", port2), new BlockBuilder(), logger2);
+			var node2 = new Node(new NodeConfiguration("Nodo 2", "1234", 1, 2000, port2), new BlockBuilder(), logger2);
 			node2.Listen();
 			WaitFor(() => node2.ChannelState == ChannelState.Listening);
 			WaitFor(() => node2.ChainLength == 1);
@@ -211,8 +211,8 @@ namespace Tests
 			var logger1 = new ConsoleLogger {Tag = "node-1"};
 			var logger2 = new ConsoleLogger {Tag = "node-2"};
 
-			var node1 = new Node(new NodeConfiguration("Nodo 1", "1234", "1", "2000", port1), new BlockBuilder(), logger1);
-			var node2 = new Node(new NodeConfiguration("Nodo 2", "1234", "1", "2000", port2), new BlockBuilder(), logger2);
+			var node1 = new Node(new NodeConfiguration("Nodo 1", "1234", 1, 2000, port1), new BlockBuilder(), logger1);
+			var node2 = new Node(new NodeConfiguration("Nodo 2", "1234", 1, 2000, port2), new BlockBuilder(), logger2);
 
 			try
 			{
@@ -269,9 +269,9 @@ namespace Tests
 			var logger2 = new ConsoleLogger {Tag = "node-2"};
 			var logger3 = new ConsoleLogger {Tag = "node-3"};
 
-			var node1 = new Node(new NodeConfiguration("Nodo 1", "1111", "1", "2000", port1), new BlockBuilder(), logger1);
-			var node2 = new Node(new NodeConfiguration("Nodo 2", "2222", "1", "2000", port2), new BlockBuilder(), logger2);
-			var node3 = new Node(new NodeConfiguration("Mi Nodo", "3333", "1", "2000", port3), new BlockBuilder(), logger3);
+			var node1 = new Node(new NodeConfiguration("Nodo 1", "1111", 1, 2000, port1), new BlockBuilder(), logger1);
+			var node2 = new Node(new NodeConfiguration("Nodo 2", "2222", 1, 2000, port2), new BlockBuilder(), logger2);
+			var node3 = new Node(new NodeConfiguration("Mi Nodo", "3333", 1, 2000, port3), new BlockBuilder(), logger3);
 
 			try
 			{

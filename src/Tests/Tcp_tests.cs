@@ -8,6 +8,7 @@ using Domain.Protocol;
 using Domain.Elections;
 using Moq;
 using NUnit.Framework;
+using Tests.Mocks;
 
 namespace Tests
 {
@@ -24,7 +25,7 @@ namespace Tests
 		public void Start_and_stop_server()
 		{
 			var node = new Mock<INode>();
-			var channel = new TcpChannel(node.Object, port1, new ConsoleListener());
+			var channel = new TcpChannel(node.Object, port1, new ConsoleLogger());
 
 			try
 			{
@@ -47,7 +48,7 @@ namespace Tests
 		public void Send_vote()
 		{
 			var node = new Mock<INode>();
-			var channel = new TcpChannel(node.Object, port1, new ConsoleListener());
+			var channel = new TcpChannel(node.Object, port1, new ConsoleLogger());
 
 			try
 			{
@@ -75,7 +76,7 @@ namespace Tests
 		public void Send_member()
 		{
 			var node = new Mock<INode>();
-			var channel = new TcpChannel(node.Object, port1, new ConsoleListener());
+			var channel = new TcpChannel(node.Object, port1, new ConsoleLogger());
 
 			try
 			{
@@ -105,7 +106,7 @@ namespace Tests
 			var node = new Mock<INode>();
 			Question questionInNode = null;
 			node.Setup(n => n.Add(It.IsAny<Question>())).Callback<Question>(v => questionInNode = v);
-			var channel = new TcpChannel(node.Object, port1, new ConsoleListener());
+			var channel = new TcpChannel(node.Object, port1, new ConsoleLogger());
 
 			try
 			{
@@ -149,7 +150,7 @@ namespace Tests
 			var node = new Mock<INode>();
 			Community communityInNode = null;
 			node.Setup(n => n.Add(It.IsAny<Community>())).Callback<Community>(v => communityInNode = v);
-			var channel = new TcpChannel(node.Object, port1, new ConsoleListener());
+			var channel = new TcpChannel(node.Object, port1, new ConsoleLogger());
 
 			try
 			{
@@ -184,8 +185,7 @@ namespace Tests
 		{
 			var node = new Mock<INode>();
 
-			var server = new TcpChannel(node.Object, port1, new ConsoleListener());
-			server.AddListener(new ConsoleListener());
+			var server = new TcpChannel(node.Object, port1, new ConsoleLogger());
 
 			try
 			{
@@ -219,7 +219,7 @@ namespace Tests
 		public void Send_block_2048()
 		{
 			var node = new Mock<INode>();
-			var channel = new TcpChannel(node.Object, port1, new ConsoleListener());
+			var channel = new TcpChannel(node.Object, port1, new ConsoleLogger());
 
 			try
 			{
@@ -258,9 +258,8 @@ namespace Tests
 		public void Send_block_512()
 		{
 			var node = new Mock<INode>();
-			var channel = new TcpChannel(node.Object, port1, new ConsoleListener());
+			var channel = new TcpChannel(node.Object, port1, new ConsoleLogger());
 
-			channel.AddListener(new ConsoleListener());
 
 			try
 			{
@@ -298,7 +297,7 @@ namespace Tests
 			var node = new Mock<INode>();
 			Document documentInNode = null;
 			node.Setup(n => n.Add(It.IsAny<Document>())).Callback<Document>(v => documentInNode = v);
-			var channel = new TcpChannel(node.Object, port1, new ConsoleListener());
+			var channel = new TcpChannel(node.Object, port1, new ConsoleLogger());
 
 			try
 			{
@@ -334,7 +333,7 @@ namespace Tests
 			var node = new Mock<INode>();
 			Document documentInNode = null;
 			node.Setup(n => n.Add(It.IsAny<Document>())).Callback<Document>(v => documentInNode = v);
-			var channel = new TcpChannel(node.Object, port1, new ConsoleListener());
+			var channel = new TcpChannel(node.Object, port1, new ConsoleLogger());
 
 			try
 			{

@@ -34,6 +34,16 @@ namespace CryptoVote
 			var configuration = new NodeConfiguration(builder.Build());
 			
 			var logger = configuration.ConsoleColored ?  (IEventListener)new ColoredConsoleLogger() : new ConsoleLogger();
+			logger.Information($"Name: {configuration.Name}");
+			logger.Information($"Miner:Address: {configuration.MinerAddress}");
+			logger.Information($"Miner:Interval: {configuration.MinerInterval} ms");
+			logger.Information($"Blockchain:Dificulty: {configuration.BlockchainDificulty}");
+			logger.Information($"My:Host: {configuration.MyHost}");
+			logger.Information($"My:Port: {configuration.MyPort}");
+			logger.Information($"Peer:Host: {configuration.PeerHost}");
+			logger.Information($"Peer:Port: {configuration.PeerPort}");
+			logger.Information($"Console:Colored: {configuration.ConsoleColored}");
+			
 			var node = new Node(configuration, new BlockBuilder(), logger);
 
 			node.Listen();

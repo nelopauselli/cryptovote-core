@@ -5,9 +5,9 @@ namespace Domain
 	public interface INodeConfiguration
 	{
 		string Name { get; }
+		byte BlockchainDificulty { get; }
 		string MinerAddress { get; }
-		string BlockchainDificulty { get; }
-		string MinerInterval { get; }
+		int MinerInterval { get; }
 		string MyHost { get; }
 		int MyPort { get; }
 	}
