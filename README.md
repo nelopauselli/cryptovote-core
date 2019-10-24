@@ -10,29 +10,36 @@ La informaci&oacute;n no es que est&aacute; centralizada con un acceso p&uacute;
 * **web**: se encarga de exponer la informaci&oacute;n como una WebApi REST (json) para facilitar el acceso a la red de aplicaciones clientes sin necesidad de adentrase en el protocolo.
 * **mobile**: es un cliente desarrollado para Android 6.0 o superior que permite operar sobre la blockchain desde un tel&eacute;fono, tablet u otro dispositivo que cora Android. El c&oacute;digo fuente de este proyecto se encuentra en: https://github.com/nelopauselli/cryptovote-android
 
-## Instalaci&oacute;n y ejecuci&oacute;n de un nodo y el sitio web
+## Ejecuci&oacute;n de un nodo y el sitio web
 El nodo puede correr tanto en Windows, Mac o Linux (incluso en Raspberry Pi as&iacute; como en docker).
 
-1. El primer paso es instalar netcore 2.2 siguiendo las instrucciones de la p&aacute;gina oficial: https://dotnet.microsoft.com/download/dotnet-core/2.2, es necesario tanto *ASP.NET Core* como *.NET Core*. 
+1. El primer paso es descargar la versi&oacute;n del nodo y del sitio web correspondientes al sistema operativo:
+* Windows x64: [TODO: poner link]
+* Linux x64: [TODO: poner link]
+* Linux arm (para Rasberry): [TODO: poner link]
 
->TODO: verificar los componentes requeridos.
+2. descomprimir el archivo
 
-2. descargar o clonar este repositorio
-3. compilar el proyecto
-```bash
-$ cd ./src
-$ ./build.sh
-```
-4. elegir la publicaci&oacute;n a utilizar (o compilar una distinta, ver archivo build.sh)
-5. ejecutar el nodo de **cryptovote**
+3. ejecutar el nodo de **cryptovote**
 ```bash
 # TODO: completar los [args]
-$ dotnet CryptoVote.dll [args] [args] [args]
+# Windows:
+> CryptoVote.exe [args] [args] [args]
+# Linux:
+$ TODO: escribir sintaxis
+# OS X:
+$ TODO: escribir sintaxis
 ```
-6. ejecutar el sitio web de **cryptovote**
+
+4. ejecutar el sitio web de **cryptovote**
 ```bash
 # TODO: completar los [args]
-$ dotnet Web.dll [args] [args] [args]
+# Windows:
+> Web.exe [args] [args] [args]
+# Linux:
+$ TODO: escribir sintaxis
+# OS X:
+$ TODO: escribir sintaxis
 ```
 
 ## Carga de datos de ejemplo
