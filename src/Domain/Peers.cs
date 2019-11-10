@@ -12,7 +12,7 @@ namespace Domain
 {
 	public class Peers
 	{
-		private const int TimeoutMillicesonds = 2000;
+		public const int TimeoutMillicesonds = 10000;
 		private readonly IList<IPeer> hosts = new List<IPeer>();
 		private readonly string nodeName;
 		private readonly INodeLogger logger;
@@ -133,7 +133,7 @@ namespace Domain
 			}
 			catch (ChannelException ex)
 			{
-				logger.Warning(ex.Message);
+				logger.Warning(message: ex.ToString());
 			}
 		}
 

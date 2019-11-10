@@ -14,19 +14,20 @@ namespace DataSample
 			Console.WriteLine("Creando datos de ejemplo");
 
 			var crypto = new CryptoSecp256k1();
-			var nelo = crypto.GeneratePair(Base58.Decode("2FbceVNGnzuqCFy1M8RLga8R64kAi8Eq6LAhWq52Wdnf")); // Tablet en emulador: me
+			var nelo = crypto.GeneratePair(Base58.Decode("132AcYZtp4XAxufsdNaPzTQ9oK11gnxP6Sw8UxzV1rTn")); // Tablet en emulador: me
 			var martin = crypto.GeneratePair(Base58.Decode("4x6pChtv9EUNQ27otESf9GyL7PWerKF7z475ESGusnK4")); // Tablet en emulador: martin
-			var silvio = crypto.GeneratePair(Base58.Decode("147iFS4LCLJqGqe9W59QSREWvtGgwExKj8vZomZKYojN")); // Tablet en emulador: silvio
 			var romina = crypto.GeneratePair(Base58.Decode("13SF2nG7CYsGqY2y1xKP4X318vVbRbZhFMsGySHDDcRd")); // Tablet en emulador: gonzalo
 			var juana = crypto.GeneratePair(Base58.Decode("14V8igLr1ftDVGtgwrCUCAacdz43mzu1L2ZeumrEEkD1")); // Tablet en emulador: juana
 			var alicia = crypto.GeneratePair(Base58.Decode("13MKf75enRiqyHnsiZAbz7pi94qUpDaGk29NaNFhkezZ")); // Tablet en emulador: alicia
 
+			var silvio = Base58.Decode("QCWderiVdAVDLTxipfHnRY7gmpAU8sdC9pd5NQmkd8eDjMyPC2haiVjZDqaEi7xDrAQzk91FMRrT82TGu1GwWaCZ");
 			var tabletNeloNexus7 = Base58.Decode("NP9ajvEU6bWzN3CMdz1JCa2G34jVsi7ss7tzJCuJK52fbmXRzgky811Upko8tEjt4eSBaCsWKN7DwYYEdYLVSkxp");
+			var salva = Base58.Decode("Me65oa1KXyURvatDrNBeuRBxWqWSrsC9aYNSFMFftNq291JfaZBUFnR4TjzwCdDzN154N8tioaBxCHsUC3b4wvfc");
 
 			var publisher = args.Length == 0 ? new ConsoleAdapter()
 				: args[0] == "web" ? new WebApiAdapter(args[1])
 				: args[0] == "file" ? (IPublisher) new FileAdapter()
-				: throw new ArgumentException("El parámetro args[0] no es válido");
+				: throw new ArgumentException($"El parámetro {args[0]} no es válido");
 
 			var factory = new Factory(crypto, publisher);
 
@@ -37,8 +38,9 @@ namespace DataSample
 			{
 				factory.Member(cryptoVoteId, "Nelo", nelo.PublicKey, nelo),
 				factory.Member(cryptoVoteId, "Martin", martin.PublicKey, nelo),
-				factory.Member(cryptoVoteId, "Silvio", silvio.PublicKey, nelo),
-				factory.Member(cryptoVoteId, "Neluz", tabletNeloNexus7, nelo)
+				factory.Member(cryptoVoteId, "Silvio", silvio, nelo),
+				factory.Member(cryptoVoteId, "Neluz", tabletNeloNexus7, nelo),
+				factory.Member(cryptoVoteId, "Salva", salva, nelo)
 			});
 
 			var tasks = new List<Task>();
@@ -74,7 +76,7 @@ namespace DataSample
 			{
 				factory.Member(eantId, "Martin", martin.PublicKey, martin),
 				factory.Member(eantId, "Gustavo", juana.PublicKey, martin),
-				factory.Member(eantId, "Silvio", silvio.PublicKey, martin),
+				factory.Member(eantId, "Silvio", silvio, martin),
 				factory.Member(eantId, "Romina", romina.PublicKey, martin),
 			});
 
@@ -112,19 +114,20 @@ namespace DataSample
 
 			Task.WaitAll(new[]
 			{
-				factory.Urn(eleccionesNacionalesId, "5468", new[] {nelo.PublicKey}, cne),
-				factory.Urn(eleccionesNacionalesId, "1234", new[] {tabletNeloNexus7}, cne),
+				factory.Urn(eleccionesNacionalesId, "5468", new[] { tabletNeloNexus7}, cne),
+				factory.Urn(eleccionesNacionalesId, "1234", new[] {nelo.PublicKey}, cne),
+				factory.Urn(eleccionesNacionalesId, "4567", new[] {silvio}, cne),
 
 				factory.Fiscal(eleccionesNacionalesId, espertChoideId, romina.PublicKey, apoderadoFrenteDespertar),
 				factory.Fiscal(eleccionesNacionalesId, fernandezChoiceId, alicia.PublicKey, apoderadorFrenteDeTodos),
 				factory.Fiscal(eleccionesNacionalesId, delcanoChoiceId, martin.PublicKey, apoderadoFIT),
-				factory.Fiscal(eleccionesNacionalesId, macriChoiceId, juana.PublicKey, apoderadoJuntosPorElCambio),
+				factory.Fiscal(eleccionesNacionalesId, macriChoiceId, romina.PublicKey, apoderadoJuntosPorElCambio),
 				factory.Fiscal(eleccionesNacionalesId, lavagnaChoiceId, juana.PublicKey, apoderadoConsensoFederal),
 			});
 
 			Console.WriteLine($"nelo: {Base58.Encode(nelo.PublicKey)}");
 			Console.WriteLine($"martin: {Base58.Encode(martin.PublicKey)}");
-			Console.WriteLine($"silvio: {Base58.Encode(silvio.PublicKey)}");
+			Console.WriteLine($"silvio: {Base58.Encode(silvio)}");
 			Console.WriteLine($"romina: {Base58.Encode(romina.PublicKey)}");
 			Console.WriteLine($"juana: {Base58.Encode(juana.PublicKey)}");
 			Console.WriteLine($"alicia: {Base58.Encode(alicia.PublicKey)}");

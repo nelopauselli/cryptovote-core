@@ -46,15 +46,12 @@ namespace Domain.Channels
 
 					while (!stop)
 					{
-						logger.Debug("Waiting for a connection... ");
+						logger.Debug("Waiting for a client... ");
 						TcpClient client = await server.AcceptTcpClientAsync();
-						logger.Debug("Connected!");
+						logger.Debug("Client connected!");
 
-						Task.Run(() =>
-						{
-							TalkWithClient(client.GetStream());
-							client.Close();
-						});
+						Thread t = new Thread(new ParameterizedThreadStart(HandleClient));
+						t.Start();
 					}
 				}
 				catch (SocketException e)
@@ -80,6 +77,16 @@ namespace Domain.Channels
 			return task;
 		}
 
+		private void HandleClient(object obj)
+		{
+			var client = (TcpClient) obj;
+			var stream = client.GetStream();
+			TalkWithClient(stream);
+			stream.Flush();
+			Thread.Sleep(100);
+			client.Close();
+		}
+
 		public void TalkWithClient(Stream stream)
 		{
 			try
@@ -91,7 +98,6 @@ namespace Domain.Channels
 			{
 				// Shutdown and end connection
 				logger.Debug("Shutdown and end connection");
-
 			}
 		}
 
@@ -103,10 +109,5 @@ namespace Domain.Channels
 			server?.Stop();
 			State = ChannelState.Stop;
 		}
-	}
-
-	public interface IChannel
-	{
-		void TalkWithClient(Stream stream);
 	}
 }

@@ -4,13 +4,13 @@ namespace Tests.Mocks
 {
 	public class NodeConfiguration : INodeConfiguration
 	{
-		public NodeConfiguration(string name, string minerAddress, byte blockchainDificulty, int minerInterval, int port)
+		public NodeConfiguration(string name, string minerAddress, byte blockchainDificulty, int minerInterval, int port, string host= "127.0.0.1")
 		{
 			Name = name;
 			BlockchainDificulty = blockchainDificulty;
 			MinerAddress = minerAddress;
 			MinerInterval = minerInterval;
-			MyHost = "127.0.0.1";
+			MyHost = host;
 			MyPort = port;
 		}
 

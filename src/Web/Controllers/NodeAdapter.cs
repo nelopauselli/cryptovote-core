@@ -38,63 +38,59 @@ namespace Web.Controllers
 		public async Task<string> GetResponse(byte[] data)
 		{
 			Console.WriteLine($"Conectando con {Host}:{Port}");
-			var client = new TcpClient();
-			await client.ConnectAsync(Host, Port);
-
-			string body = null;
-			if (client.Connected)
+			using (var client = new TcpClient())
 			{
-				using (var stream = client.GetStream())
+				await client.ConnectAsync(Host, Port);
+
+				string body = null;
+				if (client.Connected)
 				{
-					CancellationToken ctsToken;
-					await stream.WriteAsync(data, 0, data.Length, ctsToken);
-
-					stream.Flush();
-
-					if (!ctsToken.IsCancellationRequested)
+					using (var stream = client.GetStream())
 					{
-						byte[] bytesToRead = new byte[client.ReceiveBufferSize];
-						int bytesRead = stream.Read(bytesToRead, 0, client.ReceiveBufferSize);
-						var response = Encoding.ASCII.GetString(bytesToRead, 0, bytesRead);
+						CancellationToken ctsToken;
+						stream.Write(data, 0, data.Length);
+						stream.Flush();
 
-						var chunks = response.Split('|');
-						if (chunks.Length == 2)
-							body = chunks[1];
+						if (!ctsToken.IsCancellationRequested)
+						{
+							byte[] bytesToRead = new byte[client.ReceiveBufferSize];
+							int bytesRead = stream.Read(bytesToRead, 0, client.ReceiveBufferSize);
+							var response = Encoding.ASCII.GetString(bytesToRead, 0, bytesRead);
+
+							var chunks = response.Split('|');
+							if (chunks.Length == 2)
+								body = chunks[1];
+						}
 					}
 				}
 
-				client.Close();
+				return body;
 			}
-
-			return body;
 		}
 
 		public async Task<T> GetResponse<T>(IMessage<T> message) where T : class
 		{
-			var client = new TcpClient();
-			await client.ConnectAsync(Host, Port);
-
-			if (client.Connected)
+			using (var client = new TcpClient())
 			{
-				using (var stream = client.GetStream())
+				await client.ConnectAsync(Host, Port);
+
+				if (client.Connected)
 				{
-					var data = message.GetBytes();
-
-					CancellationToken ctsToken;
-					await stream.WriteAsync(data, 0, data.Length, ctsToken);
-
-					stream.Flush();
-
-					if (!ctsToken.IsCancellationRequested)
+					using (var stream = client.GetStream())
 					{
-						return message.Parse(new ProtocolMessageChannel(stream));
+						var data = message.GetBytes();
+
+						CancellationToken ctsToken;
+						stream.Write(data, 0, data.Length);
+						stream.Flush();
+
+						if (!ctsToken.IsCancellationRequested)
+							return message.Parse(new ProtocolMessageChannel(stream));
 					}
+
 				}
-
-				client.Close();
+				return null;
 			}
-
-			return null;
 		}
 	}
 }

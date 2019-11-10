@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Text;
+using System.Threading;
 
 namespace Domain.Protocol
 {
@@ -11,11 +12,11 @@ namespace Domain.Protocol
 
 		public ProtocolMessageChannel(Stream stream)
 		{
+			this.stream = stream;
+
 			var value = stream.ReadByte();
 			if (value != -1)
 				commandId = Encoding.UTF8.GetString(new[] {(byte) value})[0];
-
-			this.stream = stream;
 		}
 
 		public string GetBody()

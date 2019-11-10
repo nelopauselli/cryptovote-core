@@ -28,23 +28,27 @@ namespace Domain.Channels
 		{
 			try
 			{
-				client = new TcpClient {SendTimeout = 1000, ReceiveTimeout = 1000};
+				client = new TcpClient {SendTimeout = Peers.TimeoutMillicesonds, ReceiveTimeout = Peers.TimeoutMillicesonds};
 				await client.ConnectAsync(Host, Port);
+
 				if (client.Connected)
 				{
 					using (var stream = client.GetStream())
 					{
-						await stream.WriteAsync(data, 0, data.Length, ctsToken);
+						stream.Write(data, 0, data.Length);
 						stream.Flush();
 
 						Thread.Sleep(1000);
 						channel.TalkWithClient(stream);
+						stream.Flush();
+
+						Thread.Sleep(1000);
 					}
 				}
 			}
 			catch (Exception ex)
 			{
-				disabledTo = DateTime.Now.AddMinutes(1);
+				disabledTo = DateTime.Now.AddSeconds(10);
 				throw new ChannelException($"Error de comunicación con {Host}:{Port}: {ex.Message}", ex);
 			}
 		}
@@ -55,10 +59,5 @@ namespace Domain.Channels
 		}
 
 		public bool IsReady => !disabledTo.HasValue || disabledTo.Value < DateTime.Now;
-		public void Close()
-		{
-			if (client?.Connected ?? false)
-				client?.Close();
-		}
 	}
 }
