@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using Domain.Protocol;
 using Domain.Queries;
 using Domain.Elections;
-using Newtonsoft.Json;
 
 namespace Web.Controllers
 {
@@ -19,22 +18,21 @@ namespace Web.Controllers
 
 		public async Task<IEnumerable<Community>> ListCommunities()
 		{
-			var command = new CommunitiesQueryMessage().GetBytes();
-			var body = await nodeAdapter.GetResponse(command);
-			return !string.IsNullOrWhiteSpace(body) ? JsonConvert.DeserializeObject<Community[]>(body) : null;
+			var command = new CommunitiesQueryCommand();
+			var response = await nodeAdapter.GetResponse(command);
+			return response;
 		}
 		public async Task AddCommunity(Community community)
 		{
-			var command = new SendCommunityMessage(community);
-			var data = command.GetBytes();
-			await nodeAdapter.GetResponse(data);
+			var command = new SendCommunityCommand(community);
+			await nodeAdapter.Send(command);
 		}
 
 		public async Task<Community> Get(Guid communityId)
 		{
-			var command = new CommunityQueryMessage(communityId).GetBytes();
-			var body = await nodeAdapter.GetResponse(command);
-			return !string.IsNullOrWhiteSpace(body) ? JsonConvert.DeserializeObject<Community>(body) : null;
+			var command = new CommunityQueryCommand(communityId);
+			var response = await nodeAdapter.GetResponse(command);
+			return response;
 		}
 	}
 }

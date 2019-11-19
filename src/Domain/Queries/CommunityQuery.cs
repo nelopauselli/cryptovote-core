@@ -12,11 +12,8 @@ namespace Domain.Queries
 			this.blockchain = blockchain;
 		}
 
-		public Community Execute(string content)
+		public Community Execute(Guid communityId)
 		{
-			if (!Guid.TryParse(content, out var communityId))
-				return null;
-
 			foreach (var block in blockchain.Trunk)
 			{
 				foreach (var community in block.Communities)

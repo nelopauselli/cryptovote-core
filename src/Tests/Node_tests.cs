@@ -60,10 +60,10 @@ namespace Tests
 			node3.Listen();
 			WaitFor(() => node3.ChannelState == ChannelState.Listening);
 
-			node1.Register(host2, port2);
-			WaitFor(() => node2.Peers.Count == 1);
-			node2.Register(host3, port3);
-			WaitFor(() => node3.Peers.Count == 2);
+			node1.Connect(host2, port2);
+			WaitFor(() => node2.Channel.Peers.Count() == 1);
+			node2.Connect(host3, port3);
+			WaitFor(() => node3.Channel.Peers.Count() == 2);
 			node2.Syncronize();
 			WaitFor(() => node2.Blockchain.Trunk.Count() == 1);
 
@@ -97,10 +97,10 @@ namespace Tests
 				node3.Listen();
 				WaitFor(() => node3.ChannelState == ChannelState.Listening);
 
-				node1.Register(host2, port2);
-				WaitFor(() => node1.Peers.Count == 1 && node2.Peers.Count == 1);
-				node2.Register(host3, port3);
-				WaitFor(() => node3.Peers.Count == 2 && node2.Peers.Count == 2);
+				node1.Connect(host2, port2);
+				WaitFor(() => node1.Channel.Peers.Count() == 1 && node2.Channel.Peers.Count() == 1);
+				node2.Connect(host3, port3);
+				WaitFor(() => node3.Channel.Peers.Count() == 2 && node2.Channel.Peers.Count() == 2);
 
 				node1.Add(new Community {Address = new byte[] {1, 2, 3}});
 				WaitFor(() => node1.Pendings.Count() == 1 && node2.Pendings.Count() == 1 && node3.Pendings.Count() == 1);
@@ -128,7 +128,7 @@ namespace Tests
 			var node1 = new Node(new NodeConfiguration("Nodo 1", "1111", 1, 2000, port1), new BlockBuilder(), logger1);
 			var node2 = new Node(new NodeConfiguration("Nodo 2", "2222", 1, 2000, port2), new BlockBuilder(), logger2);
 			var node3 = new Node(new NodeConfiguration("Nodo 3", "3333", 1, 2000, port3), new BlockBuilder(), logger3);
-			
+
 			try
 			{
 				node1.Listen();
@@ -138,24 +138,24 @@ namespace Tests
 				node3.Listen();
 				WaitFor(() => node3.ChannelState == ChannelState.Listening);
 
-				Assert.AreEqual(0, node1.Peers.Count);
-				Assert.AreEqual(0, node2.Peers.Count);
-				Assert.AreEqual(0, node3.Peers.Count);
+				Assert.AreEqual(0, node1.Channel.Peers.Count());
+				Assert.AreEqual(0, node2.Channel.Peers.Count());
+				Assert.AreEqual(0, node3.Channel.Peers.Count());
 
-				node1.Register(host2, port2);
-				WaitFor(() => node2.Peers.Count == 1);
+				node1.Connect(host2, port2);
+				WaitFor(() => node2.Channel.Peers.Count() == 1);
 
-				Assert.AreEqual(1, node1.Peers.Count);
-				Assert.AreEqual(1, node2.Peers.Count);
-				Assert.AreEqual(0, node3.Peers.Count);
+				Assert.AreEqual(1, node1.Channel.Peers.Count());
+				Assert.AreEqual(1, node2.Channel.Peers.Count());
+				Assert.AreEqual(0, node3.Channel.Peers.Count());
 
-				node2.Register(host3, port3);
-				WaitFor(() => node3.Peers.Count == 2);
-				WaitFor(() => node1.Peers.Count == 2);
+				node2.Connect(host3, port3);
+				WaitFor(() => node3.Channel.Peers.Count() == 2);
+				WaitFor(() => node1.Channel.Peers.Count() == 2);
 
-				Assert.AreEqual(2, node1.Peers.Count);
-				Assert.AreEqual(2, node2.Peers.Count);
-				Assert.AreEqual(2, node3.Peers.Count);
+				Assert.AreEqual(2, node1.Channel.Peers.Count());
+				Assert.AreEqual(2, node2.Channel.Peers.Count());
+				Assert.AreEqual(2, node3.Channel.Peers.Count());
 			}
 			finally
 			{
@@ -192,7 +192,7 @@ namespace Tests
 			WaitFor(() => node2.ChainLength == 1);
 
 			Assert.AreEqual(1, node2.ChainLength);
-			node2.Register(host1, port1);
+			node2.Connect(host1, port1);
 			node2.Syncronize();
 			WaitFor(() => node2.ChainLength == 2);
 
@@ -245,7 +245,7 @@ namespace Tests
 
 
 				Assert.AreEqual(1, node2.ChainLength);
-				node2.Register(host1, port1);
+				node2.Connect(host1, port1);
 				node2.Syncronize();
 
 				WaitFor(() => node2.ChainLength == 3);
@@ -281,7 +281,7 @@ namespace Tests
 				node2.Listen();
 				WaitFor(() => node2.ChannelState == ChannelState.Listening);
 
-				node2.Register(host1, port1);
+				node2.Connect(host1, port1);
 				node2.Syncronize();
 				WaitFor(() => node2.ChainLength == 1);
 
@@ -310,8 +310,8 @@ namespace Tests
 				node3.Listen();
 				WaitFor(() => node3.ChannelState == ChannelState.Listening);
 
-				node3.Register(host1, port1);
-				node3.Register(host2, port2);
+				node3.Connect(host1, port1);
+				node3.Connect(host2, port2);
 				node3.Syncronize();
 				WaitFor(() => node3.ChainLength == 3);
 

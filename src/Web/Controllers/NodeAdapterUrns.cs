@@ -23,8 +23,8 @@ namespace Web.Controllers
 
 		public async Task Add(Urn urn)
 		{
-			var command = new SendUrnMessage(urn).GetBytes();
-			await nodeAdapter.GetResponse(command);
+			var command = new SendUrnCommand(urn);
+			await nodeAdapter.Send(command);
 		}
 	}
 }

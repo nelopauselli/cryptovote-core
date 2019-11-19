@@ -14,11 +14,8 @@ namespace Domain.Queries
 			this.blockchain = blockchain;
 		}
 
-		public IEnumerable<Question> Execute(string content)
+		public IEnumerable<Question> Execute(Guid communityId)
 		{
-			if (!Guid.TryParse(content, out var communityId))
-				yield break;
-
 			foreach (var block in blockchain.Trunk)
 			{
 				foreach (var question in block.Questions.Where(i => i.CommunityId == communityId))

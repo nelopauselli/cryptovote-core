@@ -27,6 +27,8 @@ namespace CryptoVote
 				? interval
 				: 60 * 1000;
 
+		public string MyName => configuration["My:Name"];
+
 		public string MyHost => configuration["My:Host"];
 
 		public int MyPort =>

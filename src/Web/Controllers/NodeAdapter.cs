@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Net.Sockets;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Domain.Channels;
+using Domain.Channels.Protocol;
 using Domain.Protocol;
 using Domain.Queries;
 using Microsoft.Extensions.Configuration;
@@ -35,36 +36,41 @@ namespace Web.Controllers
 		public NodeAdapterFiscals Fiscals => new NodeAdapterFiscals(this);
 		public NodeAdapterRecounts Recounts => new NodeAdapterRecounts(this);
 
-		public async Task<string> GetResponse(byte[] data)
+		public async Task Send(ICommand command)
 		{
 			Console.WriteLine($"Conectando con {Host}:{Port}");
 			using (var client = new TcpClient())
 			{
 				await client.ConnectAsync(Host, Port);
 
-				string body = null;
 				if (client.Connected)
 				{
 					using (var stream = client.GetStream())
 					{
-						CancellationToken ctsToken;
-						stream.Write(data, 0, data.Length);
-						stream.Flush();
+						command.Send(stream);
+					}
+				}
+			}
+		}
 
-						if (!ctsToken.IsCancellationRequested)
-						{
-							byte[] bytesToRead = new byte[client.ReceiveBufferSize];
-							int bytesRead = stream.Read(bytesToRead, 0, client.ReceiveBufferSize);
-							var response = Encoding.ASCII.GetString(bytesToRead, 0, bytesRead);
+		public async Task<T> GetResponse<T>(ICommand<T> command) where T : class
+		{
+			Console.WriteLine($"Conectando con {Host}:{Port}");
+			using (var client = new TcpClient())
+			{
+				await client.ConnectAsync(Host, Port);
 
-							var chunks = response.Split('|');
-							if (chunks.Length == 2)
-								body = chunks[1];
-						}
+				if (client.Connected)
+				{
+					using (var stream = client.GetStream())
+					{
+						command.Send(stream);
+						var header = CommandHeader.Parse(stream);
+						return command.Parse(stream, header.Length);
 					}
 				}
 
-				return body;
+				return null;
 			}
 		}
 

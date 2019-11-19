@@ -23,8 +23,8 @@ namespace Web.Controllers
 
 		public async Task Add(Fiscal fiscal)
 		{
-			var command = new SendFiscalMessage(fiscal).GetBytes();
-			await nodeAdapter.GetResponse(command);
+			var command = new SendFiscalCommand(fiscal);
+			await nodeAdapter.Send(command);
 		}
 	}
 }

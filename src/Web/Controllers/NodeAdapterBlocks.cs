@@ -1,7 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Domain;
 using Domain.Queries;
-using Newtonsoft.Json;
 
 namespace Web.Controllers
 {
@@ -16,14 +15,14 @@ namespace Web.Controllers
 
 		public async Task<Block> GetLastBlock()
 		{
-			var query = new LastBlockQueryMessage();
+			var query = new LastBlockQueryCommand();
 			var block = await nodeAdapter.GetResponse(query);
 			return block;
 		}
 
 		public async Task<Block> GetBlockByHash(byte[] hash)
 		{
-			var command = new BlockQueryMessage(hash);
+			var command = new BlockQueryCommand(hash);
 			return await nodeAdapter.GetResponse(command);
 		}
 	}

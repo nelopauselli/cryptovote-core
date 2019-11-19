@@ -13,17 +13,8 @@ namespace Domain.Queries
 			this.blockchain = blockchain;
 		}
 
-		public Member Execute(string content)
+		public Member Execute(Guid communityId, Guid memberId)
 		{
-			var chunks = content.Split('#');
-
-			if (chunks.Length != 2)
-				return null;
-			if (!Guid.TryParse(chunks[0], out var communityId))
-				return null;
-			if (!Guid.TryParse(chunks[1], out var memberId))
-				return null;
-
 			foreach (var block in blockchain.Trunk)
 			{
 				foreach (var question in block.Members.Where(i => i.CommunityId == communityId && i.Id == memberId))

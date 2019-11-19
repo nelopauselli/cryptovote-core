@@ -1,25 +1,28 @@
-using System.Text;
+using System.IO;
+using Domain.Channels;
+using Domain.Channels.Protocol;
 using Domain.Elections;
-using Newtonsoft.Json;
 
 namespace Domain.Protocol
 {
-	public class SendRecountMessage : ProtocolMessage
+	public class SendRecountCommand : ICommand
 	{
-		public const char CommandId = SendRecountCommandId;
-
 		private readonly Recount recount;
 
-		public SendRecountMessage(Recount recount)
+		public SendRecountCommand(Recount recount)
 		{
 			this.recount = recount;
 		}
 
-		public override byte[] GetBytes()
+		public string Name => "Send Recount";
+
+		public void Send(Stream stream)
 		{
-			var serialized = JsonConvert.SerializeObject(recount, Formatting.None);
-			var message = $"{CommandId}:{serialized.Length:D5}|{serialized}";
-			return Encoding.UTF8.GetBytes(message);
+			var buffer = Serializer.GetBytes(recount);
+			var header = new CommandHeader(CommandIds.SendRecount, buffer.Length);
+			header.CopyTo(stream);
+
+			stream.Write(buffer, 0, buffer.Length);
 		}
 	}
 }

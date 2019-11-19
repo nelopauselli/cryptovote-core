@@ -17,20 +17,20 @@ namespace Web.Controllers
 
 		public async Task<Member[]> ListMembers(Guid communityId)
 		{
-			var command = new MembersQueryMessage(communityId);
+			var command = new MembersQueryCommand(communityId);
 			return await nodeAdapter.GetResponse(command);
 		}
 
 		public async Task<Member> GetMember(Guid communityId, Guid memberId)
 		{
-			var command = new MemberQueryMessage(communityId, memberId);
+			var command = new MemberQueryCommand(communityId, memberId);
 			return await nodeAdapter.GetResponse(command);
 		}
 
 		public async Task AddMember(Member member)
 		{
-			var command = new SendMemberMessage(member).GetBytes();
-			await nodeAdapter.GetResponse(command);
+			var command = new SendMemberCommand(member);
+			await nodeAdapter.Send(command);
 		}
 	}
 }

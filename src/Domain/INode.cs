@@ -14,8 +14,6 @@ namespace Domain
 		void Add(Fiscal fiscal);
 		void Add(Urn urn);
 		void Add(Recount recount);
-
 		void Add(Block block);
-		void Register(string host, int port);
 	}
 }

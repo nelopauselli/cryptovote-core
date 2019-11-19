@@ -23,8 +23,8 @@ namespace Web.Controllers
 
 		public async Task Add(Vote vote)
 		{
-			var command = new SendVoteMessage(vote).GetBytes();
-			await nodeAdapter.GetResponse(command);
+			var command = new SendVoteCommand(vote);
+			await nodeAdapter.Send(command);
 		}
 	}
 }

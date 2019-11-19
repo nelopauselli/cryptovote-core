@@ -51,7 +51,7 @@ namespace CryptoVote
 			if (!string.IsNullOrWhiteSpace(configuration.PeerHost))
 			{
 				logger.Information($"Intentando conectar con: {configuration.PeerHost}:{configuration.PeerPort}");
-				node.Register(configuration.PeerHost, configuration.PeerPort);
+				node.Connect(configuration.PeerHost, configuration.PeerPort);
 				node.Syncronize();
 			}
 

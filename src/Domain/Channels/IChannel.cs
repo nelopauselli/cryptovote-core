@@ -1,9 +1,15 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
 
 namespace Domain.Channels
 {
 	public interface IChannel
 	{
-		void TalkWithClient(Stream stream);
+		string ID { get; }
+		string ListenHost { get; }
+		int ListenPort { get; }
+		IEnumerable<TcpPeer> Peers { get; }
+		INode Node { get; }
+		
+		void Connect(PeerInfo peerInfo);
 	}
 }

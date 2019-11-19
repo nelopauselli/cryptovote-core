@@ -23,8 +23,8 @@ namespace Web.Controllers
 
 		public async Task Add(Recount recount)
 		{
-			var command = new SendRecountMessage(recount).GetBytes();
-			await nodeAdapter.GetResponse(command);
+			var command = new SendRecountCommand(recount);
+			await nodeAdapter.Send(command);
 		}
 	}
 }

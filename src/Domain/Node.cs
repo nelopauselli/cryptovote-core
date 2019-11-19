@@ -17,7 +17,6 @@ namespace Domain
 		private readonly INodeLogger logger;
 		private readonly Blockchain blockchain;
 		private readonly IDictionary<string, BlockItem> pendings;
-		public Peers Peers { get; }
 
 		private bool stop;
 		private readonly object semaphore = new object();
@@ -28,14 +27,13 @@ namespace Domain
 		{
 			this.configuration = configuration;
 			this.logger = logger;
-			this.Peers = new Peers(configuration.Name, logger);
 
 			blockchain = new Blockchain(new Miner(AddressRewards), blockBuilder, configuration.BlockchainDificulty);
 
 			var path = "genesis.block";
 			blockchain.LoadGenesisBlock(path);
 
-			channel = new TcpChannel(this, configuration.MyPort, logger);
+			channel = new TcpChannel(configuration.Name, configuration.MyHost, configuration.MyPort, this, logger);
 			pendings = new Dictionary<string, BlockItem>();
 		}
 
@@ -72,6 +70,7 @@ namespace Domain
 		public int ChainLength => blockchain.Trunk.Count();
 		public Blockchain Blockchain => blockchain;
 		public ChannelState ChannelState => channel.State;
+		public IChannel Channel => channel;
 
 		public void Start()
 		{
@@ -93,7 +92,7 @@ namespace Domain
 
 		public void Listen(int timeout = 1000)
 		{
-			channel.Start(timeout);
+			Task.Run(() => channel.Listen());
 		}
 
 		public void MinePendingTransactions()
@@ -115,7 +114,7 @@ namespace Domain
 				{
 					if (block != null)
 					{
-						Peers.Broadcast(block);
+						channel.Broadcast(new SendBlockCommand(block));
 						var transactions = block.GetTransactions();
 						foreach (var item in transactions)
 							pendings.Remove(item.GetKey());
@@ -144,7 +143,7 @@ namespace Domain
 				pendings.Add(community.GetKey(), community);
 			}
 
-			Peers.Broadcast(community);
+			channel.Broadcast(new SendCommunityCommand(community));
 		}
 
 		public void Add(Question question)
@@ -157,7 +156,7 @@ namespace Domain
 				pendings.Add(question.GetKey(), question);
 			}
 
-			Peers.Broadcast(question);
+			channel.Broadcast(new SendQuestionCommand(question));
 		}
 
 		public void Add(Member member)
@@ -170,7 +169,7 @@ namespace Domain
 				pendings.Add(member.GetKey(), member);
 			}
 
-			Peers.Broadcast(member);
+			channel.Broadcast(new SendMemberCommand(member));
 		}
 
 		public void Add(Vote vote)
@@ -183,7 +182,7 @@ namespace Domain
 				pendings.Add(vote.GetKey(), vote);
 			}
 
-			Peers.Broadcast(vote);
+			channel.Broadcast(new SendVoteCommand(vote));
 		}
 
 		public void Add(Fiscal fiscal)
@@ -196,7 +195,7 @@ namespace Domain
 				pendings.Add(fiscal.GetKey(), fiscal);
 			}
 
-			Peers.Broadcast(fiscal);
+			channel.Broadcast(new SendFiscalCommand(fiscal));
 		}
 
 		public void Add(Urn urn)
@@ -209,7 +208,7 @@ namespace Domain
 				pendings.Add(urn.GetKey(), urn);
 			}
 
-			Peers.Broadcast(urn);
+			channel.Broadcast(new SendUrnCommand(urn));
 		}
 
 		public void Add(Recount recount)
@@ -222,7 +221,7 @@ namespace Domain
 				pendings.Add(recount.GetKey(), recount);
 			}
 
-			Peers.Broadcast(recount);
+			channel.Broadcast(new SendRecountCommand(recount));
 		}
 
 		public void Add(Document document)
@@ -235,7 +234,7 @@ namespace Domain
 				pendings.Add(document.GetKey(), document);
 			}
 
-			Peers.Broadcast(document);
+			channel.Broadcast(new SendDocumentCommand(document));
 		}
 
 		public void Add(Block block)
@@ -252,7 +251,7 @@ namespace Domain
 			if (!blockchain.Last.Hash.SequenceEqual(block.PreviousHash))
 			{
 				logger.Information("El bloque no existe ni es el siguiente al último, buscando más");
-				Peers.GetBlockByHash(block.PreviousHash);
+				channel.Broadcast(new GetBlockCommand(block.PreviousHash));
 				return;
 			}
 
@@ -280,50 +279,17 @@ namespace Domain
 				blockchain.AddBlock(block);
 			}
 
-			Peers.Broadcast(new LastBlockQueryMessage());
+			channel.Broadcast(new GetLastBlockCommand());
 		}
 
-		public Block GetLastBlock()
+		public void Connect(string host, int port)
 		{
-			return blockchain.Last;
-		}
-
-		public Block GetByHash(byte[] hash)
-		{
-			return blockchain.GetBlock(hash);
-		}
-
-		public void Register(string host, int port)
-		{
-			var peer = new TcpPeer(host, port, channel);
-			if (Peers.Contains(peer))
-			{
-				logger.Information($"Ya tenemos a ${peer.Host}:{peer.Port} entre los pares");
-				return;
-            }
-
-			if (peer.Host == configuration.MyHost && peer.Port == configuration.MyPort)
-			{
-				logger.Information($"Soy yo mismo el par");
-				return;
-			}
-
-			logger.Information($"Registrando el par: {peer.Host}:{peer.Port}");
-
-			Peers.Add(peer);
-
-			Peers.Send(peer, new SendPeerInfoMessage(new PeerInfo {Host = configuration.MyHost, Port = configuration.MyPort}));
-			foreach (var other in Peers.Hosts)
-			{
-				if(other.Host != peer.Host || other.Port != peer.Port) // No mandamos información de un par a ese par
-					Peers.Send(peer, new SendPeerInfoMessage(new PeerInfo {Host = other.Host, Port = other.Port}));
-			}
+			channel.Connect(host, port);
 		}
 
 		public void Syncronize()
 		{
-			foreach (var peer in Peers.Hosts)
-				Peers.Send(peer, new LastBlockQueryMessage());
+			channel.Broadcast(new GetLastBlockCommand());
 		}
 
 		public void Stop(int timeout=1000)
