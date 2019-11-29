@@ -218,7 +218,7 @@ namespace Tests
 				Thread.Sleep(DefaultSendTaskTimeout);
 
 				Thread.Sleep(1000);
-				node.Verify(n => n.Add(It.IsAny<Block>()), Times.Once);
+				node.Verify(n => n.Add(It.IsAny<Block>(), It.IsAny<TcpPeer>()), Times.Once);
 			}
 			finally
 			{
@@ -258,7 +258,7 @@ namespace Tests
 				Thread.Sleep(DefaultSendTaskTimeout);
 
 				Thread.Sleep(1000);
-				node.Verify(n => n.Add(It.IsAny<Block>()), Times.Once);
+				node.Verify(n => n.Add(It.IsAny<Block>(), It.IsAny<TcpPeer>()), Times.Once);
 			}
 			finally
 			{

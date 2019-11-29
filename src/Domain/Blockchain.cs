@@ -51,7 +51,16 @@ namespace Domain
 
 		public Block GetBlock(byte[] hash)
 		{
-			return trunk.FirstOrDefault(b => b.Hash.SequenceEqual(hash));
+			Block block = trunk.FirstOrDefault(b => b.Hash.SequenceEqual(hash));
+			if (block != null) return block;
+
+			foreach (var branch in branches)
+			{
+				block = branch.FirstOrDefault(b => b.Hash.SequenceEqual(hash));
+				if (block != null) return block;
+			}
+
+			return null;
 		}
 
 		public Block GetNextTo(byte[] hash)

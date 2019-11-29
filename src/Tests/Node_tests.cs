@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Domain;
 using Domain.Channels;
@@ -15,16 +16,23 @@ namespace Tests
 		private readonly Signer signer = new Signer(CryptoService.Instance);
 
 		[Test]
-		public void Init_node()
+		public void Start_node()
 		{
 			var cfg = new NodeConfiguration("Nodo 1", "1234", 1, 2000, port1);
 			var logger = new ConsoleLogger();
 			var node = new Node(cfg, new BlockBuilder(), logger);
 
-			node.Start();
-			Assert.AreEqual(NodeState.Running, node.State);
-
-			node.Stop(2000);
+			try
+			{
+				node.Start();
+				Assert.AreEqual(NodeState.Running, node.State);
+			}
+			finally
+			{
+				node.Stop(2000);
+				WaitFor(() => node.ChannelState != ChannelState.Listening);
+				Assert.AreEqual(ChannelState.Stop, node.ChannelState);
+			}
 		}
 
 		[Test]
@@ -92,8 +100,14 @@ namespace Tests
 			finally
 			{
 				node1.Stop();
+				WaitFor(() => node1.ChannelState != ChannelState.Listening);
+				Assert.AreEqual(ChannelState.Stop, node1.ChannelState);
 				node2.Stop();
+				WaitFor(() => node2.ChannelState != ChannelState.Listening);
+				Assert.AreEqual(ChannelState.Stop, node2.ChannelState);
 				node3.Stop();
+				WaitFor(() => node3.ChannelState != ChannelState.Listening);
+				Assert.AreEqual(ChannelState.Stop, node3.ChannelState);
 			}
 		}
 
@@ -133,8 +147,14 @@ namespace Tests
 			finally
 			{
 				node1.Stop();
+				WaitFor(() => node1.ChannelState != ChannelState.Listening);
+				Assert.AreEqual(ChannelState.Stop, node1.ChannelState);
 				node2.Stop();
+				WaitFor(() => node2.ChannelState != ChannelState.Listening);
+				Assert.AreEqual(ChannelState.Stop, node2.ChannelState);
 				node3.Stop();
+				WaitFor(() => node3.ChannelState != ChannelState.Listening);
+				Assert.AreEqual(ChannelState.Stop, node3.ChannelState);
 			}
 		}
 
@@ -187,7 +207,7 @@ namespace Tests
 
 				Assert.AreEqual(2, node1.Channel.Peers.Count());
 				Assert.AreEqual(2, node2.Channel.Peers.Count());
-				Assert.AreEqual(2, node3.Channel.Peers.Count());
+				Assert.AreEqual(2, node3.Channel.Peers.Count(), string.Join(", ", node3.Channel.Peers));
 			}
 			finally
 			{
@@ -374,10 +394,12 @@ namespace Tests
 				Assert.AreEqual(ChannelState.Listening, node1.ChannelState);
 
 				node3.Connect(host1, port1);
+				WaitFor(() => node3.Channel.Peers.Count() == 1);
 				node3.Connect(host2, port2);
+				WaitFor(() => node3.Channel.Peers.Count() == 2);
+				
 				node3.Syncronize();
-
-				WaitFor(() => node3.ChainLength == 3, TcpDefaultTimeout*3);
+				WaitFor(() => node3.ChainLength == 3);
 				Assert.AreEqual(3, node3.ChainLength);
 
 			}

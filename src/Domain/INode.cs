@@ -1,4 +1,5 @@
-﻿using Domain.Elections;
+﻿using Domain.Channels;
+using Domain.Elections;
 
 namespace Domain
 {
@@ -14,6 +15,6 @@ namespace Domain
 		void Add(Fiscal fiscal);
 		void Add(Urn urn);
 		void Add(Recount recount);
-		void Add(Block block);
+		void Add(Block block, TcpPeer peer);
 	}
 }

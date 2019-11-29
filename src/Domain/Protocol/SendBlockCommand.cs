@@ -13,7 +13,7 @@ namespace Domain.Protocol
 			this.block = block;
 		}
 
-		public string Name => "Send Block";
+		public string Name => $"Send Block #{block.BlockNumber}";
 
 		public void Send(Stream stream)
 		{

@@ -272,7 +272,7 @@ namespace Domain
 			channel.Broadcast(new SendDocumentCommand(document));
 		}
 
-		public void Add(Block block)
+		public void Add(Block block, TcpPeer peer)
 		{
 			logger.Information("Recibiendo bloque");
 
@@ -286,7 +286,7 @@ namespace Domain
 			if (!blockchain.Last.Hash.SequenceEqual(block.PreviousHash))
 			{
 				logger.Information("El bloque no existe ni es el siguiente al último, buscando más");
-				channel.Broadcast(new GetBlockCommand(block.PreviousHash));
+				peer.Send(new GetBlockCommand(block.PreviousHash));
 				return;
 			}
 

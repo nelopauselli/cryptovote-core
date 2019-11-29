@@ -216,5 +216,10 @@ namespace Domain.Channels
 			Port = peerInfo.Port;
 			IsAutenticated = true;
 		}
+
+		public override string ToString()
+		{
+			return ID;
+		}
 	}
 }

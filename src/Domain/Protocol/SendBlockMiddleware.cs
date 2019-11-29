@@ -21,7 +21,7 @@ namespace Domain.Protocol
 
 			var member = Serializer.Parse<Block>(buffer);
 
-			node.Add(member);
+			node.Add(member, peer);
 
 			return true;
 		}
