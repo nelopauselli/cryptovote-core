@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 using Domain;
 using Domain.Channels;
 using Domain.Crypto;
@@ -53,29 +54,47 @@ namespace Tests
 			var node2 = new Node(new NodeConfiguration("Nodo 2", "2222", 1, 2000, port2), new BlockBuilder(), logger2);
 			var node3 = new Node(new NodeConfiguration("Nodo 3", "3333", 1, 2000, port3), new BlockBuilder(), logger3);
 
-			node1.Listen();
-			WaitFor(() => node1.ChannelState == ChannelState.Listening);
-			node2.Listen();
-			WaitFor(() => node2.ChannelState == ChannelState.Listening);
-			node3.Listen();
-			WaitFor(() => node3.ChannelState == ChannelState.Listening);
+			try
+			{
+				Task.Run(() => node1.Listen());
+				WaitFor(() => node1.ChannelState == ChannelState.Listening);
+				Task.Run(() => node2.Listen());
+				WaitFor(() => node2.ChannelState == ChannelState.Listening);
+				Task.Run(() => node3.Listen());
+				WaitFor(() => node3.ChannelState == ChannelState.Listening);
 
-			node1.Connect(host2, port2);
-			WaitFor(() => node2.Channel.Peers.Count() == 1);
-			node2.Connect(host3, port3);
-			WaitFor(() => node3.Channel.Peers.Count() == 2);
-			node2.Syncronize();
-			WaitFor(() => node2.Blockchain.Trunk.Count() == 1);
+				node1.Connect(host2, port2);
+				WaitFor(() => node1.Channel.Peers.Count() == 1);
+				WaitFor(() => node2.Channel.Peers.Count() == 1);
+				WaitFor(() => node3.Channel.Peers.Count() == 0);
 
-			node1.Add(new Community {Address = new byte[] {1, 2, 3}});
-			WaitFor(() => node2.Pendings.Count() == 1 && node3.Pendings.Count() == 1);
+				node2.Connect(host3, port3);
+				WaitFor(() => node1.Channel.Peers.Count() == 1);
+				WaitFor(() => node2.Channel.Peers.Count() == 2);
+				WaitFor(() => node3.Channel.Peers.Count() == 1);
 
-			Assert.AreEqual(1, node2.Pendings.Count());
-			Assert.AreEqual(1, node3.Pendings.Count());
+				node3.Discovery();
+				WaitFor(() => node1.Channel.Peers.Count() == 1);
+				WaitFor(() => node2.Channel.Peers.Count() == 2);
+				WaitFor(() => node3.Channel.Peers.Count() == 2);
 
-			node1.Stop();
-			node2.Stop();
-			node3.Stop();
+				node2.Syncronize();
+				WaitFor(() => node2.Blockchain.Trunk.Count() == 1);
+				node3.Syncronize();
+				WaitFor(() => node3.Blockchain.Trunk.Count() == 1);
+
+				node1.Add(new Community {Address = new byte[] {1, 2, 3}});
+				WaitFor(() => node2.Pendings.Count() == 1 && node3.Pendings.Count() == 1);
+
+				Assert.AreEqual(1, node2.Pendings.Count());
+				Assert.AreEqual(1, node3.Pendings.Count());
+			}
+			finally
+			{
+				node1.Stop();
+				node2.Stop();
+				node3.Stop();
+			}
 		}
 
 		[Test]
@@ -90,17 +109,19 @@ namespace Tests
 			var node3 = new Node(new NodeConfiguration("Nodo 3", "3333", 1, 2000, port3), new BlockBuilder(), logger3);
 			try
 			{
-				node1.Listen();
+				Task.Run(() => node1.Listen());
 				WaitFor(() => node1.ChannelState == ChannelState.Listening);
-				node2.Listen();
+				Task.Run(() => node2.Listen());
 				WaitFor(() => node2.ChannelState == ChannelState.Listening);
-				node3.Listen();
+				Task.Run(() => node3.Listen());
 				WaitFor(() => node3.ChannelState == ChannelState.Listening);
 
 				node1.Connect(host2, port2);
 				WaitFor(() => node1.Channel.Peers.Count() == 1 && node2.Channel.Peers.Count() == 1);
 				node2.Connect(host3, port3);
-				WaitFor(() => node3.Channel.Peers.Count() == 2 && node2.Channel.Peers.Count() == 2);
+				WaitFor(() => node2.Channel.Peers.Count() == 2 && node3.Channel.Peers.Count() == 2);
+				node3.Connect(host1, port1);
+				WaitFor(() => node3.Channel.Peers.Count() == 2 && node1.Channel.Peers.Count() == 2);
 
 				node1.Add(new Community {Address = new byte[] {1, 2, 3}});
 				WaitFor(() => node1.Pendings.Count() == 1 && node2.Pendings.Count() == 1 && node3.Pendings.Count() == 1);
@@ -131,12 +152,17 @@ namespace Tests
 
 			try
 			{
-				node1.Listen();
+				Task.Run(() => node1.Listen());
 				WaitFor(() => node1.ChannelState == ChannelState.Listening);
-				node2.Listen();
+				Assert.AreEqual(ChannelState.Listening, node1.ChannelState);
+				
+				Task.Run(() => node2.Listen());
 				WaitFor(() => node2.ChannelState == ChannelState.Listening);
-				node3.Listen();
+				Assert.AreEqual(ChannelState.Listening, node2.ChannelState);
+				
+				Task.Run(() => node3.Listen());
 				WaitFor(() => node3.ChannelState == ChannelState.Listening);
+				Assert.AreEqual(ChannelState.Listening, node3.ChannelState);
 
 				Assert.AreEqual(0, node1.Channel.Peers.Count());
 				Assert.AreEqual(0, node2.Channel.Peers.Count());
@@ -150,8 +176,14 @@ namespace Tests
 				Assert.AreEqual(0, node3.Channel.Peers.Count());
 
 				node2.Connect(host3, port3);
-				WaitFor(() => node3.Channel.Peers.Count() == 2);
+				WaitFor(() => node1.Channel.Peers.Count() == 1);
+				WaitFor(() => node2.Channel.Peers.Count() == 2);
+				WaitFor(() => node3.Channel.Peers.Count() == 1);
+
+				node3.Discovery();
 				WaitFor(() => node1.Channel.Peers.Count() == 2);
+				WaitFor(() => node2.Channel.Peers.Count() == 2);
+				WaitFor(() => node3.Channel.Peers.Count() == 2);
 
 				Assert.AreEqual(2, node1.Channel.Peers.Count());
 				Assert.AreEqual(2, node2.Channel.Peers.Count());
@@ -160,8 +192,14 @@ namespace Tests
 			finally
 			{
 				node1.Stop();
+				WaitFor(() => node1.ChannelState != ChannelState.Listening);
+				Assert.AreEqual(ChannelState.Stop, node1.ChannelState);
 				node2.Stop();
+				WaitFor(() => node2.ChannelState != ChannelState.Listening);
+				Assert.AreEqual(ChannelState.Stop, node2.ChannelState);
 				node3.Stop();
+				WaitFor(() => node3.ChannelState != ChannelState.Listening);
+				Assert.AreEqual(ChannelState.Stop, node3.ChannelState);
 			}
 		}
 
@@ -172,34 +210,47 @@ namespace Tests
 			var logger2 = new ConsoleLogger {Tag = "node-2"};
 
 			var node1 = new Node(new NodeConfiguration("Nodo 1", "1111", 1, 2000, port1), new BlockBuilder(), logger1);
-			node1.Listen();
-			WaitFor(() => node1.ChannelState == ChannelState.Listening);
-			WaitFor(() => node1.ChainLength == 1);
-			Assert.AreEqual(1, node1.ChainLength);
-
-			var community = new Community {Id = Guid.NewGuid(), Name = "My Company", Address = new byte[] {1, 2, 3}};
-			var keys = CryptoService.Instance.GeneratePair();
-			signer.Sign(community, keys);
-
-			node1.Add(community);
-			node1.MinePendingTransactions();
-
-			Assert.AreEqual(2, node1.ChainLength);
-
 			var node2 = new Node(new NodeConfiguration("Nodo 2", "1234", 1, 2000, port2), new BlockBuilder(), logger2);
-			node2.Listen();
-			WaitFor(() => node2.ChannelState == ChannelState.Listening);
-			WaitFor(() => node2.ChainLength == 1);
 
-			Assert.AreEqual(1, node2.ChainLength);
-			node2.Connect(host1, port1);
-			node2.Syncronize();
-			WaitFor(() => node2.ChainLength == 2);
+			try
+			{
+				Task.Run(() => node1.Listen());
+				WaitFor(() => node1.ChannelState == ChannelState.Listening);
+				Assert.AreEqual(ChannelState.Listening, node1.ChannelState);
 
-			Assert.AreEqual(2, node2.ChainLength);
+				WaitFor(() => node1.ChainLength == 1);
+				Assert.AreEqual(1, node1.ChainLength);
 
-			node1.Stop();
-			node2.Stop();
+				var community = new Community {Id = Guid.NewGuid(), Name = "My Company", Address = new byte[] {1, 2, 3}};
+				var keys = CryptoService.Instance.GeneratePair();
+				signer.Sign(community, keys);
+
+				node1.Add(community);
+				node1.MinePendingTransactions();
+
+				Assert.AreEqual(2, node1.ChainLength);
+
+				Task.Run(() => node2.Listen());
+				WaitFor(() => node2.ChannelState == ChannelState.Listening);
+				Assert.AreEqual(ChannelState.Listening, node2.ChannelState);
+				WaitFor(() => node2.ChainLength == 1);
+
+				Assert.AreEqual(1, node2.ChainLength);
+				node2.Connect(host1, port1);
+				node2.Syncronize();
+				WaitFor(() => node2.ChainLength == 2);
+
+				Assert.AreEqual(2, node2.ChainLength);
+			}
+			finally
+			{
+				node1.Stop();
+				WaitFor(() => node1.ChannelState != ChannelState.Listening);
+				Assert.AreEqual(ChannelState.Stop, node1.ChannelState);
+				node2.Stop();
+				WaitFor(() => node2.ChannelState != ChannelState.Listening);
+				Assert.AreEqual(ChannelState.Stop, node2.ChannelState);
+			}
 		}
 
 		[Test]
@@ -216,7 +267,10 @@ namespace Tests
 
 			try
 			{
-				node1.Listen();
+				Task.Run(() => node1.Listen());
+				WaitFor(() => node1.ChannelState == ChannelState.Listening);
+				Assert.AreEqual(ChannelState.Listening, node1.ChannelState); 
+				
 				WaitFor(() => node1.ChannelState == ChannelState.Listening);
 				WaitFor(() => node1.ChainLength == 1);
 
@@ -239,7 +293,10 @@ namespace Tests
 
 				Assert.AreEqual(3, node1.ChainLength);
 
-				node2.Listen();
+				Task.Run(() => node2.Listen());
+				WaitFor(() => node2.ChannelState == ChannelState.Listening);
+				Assert.AreEqual(ChannelState.Listening, node2.ChannelState); 
+				
 				WaitFor(() => node2.ChannelState == ChannelState.Listening);
 				WaitFor(() => node2.ChainLength == 1);
 
@@ -255,7 +312,11 @@ namespace Tests
 			finally
 			{
 				node1.Stop();
+				WaitFor(() => node1.ChannelState != ChannelState.Listening);
+				Assert.AreEqual(ChannelState.Stop, node1.ChannelState);
 				node2.Stop();
+				WaitFor(() => node2.ChannelState != ChannelState.Listening);
+				Assert.AreEqual(ChannelState.Stop, node2.ChannelState);
 			}
 		}
 
@@ -275,11 +336,13 @@ namespace Tests
 
 			try
 			{
-				node1.Listen();
+				Task.Run(() => node1.Listen());
 				WaitFor(() => node1.ChannelState == ChannelState.Listening);
+				Assert.AreEqual(ChannelState.Listening, node1.ChannelState);
 
-				node2.Listen();
+				Task.Run(() => node2.Listen());
 				WaitFor(() => node2.ChannelState == ChannelState.Listening);
+				Assert.AreEqual(ChannelState.Listening, node2.ChannelState);
 
 				node2.Connect(host1, port1);
 				node2.Syncronize();
@@ -304,25 +367,31 @@ namespace Tests
 				node1.MinePendingTransactions();
 
 				Assert.AreEqual(3, node1.ChainLength);
-
 				Assert.AreEqual(1, node3.ChainLength);
 
-				node3.Listen();
+				Task.Run(() => node3.Listen());
 				WaitFor(() => node3.ChannelState == ChannelState.Listening);
+				Assert.AreEqual(ChannelState.Listening, node1.ChannelState);
 
 				node3.Connect(host1, port1);
 				node3.Connect(host2, port2);
 				node3.Syncronize();
-				WaitFor(() => node3.ChainLength == 3);
 
+				WaitFor(() => node3.ChainLength == 3, TcpDefaultTimeout*3);
 				Assert.AreEqual(3, node3.ChainLength);
 
 			}
 			finally
 			{
 				node1.Stop();
+				WaitFor(() => node1.ChannelState != ChannelState.Listening);
+				Assert.AreEqual(ChannelState.Stop, node1.ChannelState);
 				node2.Stop();
+				WaitFor(() => node2.ChannelState != ChannelState.Listening);
+				Assert.AreEqual(ChannelState.Stop, node2.ChannelState);
 				node3.Stop();
+				WaitFor(() => node3.ChannelState != ChannelState.Listening);
+				Assert.AreEqual(ChannelState.Stop, node3.ChannelState);
 			}
 		}
 	}

@@ -24,7 +24,7 @@ namespace Tests
 		public void Start_and_stop_server()
 		{
 			var node = new Mock<INode>();
-			var channel = new TcpChannel("server",host1, port1, node.Object, new ConsoleLogger());
+			var channel = new TcpChannel("server", host1, port1, node.Object, new ConsoleLogger());
 
 			try
 			{
@@ -52,22 +52,25 @@ namespace Tests
 
 			try
 			{
-								Task.Run(() => channel.Listen());
+				Task.Run(() => channel.Listen());
 				WaitFor(() => channel.State == ChannelState.Listening);
+				Assert.AreEqual(ChannelState.Listening, channel.State);
 
 				var client = new TcpPeer(new FakeChannel("client", host2, port2), new TcpClient(host1, port1), new ConsoleLogger());
 
 				var vote = new Vote {ChoiceId = Guid.NewGuid()};
 				var command = new SendVoteCommand(vote);
 
-				client.Send(command);Thread.Sleep(DefaultSendTaskTimeout);
+				client.Send(command);
+				Thread.Sleep(DefaultSendTaskTimeout);
 
 				node.Verify(n => n.Add(It.IsAny<Vote>()), Times.Once);
 			}
 			finally
 			{
-				if (channel.State == ChannelState.Listening)
-					channel.Stop();
+				channel.Stop();
+				WaitFor(() => channel.State != ChannelState.Listening);
+				Assert.AreEqual(ChannelState.Stop, channel.State);
 			}
 		}
 
@@ -75,26 +78,29 @@ namespace Tests
 		public void Send_member()
 		{
 			var node = new Mock<INode>();
-			var channel = new TcpChannel("server",host1, port1, node.Object, new ConsoleLogger());
+			var channel = new TcpChannel("server", host1, port1, node.Object, new ConsoleLogger());
 
 			try
 			{
-								Task.Run(() => channel.Listen());
+				Task.Run(() => channel.Listen());
 				WaitFor(() => channel.State == ChannelState.Listening);
+				Assert.AreEqual(ChannelState.Listening, channel.State);
 
 				var client = new TcpPeer(new FakeChannel("client", host2, port2), new TcpClient(host1, port1), new ConsoleLogger());
 
 				var member = new Member {Name = "Juan"};
 				var command = new SendMemberCommand(member);
 
-				client.Send(command); Thread.Sleep(DefaultSendTaskTimeout);
+				client.Send(command);
+				Thread.Sleep(DefaultSendTaskTimeout);
 
 				node.Verify(n => n.Add(It.IsAny<Member>()), Times.Once);
 			}
 			finally
 			{
-				if (channel.State == ChannelState.Listening)
-					channel.Stop();
+				channel.Stop();
+				WaitFor(() => channel.State != ChannelState.Listening);
+				Assert.AreEqual(ChannelState.Stop, channel.State);
 			}
 		}
 
@@ -104,12 +110,13 @@ namespace Tests
 			var node = new Mock<INode>();
 			Question questionInNode = null;
 			node.Setup(n => n.Add(It.IsAny<Question>())).Callback<Question>(v => questionInNode = v);
-			var channel = new TcpChannel("server",host1, port1, node.Object, new ConsoleLogger());
+			var channel = new TcpChannel("server", host1, port1, node.Object, new ConsoleLogger());
 
 			try
 			{
-								Task.Run(() => channel.Listen());
+				Task.Run(() => channel.Listen());
 				WaitFor(() => channel.State == ChannelState.Listening);
+				Assert.AreEqual(ChannelState.Listening, channel.State);
 
 				var client = new TcpPeer(new FakeChannel("client", host2, port2), new TcpClient(host1, port1), new ConsoleLogger());
 
@@ -123,7 +130,8 @@ namespace Tests
 				};
 				var command = new SendQuestionCommand(question);
 
-				client.Send(command); Thread.Sleep(DefaultSendTaskTimeout);
+				client.Send(command);
+				Thread.Sleep(DefaultSendTaskTimeout);
 
 				node.Verify(n => n.Add(It.IsAny<Question>()), Times.Once);
 
@@ -136,8 +144,9 @@ namespace Tests
 			}
 			finally
 			{
-				if (channel.State == ChannelState.Listening)
-					channel.Stop();
+				channel.Stop();
+				WaitFor(() => channel.State != ChannelState.Listening);
+				Assert.AreEqual(ChannelState.Stop, channel.State);
 			}
 		}
 
@@ -148,12 +157,13 @@ namespace Tests
 			Community communityInNode = null;
 			node.Setup(n => n.Add(It.IsAny<Community>())).Callback<Community>(v => communityInNode = v);
 
-			var channel = new TcpChannel("server",host1, port1, node.Object, new ConsoleLogger());
+			var channel = new TcpChannel("server", host1, port1, node.Object, new ConsoleLogger());
 
 			try
 			{
-								Task.Run(() => channel.Listen());
+				Task.Run(() => channel.Listen());
 				WaitFor(() => channel.State == ChannelState.Listening);
+				Assert.AreEqual(ChannelState.Listening, channel.State);
 
 				var client = new TcpPeer(new FakeChannel("client", host2, port2), new TcpClient(host1, port1), new ConsoleLogger());
 
@@ -164,7 +174,8 @@ namespace Tests
 				};
 
 				var command = new SendCommunityCommand(community);
-				client.Send(command); Thread.Sleep(DefaultSendTaskTimeout);
+				client.Send(command);
+				Thread.Sleep(DefaultSendTaskTimeout);
 
 				node.Verify(n => n.Add(It.IsAny<Community>()), Times.Once);
 				Assert.IsNotNull(communityInNode);
@@ -172,8 +183,9 @@ namespace Tests
 			}
 			finally
 			{
-				if (channel.State == ChannelState.Listening)
-					channel.Stop();
+				channel.Stop();
+				WaitFor(() => channel.State != ChannelState.Listening);
+				Assert.AreEqual(ChannelState.Stop, channel.State);
 			}
 		}
 
@@ -181,11 +193,12 @@ namespace Tests
 		public void Send_block_2048()
 		{
 			var node = new Mock<INode>();
-			var channel = new TcpChannel("server",host1, port1, node.Object, new ConsoleLogger());
+			var channel = new TcpChannel("server", host1, port1, node.Object, new ConsoleLogger());
 
 			try
 			{
-								Task.Run(() => channel.Listen());
+				Task.Run(() => channel.Listen());
+				WaitFor(() => channel.State == ChannelState.Listening);
 				Assert.AreEqual(ChannelState.Listening, channel.State);
 
 				var client = new TcpPeer(new FakeChannel("client", host2, port2), new TcpClient(host1, port1), new ConsoleLogger());
@@ -201,17 +214,18 @@ namespace Tests
 
 				var command = new SendBlockCommand(block);
 
-				client.Send(command); Thread.Sleep(DefaultSendTaskTimeout);
+				client.Send(command);
+				Thread.Sleep(DefaultSendTaskTimeout);
 
 				Thread.Sleep(1000);
 				node.Verify(n => n.Add(It.IsAny<Block>()), Times.Once);
-
-				channel.Stop();
 			}
 			finally
 			{
-				if (channel.State == ChannelState.Listening)
-					channel.Stop();
+				channel.Stop();
+				WaitFor(() => channel.State != ChannelState.Listening);
+				Assert.AreEqual(ChannelState.Stop, channel.State);
+
 			}
 		}
 
@@ -219,14 +233,15 @@ namespace Tests
 		public void Send_block_512()
 		{
 			var node = new Mock<INode>();
-			var channel = new TcpChannel("server",host1, port1, node.Object, new ConsoleLogger());
+			var channel = new TcpChannel("server", host1, port1, node.Object, new ConsoleLogger());
 
 
 			try
 			{
-								Task.Run(() => channel.Listen());
+				Task.Run(() => channel.Listen());
+				WaitFor(() => channel.State == ChannelState.Listening);
 				Assert.AreEqual(ChannelState.Listening, channel.State);
-
+				
 				var client = new TcpPeer(new FakeChannel("client", host2, port2), new TcpClient(host1, port1), new ConsoleLogger());
 
 				var previousHash = new byte[] {0, 0, 0, 0};
@@ -239,15 +254,17 @@ namespace Tests
 				block.Documents.Add(new Document(content));
 
 				var command = new SendBlockCommand(block);
-				client.Send(command); Thread.Sleep(DefaultSendTaskTimeout);
+				client.Send(command);
+				Thread.Sleep(DefaultSendTaskTimeout);
 
 				Thread.Sleep(1000);
 				node.Verify(n => n.Add(It.IsAny<Block>()), Times.Once);
 			}
 			finally
 			{
-				if (channel.State == ChannelState.Listening)
-					channel.Stop();
+				channel.Stop();
+				WaitFor(() => channel.State != ChannelState.Listening);
+				Assert.AreEqual(ChannelState.Stop, channel.State);
 			}
 		}
 
@@ -257,12 +274,13 @@ namespace Tests
 			var node = new Mock<INode>();
 			Document documentInNode = null;
 			node.Setup(n => n.Add(It.IsAny<Document>())).Callback<Document>(v => documentInNode = v);
-			var channel = new TcpChannel("server",host1, port1, node.Object, new ConsoleLogger());
+			var channel = new TcpChannel("server", host1, port1, node.Object, new ConsoleLogger());
 
 			try
 			{
-								Task.Run(() => channel.Listen());
+				Task.Run(() => channel.Listen());
 				WaitFor(() => channel.State == ChannelState.Listening);
+				Assert.AreEqual(ChannelState.Listening, channel.State);
 
 				var client = new TcpPeer(new FakeChannel("client", host2, port2), new TcpClient(host1, port1), new ConsoleLogger());
 
@@ -273,7 +291,8 @@ namespace Tests
 				var document = new Document(content);
 
 				var command = new SendDocumentCommand(document);
-				client.Send(command); Thread.Sleep(DefaultSendTaskTimeout);
+				client.Send(command);
+				Thread.Sleep(DefaultSendTaskTimeout);
 
 				node.Verify(n => n.Add(It.IsAny<Document>()), Times.Once);
 				Assert.IsNotNull(documentInNode);
@@ -281,8 +300,9 @@ namespace Tests
 			}
 			finally
 			{
-				if (channel.State == ChannelState.Listening)
-					channel.Stop();
+				channel.Stop();
+				WaitFor(() => channel.State != ChannelState.Listening);
+				Assert.AreEqual(ChannelState.Stop, channel.State);
 			}
 		}
 
@@ -292,12 +312,13 @@ namespace Tests
 			var node = new Mock<INode>();
 			Document documentInNode = null;
 			node.Setup(n => n.Add(It.IsAny<Document>())).Callback<Document>(v => documentInNode = v);
-			var channel = new TcpChannel("server",host1, port1, node.Object, new ConsoleLogger());
+			var channel = new TcpChannel("server", host1, port1, node.Object, new ConsoleLogger());
 
 			try
 			{
-								Task.Run(() => channel.Listen());
+				Task.Run(() => channel.Listen());
 				WaitFor(() => channel.State == ChannelState.Listening);
+				Assert.AreEqual(ChannelState.Listening, channel.State);
 
 				var client = new TcpPeer(new FakeChannel("client", host2, port2), new TcpClient(host1, port1), new ConsoleLogger());
 
@@ -308,7 +329,8 @@ namespace Tests
 				var document = new Document(content);
 
 				var command = new SendDocumentCommand(document);
-				client.Send(command); Thread.Sleep(DefaultSendTaskTimeout);
+				client.Send(command);
+				Thread.Sleep(DefaultSendTaskTimeout);
 
 				node.Verify(n => n.Add(It.IsAny<Document>()), Times.Once);
 				Assert.IsNotNull(documentInNode);
@@ -316,8 +338,9 @@ namespace Tests
 			}
 			finally
 			{
-				if (channel.State == ChannelState.Listening)
-					channel.Stop();
+				channel.Stop();
+				WaitFor(() => channel.State != ChannelState.Listening);
+				Assert.AreEqual(ChannelState.Stop, channel.State);
 			}
 		}
 	}

@@ -53,6 +53,8 @@ namespace CryptoVote
 				logger.Information($"Intentando conectar con: {configuration.PeerHost}:{configuration.PeerPort}");
 				node.Connect(configuration.PeerHost, configuration.PeerPort);
 				node.Syncronize();
+
+				node.Discovery();
 			}
 
 			Console.CancelKeyPress += OnCancelKeyPress;

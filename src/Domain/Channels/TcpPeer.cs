@@ -68,7 +68,7 @@ namespace Domain.Channels
 				new SendVoteMiddleware(owner.Node), 
 
 				new GetLastBlockMiddleware(owner.Node),
-				new GetBlockMiddleware(owner.Node), 
+				new GetBlockMiddleware(owner.Node, logger), 
 
 				new LastBlockQueryMiddleware(owner.Node),
 				new BlockQueryMiddleware(owner.Node),

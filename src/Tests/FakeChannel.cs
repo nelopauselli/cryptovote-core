@@ -24,5 +24,10 @@ namespace Tests
 		public void Connect(PeerInfo peerInfo)
 		{
 		}
+
+		public void Discovery()
+		{
+			
+		}
 	}
 }

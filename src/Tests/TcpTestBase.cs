@@ -20,14 +20,11 @@ namespace Tests
 			var count = timeout / 250;
 			while (count > 0)
 			{
-				if (condition.Invoke()) return;
+				if (condition.Invoke()) break;
 
 				Thread.Sleep(250);
 				count--;
 			}
-
-			Assert.Fail("Timeout");
 		}
-
 	}
 }

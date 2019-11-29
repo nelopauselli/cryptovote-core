@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
@@ -38,37 +39,56 @@ namespace Domain.Channels
 
 		public async Task Listen()
 		{
-			logger.Information($"[#{Thread.CurrentThread.ManagedThreadId}] Iniciando canal de comunicaciones...");
-
-			var addr = IPAddress.Parse(ListenHost);
-			server = new TcpListener(addr, ListenPort);
-			server.Start();
-
 			try
 			{
-				State = ChannelState.Listening;
-				
-				while (!cancellationToken.IsCancellationRequested)
+				logger.Information($"[#{Thread.CurrentThread.ManagedThreadId}] Iniciando canal de comunicaciones...");
+
+				var addr = IPAddress.Parse(ListenHost);
+				server = new TcpListener(addr, ListenPort);
+				server.Start();
+
+				try
 				{
-					logger.Information($"[#{Thread.CurrentThread.ManagedThreadId}] Canal iniciado");
+					State = ChannelState.Listening;
 
-					var client = await Task.Run(() => server.AcceptTcpClientAsync(), cancellationToken.Token);
-					logger.Information($"[#{Thread.CurrentThread.ManagedThreadId}] Nueva comunicación entrante");
+					while (!cancellationToken.IsCancellationRequested)
+					{
+						logger.Information($"[#{Thread.CurrentThread.ManagedThreadId}] Canal iniciado");
+						
+						TcpClient client;
+						try
+						{
+							client = await Task.Run(() => server.AcceptTcpClientAsync(), cancellationToken.Token);
+						}
+						catch
+						{
+							client = null;
+						}
 
-					var peer = new TcpPeer(this, client, logger);
-					peer.Start();
+						if (client != null)
+						{
+							logger.Information($"[#{Thread.CurrentThread.ManagedThreadId}] Nueva comunicación entrante");
 
-					peers.Add(peer);
+							var peer = new TcpPeer(this, client, logger);
+							peer.Start();
+
+							peers.Add(peer);
+						}
+					}
 				}
-
-				State = ChannelState.Stop;
+				finally
+				{
+					logger.Information($"[#{Thread.CurrentThread.ManagedThreadId}] Listener detenido");
+					if (server.Server.Connected)
+						server.Stop();
+					State = ChannelState.Stop;
+					stoped = true;
+				}
 			}
-			finally
+			catch (Exception ex)
 			{
-				logger.Information($"[#{Thread.CurrentThread.ManagedThreadId}] Listener detenido");
-				State = ChannelState.Stop;
-				server.Stop();
-				stoped = true;
+				State = ChannelState.Error;
+				logger.Error(ex.ToString());
 			}
 		}
 
@@ -130,7 +150,8 @@ namespace Domain.Channels
 
 		public void Discovery()
 		{
-			foreach (var peer in peers)
+			var target = peers.ToArray();
+			foreach (var peer in target)
 			{
 				peer.Send(new PeersRequestCommand());
 			}

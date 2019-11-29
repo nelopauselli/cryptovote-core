@@ -1,5 +1,4 @@
 using System;
-using System.IO;
 using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
@@ -16,7 +15,7 @@ using Tests.Mocks;
 
 namespace Tests
 {
-	public class Conversation_tests
+	public class Conversation_tests : TcpTestBase
 	{
 		private string host = "127.0.0.1";
 		private int port = 14001;
@@ -56,11 +55,11 @@ namespace Tests
 			var question = new Question {Id = questionId, CommunityId = cryptoVote.Id, Name = "¿el nodo debe poder ejecutarse en una Raspberry?", Choices = new[] {new Choice {Id = Guid.NewGuid(), Text = "SI"}, new Choice {Id = Guid.NewGuid(), Text = "NO"}}};
 			signer.Sign(question, nelo);
 
-			var member = new Member { Id = neloId, CommunityId = cryptoVote.Id, Name = "Nelo" };
+			var member = new Member {Id = neloId, CommunityId = cryptoVote.Id, Name = "Nelo"};
 			signer.Sign(member, nelo);
 
 			blockchain.MineNextBlock(new BlockItem[] {cryptoVote, copperadora});
-			var block1 = blockchain.MineNextBlock(new BlockItem[] {question, member });
+			var block1 = blockchain.MineNextBlock(new BlockItem[] {question, member});
 			block1Hash = block1.Hash;
 		}
 
@@ -72,6 +71,9 @@ namespace Tests
 			var channel = new TcpChannel("server", host, port, node.Object, new ConsoleLogger());
 
 			Task.Run(() => channel.Listen());
+			WaitFor(() => channel.State != ChannelState.Stop);
+			Assert.AreEqual(ChannelState.Listening, channel.State);
+
 			try
 			{
 				var command = new GetLastBlockCommand();
@@ -101,7 +103,9 @@ namespace Tests
 			}
 			finally
 			{
-				channel.Stop();
+				Task.Run(() => channel.Stop());
+				WaitFor(() => channel.State != ChannelState.Listening);
+				Assert.AreEqual(ChannelState.Stop, channel.State);
 			}
 		}
 
@@ -113,6 +117,9 @@ namespace Tests
 			var channel = new TcpChannel("server", host, port, node.Object, new ConsoleLogger());
 
 			Task.Run(() => channel.Listen());
+			WaitFor(() => channel.State != ChannelState.Stop);
+			Assert.AreEqual(ChannelState.Listening, channel.State);
+
 			try
 			{
 				var command = new GetBlockCommand(block1Hash);
@@ -141,7 +148,9 @@ namespace Tests
 			}
 			finally
 			{
-				channel.Stop();
+				Task.Run(() => channel.Stop());
+				WaitFor(() => channel.State != ChannelState.Listening);
+				Assert.AreEqual(ChannelState.Stop, channel.State);
 			}
 		}
 
@@ -153,6 +162,9 @@ namespace Tests
 			var channel = new TcpChannel("server", host, port, node.Object, new ConsoleLogger());
 
 			Task.Run(() => channel.Listen());
+			WaitFor(() => channel.State != ChannelState.Stop);
+			Assert.AreEqual(ChannelState.Listening, channel.State);
+
 			try
 			{
 				var command = new CommunitiesQueryCommand();
@@ -179,7 +191,9 @@ namespace Tests
 			}
 			finally
 			{
-				channel.Stop();
+				Task.Run(() => channel.Stop());
+				WaitFor(() => channel.State != ChannelState.Listening);
+				Assert.AreEqual(ChannelState.Stop, channel.State);
 			}
 		}
 
@@ -191,6 +205,9 @@ namespace Tests
 			var channel = new TcpChannel("server", host, port, node.Object, new ConsoleLogger());
 
 			Task.Run(() => channel.Listen());
+			WaitFor(() => channel.State != ChannelState.Stop);
+			Assert.AreEqual(ChannelState.Listening, channel.State);
+
 			try
 			{
 				var command = new CommunityQueryCommand(cryptoVoteId);
@@ -211,14 +228,14 @@ namespace Tests
 
 						Assert.IsNotNull(community);
 						Assert.AreEqual("Crypto Vote", community.Name);
-
-
 					}
 				}
 			}
 			finally
 			{
-				channel.Stop();
+				Task.Run(() => channel.Stop());
+				WaitFor(() => channel.State != ChannelState.Listening);
+				Assert.AreEqual(ChannelState.Stop, channel.State);
 			}
 		}
 
@@ -230,6 +247,9 @@ namespace Tests
 			var channel = new TcpChannel("server", host, port, node.Object, new ConsoleLogger());
 
 			Task.Run(() => channel.Listen());
+			WaitFor(() => channel.State != ChannelState.Stop);
+			Assert.AreEqual(ChannelState.Listening, channel.State);
+
 			try
 			{
 				var command = new QuestionsQueryCommand(cryptoVoteId);
@@ -261,7 +281,9 @@ namespace Tests
 			}
 			finally
 			{
-				channel.Stop();
+				Task.Run(() => channel.Stop());
+				WaitFor(() => channel.State != ChannelState.Listening);
+				Assert.AreEqual(ChannelState.Stop, channel.State);
 			}
 		}
 
@@ -273,6 +295,9 @@ namespace Tests
 			var channel = new TcpChannel("server", host, port, node.Object, new ConsoleLogger());
 
 			Task.Run(() => channel.Listen());
+			WaitFor(() => channel.State != ChannelState.Stop);
+			Assert.AreEqual(ChannelState.Listening, channel.State);
+
 			try
 			{
 				var command = new QuestionQueryCommand(cryptoVoteId, questionId);
@@ -301,7 +326,9 @@ namespace Tests
 			}
 			finally
 			{
-				channel.Stop();
+				Task.Run(() => channel.Stop());
+				WaitFor(() => channel.State != ChannelState.Listening);
+				Assert.AreEqual(ChannelState.Stop, channel.State);
 			}
 		}
 
@@ -313,6 +340,9 @@ namespace Tests
 			var channel = new TcpChannel("server", host, port, node.Object, new ConsoleLogger());
 
 			Task.Run(() => channel.Listen());
+			WaitFor(() => channel.State != ChannelState.Stop);
+			Assert.AreEqual(ChannelState.Listening, channel.State);
+
 			try
 			{
 				var command = new MembersQueryCommand(cryptoVoteId);
@@ -344,7 +374,9 @@ namespace Tests
 			}
 			finally
 			{
-				channel.Stop();
+				Task.Run(() => channel.Stop());
+				WaitFor(() => channel.State != ChannelState.Listening);
+				Assert.AreEqual(ChannelState.Stop, channel.State);
 			}
 		}
 
@@ -356,6 +388,9 @@ namespace Tests
 			var channel = new TcpChannel("server", host, port, node.Object, new ConsoleLogger());
 
 			Task.Run(() => channel.Listen());
+			WaitFor(() => channel.State != ChannelState.Stop);
+			Assert.AreEqual(ChannelState.Listening, channel.State);
+
 			try
 			{
 				var command = new MemberQueryCommand(cryptoVoteId, neloId);
@@ -384,7 +419,9 @@ namespace Tests
 			}
 			finally
 			{
-				channel.Stop();
+				Task.Run(() => channel.Stop());
+				WaitFor(() => channel.State != ChannelState.Listening);
+				Assert.AreEqual(ChannelState.Stop, channel.State);
 			}
 		}
 	}

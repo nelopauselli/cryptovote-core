@@ -1,4 +1,5 @@
-﻿using Domain.Channels;
+﻿using System;
+using Domain.Channels;
 using Domain.Channels.Protocol;
 
 namespace Domain.Protocol
@@ -6,10 +7,12 @@ namespace Domain.Protocol
 	public class GetBlockMiddleware : IMiddleware
 	{
 		private readonly INode node;
+		private readonly INodeLogger logger;
 
-		public GetBlockMiddleware(INode node)
+		public GetBlockMiddleware(INode node, INodeLogger logger)
 		{
 			this.node = node;
+			this.logger = logger;
 		}
 
 		public bool Invoke(CommandHeader header, TcpPeer peer)
@@ -20,8 +23,15 @@ namespace Domain.Protocol
 			peer.Read(hash, 0, header.Length);
 
 			var block = node.Blockchain.GetBlock(hash);
-
-			peer.Send(new SendBlockCommand(block));
+			if (block != null)
+			{
+				logger.Debug($"Enviando bloque {block.BlockNumber}");
+				peer.Send(new SendBlockCommand(block));
+			}
+			else
+			{
+				logger.Debug($"No se encontró el bloque {BitConverter.ToString(hash)}");
+			}
 
 			return true;
 		}

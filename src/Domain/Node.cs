@@ -22,6 +22,8 @@ namespace Domain
 		private readonly object semaphore = new object();
 		private Task worker;
 		private readonly TcpChannel channel;
+		private Task channelTask;
+		private CancellationTokenSource cts = new CancellationTokenSource();
 
 		public Node(INodeConfiguration configuration, IBlockBuilder blockBuilder, INodeLogger logger)
 		{
@@ -92,7 +94,40 @@ namespace Domain
 
 		public void Listen(int timeout = 1000)
 		{
-			Task.Run(() => channel.Listen());
+			channelTask = Task.Run(() => channel.Listen(), cts.Token);
+		}
+
+		public void Connect(string host, int port)
+		{
+			channel.Connect(host, port);
+		}
+
+		public void Syncronize()
+		{
+			channel.Broadcast(new GetLastBlockCommand());
+		}
+
+		public void Discovery()
+		{
+			channel.Discovery();
+		}
+
+		public void Stop(int timeout = 1000)
+		{
+			stop = true;
+
+			var startAt = DateTime.Now;
+
+			Task.Run(() => channel.Stop());
+
+			while (ChannelState == ChannelState.Listening)
+			{
+				Thread.Sleep(100);
+				if (DateTime.Now.Subtract(startAt).TotalMilliseconds > timeout)
+					break;
+			}
+
+			cts.Cancel();
 		}
 
 		public void MinePendingTransactions()
@@ -280,31 +315,6 @@ namespace Domain
 			}
 
 			channel.Broadcast(new GetLastBlockCommand());
-		}
-
-		public void Connect(string host, int port)
-		{
-			channel.Connect(host, port);
-		}
-
-		public void Syncronize()
-		{
-			channel.Broadcast(new GetLastBlockCommand());
-		}
-
-		public void Stop(int timeout=1000)
-		{
-			stop = true;
-
-			channel.Stop();
-
-			var startAt = DateTime.Now;
-			while (State == NodeState.Running)
-			{
-				Thread.Sleep(100);
-				if (DateTime.Now.Subtract(startAt).TotalMilliseconds > timeout)
-					break;
-			}
 		}
 	}
 }
