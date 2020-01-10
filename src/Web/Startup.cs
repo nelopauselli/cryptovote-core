@@ -6,10 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 using Web.Controllers;
-using DatetimeOffsetJsonConverter = Web.Converters.DatetimeOffsetJsonConverter;
-using GuidJsonConverter = Web.Converters.GuidJsonConverter;
 
 namespace Web
 {
@@ -25,26 +22,18 @@ namespace Web
 		// This method gets called by the runtime. Use this method to add services to the container.
 		public void ConfigureServices(IServiceCollection services)
 		{
-			JsonConvert.DefaultSettings = () =>
-			{
-				var settings = new JsonSerializerSettings()
-				{
-					Formatting = Formatting.None,
-				};
-				settings.Converters.Add(new GuidJsonConverter());
-				settings.Converters.Add(new DatetimeOffsetJsonConverter());
-				settings.Converters.Add(new ByteArrayJsonConverter());
-				return settings;
-			};
-
 			services.AddMvc()
+				.AddMvcOptions(options =>
+				{
+					options.EnableEndpointRouting = false;
+				})
 				.AddJsonOptions(options =>
 				{
-					options.SerializerSettings.Converters.Add(new GuidJsonConverter());
-					options.SerializerSettings.Converters.Add(new DatetimeOffsetJsonConverter());
-					options.SerializerSettings.Converters.Add(new ByteArrayJsonConverter());
+					options.JsonSerializerOptions.Converters.Add(new GuidJsonConverter());
+					options.JsonSerializerOptions.Converters.Add(new DatetimeOffsetJsonConverter());
+					options.JsonSerializerOptions.Converters.Add(new ByteArrayJsonConverter());
 				})
-				.SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+				.SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
 
 			services.AddSingleton<NodeAdapter>();
 		}

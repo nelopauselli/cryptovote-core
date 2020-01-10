@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Domain.Converters;
 using Domain.Crypto;
 using Domain.Elections;
 using Domain.Utils;
-using Newtonsoft.Json;
 
 namespace DataSample
 {
@@ -24,14 +24,6 @@ namespace DataSample
 		{
 			this.service = service;
 			this.publisher = publisher;
-			JsonConvert.DefaultSettings = () =>
-			{
-				var settings = new JsonSerializerSettings();
-				settings.Converters.Add(new GuidJsonConverter());
-				settings.Converters.Add(new DatetimeOffsetJsonConverter());
-				settings.Converters.Add(new ByteArrayJsonConverter());
-				return settings;
-			};
 		}
 
 		public async Task<Guid> Community(string name, KeysPair keys)
@@ -168,10 +160,10 @@ namespace DataSample
 			vote1.PublicKey = new byte[keys.PublicKey.Length];
 			Buffer.BlockCopy(keys.PublicKey, 0, vote1.PublicKey, 0, keys.PublicKey.Length);
 
-			var json = JsonConvert.SerializeObject(vote1);
+			var json = JsonSerializer.Serialize(vote1, JsonDefaultSettings.Options);
 			Console.WriteLine(json);
 
-			var vote = JsonConvert.DeserializeObject<Vote>(json);
+			var vote = JsonSerializer.Deserialize<Vote>(json, JsonDefaultSettings.Options);
 			var publicKeyBase58 = Base58.Encode(vote.PublicKey);
 
 			var verifier = new SignatureVerify(service);

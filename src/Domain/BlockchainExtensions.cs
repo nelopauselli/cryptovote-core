@@ -1,5 +1,6 @@
 using System.IO;
-using Newtonsoft.Json;
+using System.Text.Json;
+using Domain.Converters;
 
 namespace Domain
 {
@@ -10,7 +11,7 @@ namespace Domain
 			var json = File.ReadAllText(path);
 			if (json != null)
 			{
-				var genesis = JsonConvert.DeserializeObject<Block>(json);
+				var genesis = JsonSerializer.Deserialize<Block>(json, JsonDefaultSettings.Options);
 				blockchain.AddBlock(genesis);
 			}
 		}

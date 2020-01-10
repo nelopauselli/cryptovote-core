@@ -1,8 +1,9 @@
 using System;
 using System.Text;
+using System.Text.Json;
+using Domain.Converters;
 using Domain.Protocol;
 using Domain.Elections;
-using Newtonsoft.Json;
 
 namespace Domain.Queries
 {
@@ -24,7 +25,7 @@ namespace Domain.Queries
 		{
 			var body = channel.GetBody();
 			if (!string.IsNullOrWhiteSpace(body))
-				return JsonConvert.DeserializeObject<Fiscal[]>(body);
+				return JsonSerializer.Deserialize<Fiscal[]>(body, JsonDefaultSettings.Options);
 
 			return Array.Empty<Fiscal>();
 		}

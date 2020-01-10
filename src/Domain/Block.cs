@@ -8,6 +8,10 @@ namespace Domain
 {
 	public class Block
 	{
+		public Block()
+		{
+		}
+
 		public Block(byte[] previousHash, int blockNumber)
 		{
 			PreviousHash = previousHash;

@@ -21,6 +21,8 @@ namespace Domain.Queries
 
 			foreach (var block in blockchain.Trunk)
 			{
+				if (block?.Recounts == null) continue;
+				
 				var recount = block.Recounts.FirstOrDefault(i => i.UrnId == urnId);
 				if(recount!=null)
 					return recount;

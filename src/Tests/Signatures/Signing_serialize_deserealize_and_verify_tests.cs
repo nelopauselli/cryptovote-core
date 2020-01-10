@@ -1,8 +1,9 @@
 using System;
+using System.Text.Json;
+using Domain.Converters;
 using Domain.Crypto;
 using Domain.Elections;
 using Domain.Utils;
-using Newtonsoft.Json;
 using NUnit.Framework;
 
 namespace Tests.Signatures
@@ -29,10 +30,10 @@ namespace Tests.Signatures
 			community1.PublicKey = new byte[keys.PublicKey.Length];
 			Buffer.BlockCopy(keys.PublicKey, 0, community1.PublicKey, 0, keys.PublicKey.Length);
 
-			var json = JsonConvert.SerializeObject(community1);
+			var json = JsonSerializer.Serialize(community1, JsonDefaultSettings.Options);
 			Console.WriteLine(json);
 
-			var community2 = JsonConvert.DeserializeObject<Community>(json);
+			var community2 = JsonSerializer.Deserialize<Community>(json, JsonDefaultSettings.Options);
 			var publicKeyBase58 = Base58.Encode(community2.PublicKey);
 
 			var verifier = new SignatureVerify(service);
@@ -65,10 +66,10 @@ namespace Tests.Signatures
 			question1.PublicKey = new byte[keys.PublicKey.Length];
 			Buffer.BlockCopy(keys.PublicKey, 0, question1.PublicKey, 0, keys.PublicKey.Length);
 
-			var json = JsonConvert.SerializeObject(question1);
+			var json = JsonSerializer.Serialize(question1, JsonDefaultSettings.Options);
 			Console.WriteLine(json);
 
-			var question2 = JsonConvert.DeserializeObject<Question>(json);
+			var question2 = JsonSerializer.Deserialize<Question>(json, JsonDefaultSettings.Options);
 			var publicKeyBase58 = Base58.Encode(question2.PublicKey);
 
 			var verifier = new SignatureVerify(service);
@@ -99,10 +100,10 @@ namespace Tests.Signatures
 			member1.PublicKey = new byte[keys.PublicKey.Length];
 			Buffer.BlockCopy(keys.PublicKey, 0, member1.PublicKey, 0, keys.PublicKey.Length);
 
-			var json = JsonConvert.SerializeObject(member1);
+			var json = JsonSerializer.Serialize(member1, JsonDefaultSettings.Options);
 			Console.WriteLine(json);
 
-			var member2 = JsonConvert.DeserializeObject<Member>(json);
+			var member2 = JsonSerializer.Deserialize<Member>(json, JsonDefaultSettings.Options);
 			var publicKeyBase58 = Base58.Encode(member2.PublicKey);
 
 			var verifier = new SignatureVerify(service);
@@ -129,10 +130,10 @@ namespace Tests.Signatures
 			vote1.PublicKey = new byte[keys.PublicKey.Length];
 			Buffer.BlockCopy(keys.PublicKey, 0, vote1.PublicKey, 0, keys.PublicKey.Length);
 
-			var json = JsonConvert.SerializeObject(vote1);
+			var json = JsonSerializer.Serialize(vote1, JsonDefaultSettings.Options);
 			Console.WriteLine(json);
 
-			var vote = JsonConvert.DeserializeObject<Vote>(json);
+			var vote = JsonSerializer.Deserialize<Vote>(json, JsonDefaultSettings.Options);
 			var publicKeyBase58 = Base58.Encode(vote.PublicKey);
 
 			var verifier = new SignatureVerify(service);

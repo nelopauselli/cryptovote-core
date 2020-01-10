@@ -2,7 +2,7 @@
   "profiles": {
     "CryptoVote": {
       "commandName": "Project",
-      "commandLineArgs": "Miner:Address=QXuwUXRhANuouMkHTc2tbcZhkcucShZQKEhs7XSfseSd6Rq8q2G3sSZc1Q1z5jdj4Nz8dQuieiiyDVLiKWDmtJVp  My:Host=192.168.2.82 My:Port=13000 Console:Colored=true Verbosity=debug"
+      "commandLineArgs": "Miner:Address=QXuwUXRhANuouMkHTc2tbcZhkcucShZQKEhs7XSfseSd6Rq8q2G3sSZc1Q1z5jdj4Nz8dQuieiiyDVLiKWDmtJVp  My:Host=192.168.0.6 My:Port=13000 Console:Colored=true Verbosity=debug"
     }
   }
 }

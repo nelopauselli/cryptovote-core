@@ -21,6 +21,8 @@ namespace Domain.Queries
 
 			foreach (var block in blockchain.Trunk)
 			{
+				if (block?.Urns == null) continue;
+				
 				foreach (var urn in block.Urns.Where(i => i.QuestionId == questionId))
 					yield return urn;
 			}

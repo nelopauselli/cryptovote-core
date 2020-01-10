@@ -1,8 +1,9 @@
 using System;
 using System.Text;
+using System.Text.Json;
+using Domain.Converters;
 using Domain.Protocol;
 using Domain.Elections;
-using Newtonsoft.Json;
 
 namespace Domain.Queries
 {
@@ -23,7 +24,7 @@ namespace Domain.Queries
 		public Recount Parse(ProtocolMessageChannel channel)
 		{
 			var body = channel.GetBody();
-			return !string.IsNullOrWhiteSpace(body) ? JsonConvert.DeserializeObject<Recount>(body) : null;
+			return !string.IsNullOrWhiteSpace(body) ? JsonSerializer.Deserialize<Recount>(body, JsonDefaultSettings.Options) : null;
 		}
 	}
 }

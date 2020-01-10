@@ -21,8 +21,10 @@ namespace Domain.Queries
 
 			foreach (var block in blockchain.Trunk)
 			{
-				foreach (var Fiscal in block.Fiscals.Where(i => i.QuestionId == questionId))
-					yield return Fiscal;
+				if (block?.Fiscals == null) continue;
+
+				foreach (var fiscal in block.Fiscals.Where(i => i.QuestionId == questionId))
+					yield return fiscal;
 			}
 		}
 	}

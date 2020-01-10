@@ -1,36 +1,32 @@
 ﻿using System;
-using Newtonsoft.Json;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace Domain.Converters
 {
-	public class GuidJsonConverter : JsonConverter
+	public class GuidJsonConverter : JsonConverter<Guid>
 	{
-		public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+		public override Guid Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
 		{
-			if (value is Guid guid)
-				writer.WriteValue(guid.ToString("N"));
-			else
-				writer.WriteValue(value);
-		}
-
-		public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
-		{
-			var value = reader.Value;
+			var value = reader.GetString();
 			if (value != null)
 			{
-				if(Guid.TryParse(value.ToString(), out var guid))
+				if (Guid.TryParse(value, out var guid))
 					return guid;
 			}
 
-			if (objectType == typeof(Guid))
-				return Guid.Empty;
+			return Guid.Empty;
+		}
 
-			return null;
+		public override void Write(Utf8JsonWriter writer, Guid value, JsonSerializerOptions options)
+		{
+			writer.WriteStringValue(value.ToString("N"));
 		}
 
 		public override bool CanConvert(Type objectType)
 		{
 			return objectType == typeof(Guid) || objectType == typeof(Guid?);
 		}
+
 	}
 }

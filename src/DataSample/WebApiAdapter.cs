@@ -2,9 +2,10 @@
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
+using Domain.Converters;
 using Domain.Elections;
-using Newtonsoft.Json;
 
 namespace DataSample
 {
@@ -19,19 +20,19 @@ namespace DataSample
 
 		public async Task Add(Community community)
 		{
-			var body = JsonConvert.SerializeObject(community);
+			var body = JsonSerializer.Serialize(community, JsonDefaultSettings.Options);
 			await Post("/api/community", body);
 		}
 
 		public async Task Add(Urn urn)
 		{
-			var body = JsonConvert.SerializeObject(urn);
+			var body = JsonSerializer.Serialize(urn, JsonDefaultSettings.Options);
 			await Post("/api/urn", body);
 		}
 
 		public async Task Add(Fiscal fiscal)
 		{
-			var body = JsonConvert.SerializeObject(fiscal);
+			var body = JsonSerializer.Serialize(fiscal, JsonDefaultSettings.Options);
 			await Post("/api/fiscal", body);
 		}
 
@@ -42,7 +43,7 @@ namespace DataSample
 
 		public async Task Add(Question question)
 		{
-			var body = JsonConvert.SerializeObject(question);
+			var body = JsonSerializer.Serialize(question, JsonDefaultSettings.Options);
 			await Post("/api/question", body);
 		}
 
@@ -53,7 +54,7 @@ namespace DataSample
 
 		public async Task Add(Member member)
 		{
-			var body = JsonConvert.SerializeObject(member);
+			var body = JsonSerializer.Serialize(member, JsonDefaultSettings.Options);
 			await Post("/api/member", body);
 		}
 		public async Task<Member[]> ListMembers(Guid communityId)
@@ -75,7 +76,7 @@ namespace DataSample
 
 				var response = await restClient.GetStringAsync(url);
 
-				var entities = JsonConvert.DeserializeObject<T[]>(response);
+				var entities = JsonSerializer.Deserialize<T[]>(response, JsonDefaultSettings.Options);
 
 				return entities;
 			}

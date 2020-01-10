@@ -1,7 +1,8 @@
 using System;
+using System.Text.Json;
 using Domain;
+using Domain.Converters;
 using Domain.Elections;
-using Newtonsoft.Json;
 using NUnit.Framework;
 
 namespace Tests.Serealization
@@ -31,10 +32,10 @@ namespace Tests.Serealization
 			block1.Communities.Add(community);
 			block1.Questions.Add(question);
 
-			var json = JsonConvert.SerializeObject(block1);
+			var json = JsonSerializer.Serialize(block1, JsonDefaultSettings.Options);
 			Console.WriteLine(json);
 
-			var block2 = JsonConvert.DeserializeObject<Block>(json);
+			var block2 = JsonSerializer.Deserialize<Block>(json, JsonDefaultSettings.Options);
 			Assert.AreEqual(7, block2.BlockNumber);
 			Assert.AreEqual(1, block2.Communities.Count);
 			Assert.AreEqual(1, block2.Questions.Count);

@@ -122,7 +122,7 @@ namespace Domain.Channels
 				}
 				catch (Exception ex)
 				{
-					logger.Error($"[{ID}] ERROR (HandlerClient): {ex.Message}");
+					logger.Error($"[{ID}] ERROR (HandlerClient): {ex}");
 				}
 			}
 
@@ -152,7 +152,7 @@ namespace Domain.Channels
 					{
 						logger.Debug($"[{ID}] Hilo bloqueado");
 
-						logger.Information($"[{ID}] Enviando '{command.Name}'");
+						logger.Information($"[{ID}] Enviando '{command.Name}' a {this.Host}");
 
 						command.Send(stream);
 						Thread.Sleep(100);
@@ -162,7 +162,7 @@ namespace Domain.Channels
 					catch (Exception ex)
 					{
 						if (attempt == MaxAttempt)
-							logger.Error($"[{ID}] ERROR (Send): {ex.Message}");
+							logger.Error($"[{ID}] ERROR (Send): {ex}"); 
 					}
 
 					logger.Debug($"[{ID}] Liberando bloqueo del hilo");

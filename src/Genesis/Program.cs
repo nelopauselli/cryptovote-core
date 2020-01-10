@@ -1,11 +1,11 @@
 ﻿using System;
 using System.IO;
 using System.Text;
+using System.Text.Json;
 using Domain;
 using Domain.Converters;
 using Domain.Crypto;
 using Domain.Utils;
-using Newtonsoft.Json;
 
 namespace Genesis
 {
@@ -13,15 +13,6 @@ namespace Genesis
 	{
 		static void Main(string[] args)
 		{
-			JsonConvert.DefaultSettings = () =>
-			{
-				var settings = new JsonSerializerSettings();
-				settings.Converters.Add(new GuidJsonConverter());
-				settings.Converters.Add(new DatetimeOffsetJsonConverter());
-				settings.Converters.Add(new ByteArrayJsonConverter());
-				return settings;
-			};
-
 			var owner = new KeysPair(
 				Base58.Decode("5eGEt2wuDrvEt1d7zUDdqZEF9u2sYiVXg6jJEk5G1ytJ"),
 				Base58.Decode("QXuwUXRhANuouMkHTc2tbcZhkcucShZQKEhs7XSfseSd6Rq8q2G3sSZc1Q1z5jdj4Nz8dQuieiiyDVLiKWDmtJVp"));
@@ -46,7 +37,7 @@ namespace Genesis
 			miner.Mine(block, dificulty);
 
 			Console.WriteLine("Serializando bloque Génesis");
-			var json = JsonConvert.SerializeObject(block);
+			var json = JsonSerializer.Serialize(block, JsonDefaultSettings.Options);
 
 			Console.WriteLine("Guardando bloque minado");
 			File.WriteAllText("genesis.block", json, Encoding.UTF8);

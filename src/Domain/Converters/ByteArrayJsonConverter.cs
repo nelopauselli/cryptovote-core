@@ -1,36 +1,37 @@
 ﻿using System;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Domain.Utils;
-using Newtonsoft.Json;
 
 namespace Domain.Converters
 {
-	public class ByteArrayJsonConverter : JsonConverter
+	public class ByteArrayJsonConverter : JsonConverter<byte[]>
 	{
-		public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+		public override bool CanConvert(Type objectType)
 		{
-			if (value is byte[] array)
-				writer.WriteValue(Base58.Encode(array));
-			else
-				writer.WriteValue(value);
+			return objectType == typeof(byte[]);
 		}
 
-		public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+		public override byte[] Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
 		{
-			var value = reader.Value;
+			var value = reader.GetString();
 			if (value != null)
 			{
-				return Base58.Decode(value.ToString());
+				return Base58.Decode(value);
 			}
 
-			if (objectType == typeof(byte[]))
+			if (typeToConvert == typeof(byte[]))
 				return Array.Empty<byte>();
 
 			return null;
 		}
 
-		public override bool CanConvert(Type objectType)
+		public override void Write(Utf8JsonWriter writer, byte[] value, JsonSerializerOptions options)
 		{
-			return objectType == typeof(byte[]);
+			if (value != null)
+				writer.WriteStringValue(Base58.Encode(value));
+			else
+				writer.WriteNullValue();
 		}
 	}
 }

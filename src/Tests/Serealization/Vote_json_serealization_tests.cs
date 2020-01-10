@@ -1,8 +1,9 @@
 using System;
 using System.Linq;
+using System.Text.Json;
+using Domain.Converters;
 using Domain.Elections;
 using Domain.Utils;
-using Newtonsoft.Json;
 using NUnit.Framework;
 
 namespace Tests.Serealization
@@ -32,8 +33,8 @@ namespace Tests.Serealization
 		[Test]
 		public void QuestionId()
 		{
-			var serialized = JsonConvert.SerializeObject(vote);
-			var vote2 = JsonConvert.DeserializeObject<Vote>(serialized);
+			var serialized = JsonSerializer.Serialize(vote, JsonDefaultSettings.Options);
+			var vote2 = JsonSerializer.Deserialize<Vote>(serialized, JsonDefaultSettings.Options);
 			
 			Assert.IsNotNull(vote2);
 			Assert.AreEqual(questionId, vote2.QuestionId);
@@ -42,8 +43,8 @@ namespace Tests.Serealization
 		[Test]
 		public void Time()
 		{
-			var serialized = JsonConvert.SerializeObject(vote);
-			var vote2 = JsonConvert.DeserializeObject<Vote>(serialized);
+			var serialized = JsonSerializer.Serialize(vote, JsonDefaultSettings.Options);
+			var vote2 = JsonSerializer.Deserialize<Vote>(serialized, JsonDefaultSettings.Options);
 
 			Assert.IsNotNull(vote2);
 			Assert.AreEqual(time, vote2.Time);
@@ -52,8 +53,8 @@ namespace Tests.Serealization
 		[Test]
 		public void Choice()
 		{
-			var serialized = JsonConvert.SerializeObject(vote);
-			var vote2 = JsonConvert.DeserializeObject<Vote>(serialized);
+			var serialized = JsonSerializer.Serialize(vote, JsonDefaultSettings.Options);
+			var vote2 = JsonSerializer.Deserialize<Vote>(serialized, JsonDefaultSettings.Options);
 
 			Assert.IsNotNull(vote2);
 			Assert.AreEqual(choiceId, vote2.ChoiceId);
@@ -62,8 +63,8 @@ namespace Tests.Serealization
 		[Test]
 		public void PublicKey()
 		{
-			var serialized = JsonConvert.SerializeObject(vote);
-			var vote2 = JsonConvert.DeserializeObject<Vote>(serialized);
+			var serialized = JsonSerializer.Serialize(vote, JsonDefaultSettings.Options);
+			var vote2 = JsonSerializer.Deserialize<Vote>(serialized, JsonDefaultSettings.Options);
 
 			Assert.IsNotNull(vote2);
 
@@ -74,8 +75,8 @@ namespace Tests.Serealization
 		[Test]
 		public void Signature()
 		{
-			var serialized = JsonConvert.SerializeObject(vote);
-			var vote2 = JsonConvert.DeserializeObject<Vote>(serialized);
+			var serialized = JsonSerializer.Serialize(vote, JsonDefaultSettings.Options);
+			var vote2 = JsonSerializer.Deserialize<Vote>(serialized, JsonDefaultSettings.Options);
 
 			Assert.IsNotNull(vote2);
 

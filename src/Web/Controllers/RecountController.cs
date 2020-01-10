@@ -1,10 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Text.Json;
 using System.Threading.Tasks;
+using Domain.Converters;
 using Domain.Elections;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 
 namespace Web.Controllers
 {
@@ -33,7 +33,7 @@ namespace Web.Controllers
 		[HttpPost]
 		public async Task<ActionResult<Recount>> Post(Recount recount)
 		{
-			logger.LogInformation("Recount: " + JsonConvert.SerializeObject(recount));
+			logger.LogInformation("Recount: " + JsonSerializer.Serialize(recount, JsonDefaultSettings.Options));
 
 			await nodeAdapter.Recounts.Add(recount);
 

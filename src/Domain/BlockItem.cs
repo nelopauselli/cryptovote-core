@@ -1,8 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 using Domain.Crypto;
-using Domain.Utils;
-using Newtonsoft.Json;
 
 namespace Domain
 {

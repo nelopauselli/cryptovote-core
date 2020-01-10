@@ -18,6 +18,8 @@ namespace Domain.Queries
 		{
 			foreach (var block in blockchain.Trunk)
 			{
+				if (block?.Questions == null) continue;
+				
 				foreach (var question in block.Questions.Where(i => i.CommunityId == communityId))
 					yield return question;
 			}

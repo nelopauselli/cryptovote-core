@@ -1,8 +1,9 @@
 using System;
 using System.Text;
+using System.Text.Json;
+using Domain.Converters;
 using Domain.Protocol;
 using Domain.Elections;
-using Newtonsoft.Json;
 
 namespace Domain.Queries
 {
@@ -26,7 +27,7 @@ namespace Domain.Queries
 		{
 			var body = channel.GetBody();
 			if (!string.IsNullOrWhiteSpace(body))
-				return JsonConvert.DeserializeObject<QuestionResult>(body);
+				return JsonSerializer.Deserialize<QuestionResult>(body, JsonDefaultSettings.Options);
 			return null;
 		}
 	}

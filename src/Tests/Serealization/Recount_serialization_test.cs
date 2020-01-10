@@ -1,8 +1,9 @@
 using System;
 using System.Linq;
+using System.Text.Json;
+using Domain.Converters;
 using Domain.Elections;
 using Domain.Utils;
-using Newtonsoft.Json;
 using NUnit.Framework;
 
 namespace Tests.Serealization
@@ -15,7 +16,7 @@ namespace Tests.Serealization
 		[Test]
 		public void Deserealize()
 		{
-			var recount = JsonConvert.DeserializeObject<Recount>(raw);
+			var recount = JsonSerializer.Deserialize<Recount>(raw, JsonDefaultSettings.Options);
 			Assert.AreEqual(Guid.Parse("ad3dca89-0a66-40c2-8a6a-4d632d1c8293"),recount.Id);
 			Assert.AreEqual(Guid.Parse("7830df01-696a-4505-8433-10e6dcb96583"),recount.UrnId);
 			Assert.IsNotNull(recount.Results);
@@ -33,7 +34,7 @@ namespace Tests.Serealization
 		[Test]
 		public void Data()
 		{
-			var recount = JsonConvert.DeserializeObject<Recount>(raw);
+			var recount = JsonSerializer.Deserialize<Recount>(raw);
 
 			var dataRaw = "2PUvrcNWrVPFZ8TMZhjsX61ef85RcEqG3nQSor17XbtMZbkd9Tsj9SATPRK2KyFFGHsSMGjD8D7H2bqLgvmuP1sZjeE78Yx3qTttmjwb4sVCsF2uKkhAXF76T84ZHFg6fSRcoM88ABrSyYDDsuzUx6KM5rLSttnY3KDbio5GT2Bsg2daLrojJ";
 			var data = Base58.Decode(dataRaw);

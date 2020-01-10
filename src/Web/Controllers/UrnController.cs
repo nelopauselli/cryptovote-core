@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json;
 using System.Threading.Tasks;
+using Domain.Converters;
 using Domain.Elections;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 
 namespace Web.Controllers
 {
@@ -24,14 +25,14 @@ namespace Web.Controllers
 		[HttpGet("{questionId}")]
 		public async Task<ActionResult<IEnumerable<Urn>>> Get(Guid questionId)
 		{
-			var Urns = await node.Urns.List(questionId);
-			return Ok(Urns);
+			var urns = await node.Urns.List(questionId);
+			return Ok(urns);
 		}
 
 		[HttpPost]
 		public async Task<ActionResult<Urn>> Post(Urn urn)
 		{
-			logger.LogInformation("Urn: " + JsonConvert.SerializeObject(urn));
+			logger.LogInformation("Urn: " + JsonSerializer.Serialize(urn, JsonDefaultSettings.Options));
 
 			await node.Urns.Add(urn);
 

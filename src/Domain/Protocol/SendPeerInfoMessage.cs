@@ -1,5 +1,7 @@
 using System.Text;
-using Newtonsoft.Json;
+using System.Text.Json;
+using System.Xml;
+using Domain.Converters;
 
 namespace Domain.Protocol
 {
@@ -16,7 +18,7 @@ namespace Domain.Protocol
 
 		public override byte[] GetBytes()
 		{
-			var serialized = JsonConvert.SerializeObject(peer, Formatting.None);
+			var serialized = JsonSerializer.Serialize(peer, JsonDefaultSettings.Options);
 			var message = $"{CommandId}:{serialized.Length:D5}|{serialized}";
 			return Encoding.UTF8.GetBytes(message);
 		}

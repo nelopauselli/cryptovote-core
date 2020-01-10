@@ -1,5 +1,5 @@
 ﻿using System.Text;
-using Newtonsoft.Json;
+using System.Text.Json;
 
 namespace Domain.Protocol
 {
@@ -9,7 +9,7 @@ namespace Domain.Protocol
 
 		public SendQueryResponseMessage(T entities)
 		{
-			var content = JsonConvert.SerializeObject(entities);
+			var content = JsonSerializer.Serialize(entities);
 			var body = $"R:{content.Length:D5}|{content}";
 			bytes = Encoding.UTF8.GetBytes(body);
 		}

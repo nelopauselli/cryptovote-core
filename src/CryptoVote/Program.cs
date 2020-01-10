@@ -1,11 +1,11 @@
 ﻿using System;
+using System.Text.Json;
 using System.Threading;
 using CryptoVote.Loggers;
 using Domain;
 using Domain.Converters;
 using Domain.Elections;
 using Microsoft.Extensions.Configuration;
-using Newtonsoft.Json;
 
 namespace CryptoVote
 {
@@ -15,15 +15,6 @@ namespace CryptoVote
 
 		static void Main(string[] args)
 		{
-			JsonConvert.DefaultSettings = () =>
-			{
-				var settings = new JsonSerializerSettings();
-				settings.Converters.Add(new GuidJsonConverter());
-				settings.Converters.Add(new DatetimeOffsetJsonConverter());
-				settings.Converters.Add(new ByteArrayJsonConverter());
-				return settings;
-			};
-
 			var builder = new ConfigurationBuilder()
 				.AddCommandLine(args)
 				.AddEnvironmentVariables();

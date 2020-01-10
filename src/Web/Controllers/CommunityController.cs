@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json;
 using System.Threading.Tasks;
+using Domain.Converters;
 using Domain.Elections;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 
 namespace Web.Controllers
 {
@@ -38,7 +39,7 @@ namespace Web.Controllers
 		[HttpPost]
 		public async Task<ActionResult<Community>> Post(Community community)
 		{
-			logger.LogInformation("Community: " + JsonConvert.SerializeObject(community));
+			logger.LogInformation("Community: " + JsonSerializer.Serialize(community, JsonDefaultSettings.Options));
 
 			await nodeAdapter.Communities.AddCommunity(community);
 

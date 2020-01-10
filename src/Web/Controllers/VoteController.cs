@@ -1,13 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
-using Domain;
-using Domain.Crypto;
 using Domain.Elections;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 
 namespace Web.Controllers
 {
@@ -43,7 +40,7 @@ namespace Web.Controllers
 		[HttpPost]
 		public async Task<ActionResult<Vote>> Post(Vote vote)
 		{
-			logger.LogInformation("Vote: " + JsonConvert.SerializeObject(vote));
+			logger.LogInformation("Vote: " + JsonSerializer.Serialize(vote));
 
 			await nodeAdapter.Votes.Add(vote);
 

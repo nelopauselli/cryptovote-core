@@ -2,9 +2,10 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
+using Domain.Converters;
 using Domain.Elections;
-using Newtonsoft.Json;
 
 namespace DataSample
 {
@@ -18,31 +19,31 @@ namespace DataSample
 
 		public async Task Add(Community community)
 		{
-			await File.WriteAllTextAsync($"community-{communities.Count+1}.json", JsonConvert.SerializeObject(community));
+			await File.WriteAllTextAsync($"community-{communities.Count+1}.json", JsonSerializer.Serialize(community, JsonDefaultSettings.Options));
 			communities.Add(community);
 		}
 
 		public async Task Add(Question question)
 		{
-			await File.WriteAllTextAsync($"question-{questions.Count+1}.json", JsonConvert.SerializeObject(question));
+			await File.WriteAllTextAsync($"question-{questions.Count+1}.json", JsonSerializer.Serialize(question, JsonDefaultSettings.Options));
 			questions.Add(question);
 		}
 
 		public async Task Add(Member member)
 		{
-			await File.WriteAllTextAsync($"member{members.Count+1}.json", JsonConvert.SerializeObject(member));
+			await File.WriteAllTextAsync($"member{members.Count+1}.json", JsonSerializer.Serialize(member, JsonDefaultSettings.Options));
 			members.Add(member);
 		}
 
 		public async Task Add(Urn urn)
 		{
-			await File.WriteAllTextAsync($"urn{urns.Count + 1}.json", JsonConvert.SerializeObject(urn));
+			await File.WriteAllTextAsync($"urn{urns.Count + 1}.json", JsonSerializer.Serialize(urn, JsonDefaultSettings.Options));
 			urns.Add(urn);
 		}
 
 		public async Task Add(Fiscal fiscal)
 		{
-			await File.WriteAllTextAsync($"fiscal{fiscals.Count + 1}.json", JsonConvert.SerializeObject(fiscal));
+			await File.WriteAllTextAsync($"fiscal{fiscals.Count + 1}.json", JsonSerializer.Serialize(fiscal, JsonDefaultSettings.Options));
 			fiscals.Add(fiscal);
 		}
 

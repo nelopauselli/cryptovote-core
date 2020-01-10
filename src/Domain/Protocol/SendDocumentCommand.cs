@@ -1,8 +1,6 @@
 using System.IO;
-using System.Text;
 using Domain.Channels;
 using Domain.Channels.Protocol;
-using Newtonsoft.Json;
 
 namespace Domain.Protocol
 {

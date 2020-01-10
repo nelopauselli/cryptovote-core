@@ -19,6 +19,7 @@ namespace Domain.Channels
 		private readonly INodeLogger logger;
 
 		TcpListener server;
+		private readonly object peersSemaphore =new object();
 		private readonly IList<TcpPeer> peers = new List<TcpPeer>();
 		private readonly CancellationTokenSource cancellationToken = new CancellationTokenSource(2000);
 		private bool stoped;
@@ -44,6 +45,7 @@ namespace Domain.Channels
 				logger.Information($"[#{Thread.CurrentThread.ManagedThreadId}] Iniciando canal de comunicaciones...");
 
 				var addr = IPAddress.Parse(ListenHost);
+				//var addr = IPAddress.Parse("0.0.0.0");
 				server = new TcpListener(addr, ListenPort);
 				server.Start();
 
@@ -72,7 +74,10 @@ namespace Domain.Channels
 							var peer = new TcpPeer(this, client, logger);
 							peer.Start();
 
-							peers.Add(peer);
+							lock (peersSemaphore)
+							{
+								peers.Add(peer);
+							}
 						}
 					}
 				}
@@ -100,8 +105,11 @@ namespace Domain.Channels
 
 				cancellationToken.Cancel();
 
-				foreach (var peer in peers)
-					peer.Stop();
+				lock (peersSemaphore)
+				{
+					foreach (var peer in peers)
+						peer.Stop();
+				}
 
 				var attemtp = 0;
 				while (!stoped && attemtp++ < 20)
@@ -125,10 +133,13 @@ namespace Domain.Channels
 
 		public void Connect(PeerInfo peerInfo)
 		{
-			if (peers.Any(p => p.ID == peerInfo.Id))
+			lock (peersSemaphore)
 			{
-				logger.Information($"El peer {peerInfo.Id} ya está registrado");
-				return;
+				if (peers.Any(p => p.ID == peerInfo.Id))
+				{
+					logger.Information($"El peer {peerInfo.Id} ya está registrado");
+					return;
+				}
 			}
 
 			Connect(peerInfo.Host, peerInfo.Port);
@@ -145,22 +156,28 @@ namespace Domain.Channels
 
 			peer.Send(new LoginCommand(new PeerInfo { Id = ID, Host = ListenHost, Port = ListenPort }));
 
-			peers.Add(peer);
+			lock (peersSemaphore)
+			{
+				peers.Add(peer);
+			}
 		}
 
 		public void Discovery()
 		{
-			var target = peers.ToArray();
-			foreach (var peer in target)
+			lock (peersSemaphore)
 			{
-				peer.Send(new PeersRequestCommand());
+				foreach (var peer in peers)
+					peer.Send(new PeersRequestCommand());
 			}
 		}
 
 		public void Broadcast(ICommand command)
 		{
-			foreach (var peer in peers)
-				peer.Send(command);
+			lock (peersSemaphore)
+			{
+				foreach (var peer in peers)
+					peer.Send(command);
+			}
 		}
 	}
 }

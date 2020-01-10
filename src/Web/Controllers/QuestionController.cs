@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json;
 using System.Threading.Tasks;
+using Domain.Converters;
 using Domain.Elections;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 
 namespace Web.Controllers
 {
@@ -40,7 +41,7 @@ namespace Web.Controllers
 		[HttpPost]
 		public async Task<ActionResult<Question>> Post(Question question)
 		{
-			logger.LogInformation("Question: " + JsonConvert.SerializeObject(question));
+			logger.LogInformation("Question: " + JsonSerializer.Serialize(question, JsonDefaultSettings.Options));
 
 			await node.Questions.Add(question);
 
