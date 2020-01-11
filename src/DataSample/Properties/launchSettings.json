@@ -2,7 +2,7 @@
   "profiles": {
     "DataSample": {
       "commandName": "Project",
-      "commandLineArgs": "web http://127.0.0.1:5000/"
+      "commandLineArgs": "web http://localhost:5000/"
     }
   }
 }

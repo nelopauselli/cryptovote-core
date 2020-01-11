@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Domain.Converters;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -49,6 +50,15 @@ namespace Web
 			}
 			app.UseMvc();
 			app.UseWebSockets();
+
+			Console.WriteLine("Iniciando");
+			Task.Run(() =>
+			{
+				while (true)
+				{
+					Console.WriteLine(".");
+				}
+			});
 		}
 	}
 }
