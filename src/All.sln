@@ -11,8 +11,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataSample", "DataSample\Da
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Genesis", "Genesis\Genesis.csproj", "{434F8A99-995B-4120-91A4-CDED9EC4A826}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CryptoVote", "CryptoVote\CryptoVote.csproj", "{01FC3CCB-9F36-4B6C-B93B-973C97B9D209}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{60613784-147E-4A64-A774-C0F6BE01055D}"
 	ProjectSection(SolutionItems) = preProject
 		.dockerignore = .dockerignore
@@ -45,10 +43,6 @@ Global
 		{434F8A99-995B-4120-91A4-CDED9EC4A826}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{434F8A99-995B-4120-91A4-CDED9EC4A826}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{434F8A99-995B-4120-91A4-CDED9EC4A826}.Release|Any CPU.Build.0 = Release|Any CPU
-		{01FC3CCB-9F36-4B6C-B93B-973C97B9D209}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{01FC3CCB-9F36-4B6C-B93B-973C97B9D209}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{01FC3CCB-9F36-4B6C-B93B-973C97B9D209}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{01FC3CCB-9F36-4B6C-B93B-973C97B9D209}.Release|Any CPU.Build.0 = Release|Any CPU
 		{DA301949-4694-46D8-A1C3-D7D5A0A85222}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{DA301949-4694-46D8-A1C3-D7D5A0A85222}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DA301949-4694-46D8-A1C3-D7D5A0A85222}.Release|Any CPU.ActiveCfg = Release|Any CPU
