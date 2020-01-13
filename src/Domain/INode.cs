@@ -4,9 +4,12 @@ namespace Domain
 {
 	public interface INode
 	{
+		Peers Peers { get; }
 		Blockchain Blockchain { get; }
 
 		void Start();
+
+		void Register(Peer peer);
 
 		void Add(Document document);
 		void Add(Community community);

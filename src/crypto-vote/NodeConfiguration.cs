@@ -11,14 +11,14 @@ namespace crypto_vote
 		{
 			this.configuration = configuration;
 		}
-		public string Name { get; set; } = "localhost";
+		public string Name => configuration["Node:Name"];
+		public string PublicUrl => configuration["Node:PublicUrl"] ?? "localhost:8000";
 
-		public byte BlockchainDificulty { get; set; } = 1;
+		public byte BlockchainDificulty => (byte)(byte.TryParse(configuration["Blockchain:Dificulty"] ?? "1", out var value) ? value : 1);
 
-		public string MinerAddress { get; set; }
+		public string MinerAddress => configuration["Miner:Address"];
 
-		public int MinerInterval { get; set; } = 10000;
+		public int MinerInterval => int.TryParse(configuration["Miner:Interval"] ?? "10000", out var value) ? value : 10000;
 
-		public string PublicUrl { get; set; } = "localhost:8000";
 	}
 }

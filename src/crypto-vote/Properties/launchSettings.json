@@ -15,9 +15,10 @@
       "launchUrl": "api/chain",
       "environmentVariables": {
         "PublicUrl": "localhost:8000",
-        "Miner:Address": "QXuwUXRhANuouMkHTc2tbcZhkcucShZQKEhs7XSfseSd6Rq8q2G3sSZc1Q1z5jdj4Nz8dQuieiiyDVLiKWDmtJVp  ",
+        "Miner:Address": "QXuwUXRhANuouMkHTc2tbcZhkcucShZQKEhs7XSfseSd6Rq8q2G3sSZc1Q1z5jdj4Nz8dQuieiiyDVLiKWDmtJVp ",
         "ASPNETCORE_ENVIRONMENT": "Development"
-      }
+      },
+      "applicationUrl": "http://localhost:5000/"
     },
     "crypto_vote": {
       "commandName": "Project",

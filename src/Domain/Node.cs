@@ -47,7 +47,7 @@ namespace Domain
 			{
 				byte[] addressRewards = null;
 
-				var addressRewardsBase58 = configuration.MinerAddress;
+				var addressRewardsBase58 = configuration.MinerAddress.Trim();
 				if (string.IsNullOrWhiteSpace(addressRewardsBase58))
 				{
 					logger.LogWarning("Falta configurar 'Miner:Address'");
@@ -307,7 +307,7 @@ namespace Domain
 			peers.GetLastBlock();
 		}
 
-		public void Add(PeerInfo peer)
+		public void Register(Peer peer)
 		{
 			peers.Add(peer);
 		}

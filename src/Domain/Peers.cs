@@ -8,7 +8,7 @@ namespace Domain
 	{
 		private readonly INode node;
 		private readonly IPeerChannel channel;
-		private readonly IList<PeerInfo> others=new List<PeerInfo>();
+		private readonly IList<Peer> others = new List<Peer>();
 
 		public Peers(INode node, IPeerChannel channel)
 		{
@@ -21,7 +21,7 @@ namespace Domain
 			if (publicUrl.Equals(url)) return;
 			if (others.Any(o => o.PublicUrl == url)) return;
 
-			others.Add(new PeerInfo {PublicUrl = url});
+			others.Add(new Peer {PublicUrl = url});
 			channel.Connect(publicUrl, url);
 		}
 
@@ -38,7 +38,7 @@ namespace Domain
 
 		public void Discovery(string publicUrl)
 		{
-			var targets = new List<PeerInfo>(others);
+			var targets = new List<Peer>(others);
 			
 			foreach (var target in targets)
 			{
@@ -110,6 +110,12 @@ namespace Domain
 				channel.Send(other.PublicUrl, recount);
 		}
 
+		public void Broadcast(Peer peer)
+		{
+			foreach (var other in others)
+				channel.Send(other.PublicUrl, peer);
+		}
+
 		public void GetBlock(byte[] hash)
 		{
 			foreach (var other in others)
@@ -122,12 +128,16 @@ namespace Domain
 
 		public int Count => others.Count;
 
-		public void Add(PeerInfo peer)
+		public void Add(Peer peer)
 		{
-			others.Add(peer);
+			if (others.All(o => o.PublicUrl != peer.PublicUrl))
+			{
+				others.Add(peer);
+				Broadcast(peer);
+			}
 		}
 
-		public IList<PeerInfo> List()
+		public IList<Peer> List()
 		{
 			return others;
 		}

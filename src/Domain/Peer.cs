@@ -1,6 +1,6 @@
 namespace Domain
 {
-	public class PeerInfo
+	public class Peer
 	{
 		public string Name { get; set; }
 		public string PublicUrl { get; set; }

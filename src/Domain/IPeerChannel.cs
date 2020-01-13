@@ -6,7 +6,7 @@ namespace Domain
 	public interface IPeerChannel
 	{
 		void Connect(string myPublicUrl, string targetPublicUrl);
-		IList<PeerInfo> ListPeers(string publicUrl);
+		IList<Peer> ListPeers(string publicUrl);
 		Block GetLastBlock(string publicUrl);
 		Block GetBlock(string publicUrl, byte[] hash);
 
@@ -19,5 +19,6 @@ namespace Domain
 		void Send(string publicUrl, Fiscal fiscal);
 		void Send(string publicUrl, Urn urn);
 		void Send(string publicUrl, Recount recount);
+		void Send(string publicUrl, Peer peer);
 	}
 }

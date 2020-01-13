@@ -25,7 +25,7 @@ namespace Domain
 			throw new System.NotImplementedException();
 		}
 
-		public IList<PeerInfo> ListPeers(string publicUrl)
+		public IList<Peer> ListPeers(string publicUrl)
 		{
 			try
 			{
@@ -43,7 +43,7 @@ namespace Domain
 						var bodyTask = result.Content.ReadAsByteArrayAsync();
 						bodyTask.Wait();
 
-						var peers = JsonSerializer.Deserialize<PeerInfo[]>(bodyTask.Result, JsonDefaultSettings.Options);
+						var peers = JsonSerializer.Deserialize<Peer[]>(bodyTask.Result, JsonDefaultSettings.Options);
 						return peers;
 					}
 				}
@@ -52,7 +52,7 @@ namespace Domain
 			{
 				logger.LogCritical($"Error al acceder a {publicUrl}: {ex}");
 			}
-			return Array.Empty<PeerInfo>();
+			return Array.Empty<Peer>();
 		}
 
 		public Block GetBlock(string publicUrl, byte[] hash)
@@ -73,14 +73,12 @@ namespace Domain
 			{
 				using (var client = new HttpClient())
 				{
-					var content=new StringContent(body);
+					var content = new StringContent(body);
 					var task = client.PostAsync(url, content);
 					task.Wait(HttpDefaultTimeout);
-					if (task.IsCompleted)
-					{
-						var result = task.Result;
-						result.EnsureSuccessStatusCode();
-					}
+
+					var result = task.Result;
+					result.EnsureSuccessStatusCode();
 				}
 			}
 			catch (Exception ex)
@@ -135,6 +133,12 @@ namespace Domain
 		{
 			var url = new Uri(new Uri(publicUrl), "api/recount");
 			Send(url, JsonSerializer.Serialize(recount, JsonDefaultSettings.Options));
+		}
+
+		public void Send(string publicUrl, Peer peer)
+		{
+			var url = new Uri(new Uri(publicUrl), "api/peer");
+			Send(url, JsonSerializer.Serialize(peer, JsonDefaultSettings.Options));
 		}
 
 		public Block GetLastBlock(string publicUrl)

@@ -17,10 +17,10 @@ namespace Tests
 		public void Connect(string myPublicUrl, string targetPublicUrl)
 		{
 			var other = nodes.SingleOrDefault(n => n.PublicUrl == targetPublicUrl);
-			other?.Add(new PeerInfo{PublicUrl = myPublicUrl});
+			other?.Register(new Peer{PublicUrl = myPublicUrl});
 		}
 
-		public IList<PeerInfo> ListPeers(string publicUrl)
+		public IList<Peer> ListPeers(string publicUrl)
 		{
 			var node = nodes.SingleOrDefault(n => n.PublicUrl == publicUrl);
 			return node?.Peers.List();
@@ -43,6 +43,36 @@ namespace Tests
 		{
 			var node = nodes.SingleOrDefault(n => n.PublicUrl == publicUrl);
 			node?.Add(question);
+		}
+
+		public void Send(string publicUrl, Member member)
+		{
+			throw new System.NotImplementedException();
+		}
+
+		public void Send(string publicUrl, Document document)
+		{
+			throw new System.NotImplementedException();
+		}
+
+		public void Send(string publicUrl, Vote vote)
+		{
+			throw new System.NotImplementedException();
+		}
+
+		public void Send(string publicUrl, Fiscal fiscal)
+		{
+			throw new System.NotImplementedException();
+		}
+
+		public void Send(string publicUrl, Urn urn)
+		{
+			throw new System.NotImplementedException();
+		}
+
+		public void Send(string publicUrl, Recount recount)
+		{
+			throw new System.NotImplementedException();
 		}
 
 		public Block GetLastBlock(string publicUrl)
