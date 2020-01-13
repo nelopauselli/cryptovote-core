@@ -1,0 +1,12 @@
+{
+  "profiles": {
+    "Tests": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "Node:Name": "Tests",
+        "Node:Id": "Value",
+        "Node:PublicUrl": "http://localhost.test/"
+      }
+    }
+  }
+}

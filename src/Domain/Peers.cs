@@ -16,16 +16,6 @@ namespace Domain
 			this.channel = channel;
 		}
 
-		public void Connect(string publicUrl, string url)
-		{
-			if (publicUrl.Equals(url)) return;
-			if (others.Any(o => o.PublicUrl == url)) return;
-
-			others.Add(new Peer {PublicUrl = url});
-			channel.Connect(publicUrl, url);
-		}
-
-
 		public void GetLastBlock()
 		{
 			foreach (var other in others)
@@ -36,7 +26,7 @@ namespace Domain
 			}
 		}
 
-		public void Discovery(string publicUrl)
+		public void Discovery()
 		{
 			var targets = new List<Peer>(others);
 			
@@ -49,7 +39,7 @@ namespace Domain
 					{
 						if (others.All(o => o.PublicUrl != peer.PublicUrl))
 						{
-							Connect(publicUrl, peer.PublicUrl);
+							Add(peer);
 						}
 					}
 				}
@@ -130,16 +120,22 @@ namespace Domain
 
 		public void Add(Peer peer)
 		{
-			if (others.All(o => o.PublicUrl != peer.PublicUrl))
-			{
-				others.Add(peer);
-				Broadcast(peer);
-			}
+			if (peer.PublicUrl.Equals(node.Peer.PublicUrl)) return;
+			if (others.Any(o => o.PublicUrl == peer.PublicUrl)) return;
+
+			others.Add(peer);
+			channel.Send(peer.PublicUrl, node.Peer);
+			//Broadcast(peer);
 		}
 
 		public IList<Peer> List()
 		{
 			return others;
+		}
+
+		public Peer GetNodeInfo(string url)
+		{
+			return channel.GetNodeInfo(url);
 		}
 	}
 }

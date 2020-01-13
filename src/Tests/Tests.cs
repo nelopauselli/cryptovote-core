@@ -120,21 +120,21 @@ namespace Tests
 			Assert.AreEqual(0, node2.Peers.Count);
 			Assert.AreEqual(0, node3.Peers.Count);
 
-			node1.Connect($"http://{host2}:{port2}");
+			node1.Connect(node2.PublicUrl);
 
-			Assert.AreEqual(1, node1.Peers.Count);
-			Assert.AreEqual(1, node2.Peers.Count);
-			Assert.AreEqual(0, node3.Peers.Count);
+			Assert.AreEqual(1, node1.Peers.Count, string.Join(", ", node1.Peers.List()));
+			Assert.AreEqual(1, node2.Peers.Count, string.Join(", ", node2.Peers.List()));
+			Assert.AreEqual(0, node3.Peers.Count, string.Join(", ", node3.Peers.List()));
 
-			node2.Connect($"http://{host3}:{port3}");
-			Assert.AreEqual(1, node1.Peers.Count);
-			Assert.AreEqual(2, node2.Peers.Count);
-			Assert.AreEqual(1, node3.Peers.Count);
+			node2.Connect(node3.PublicUrl);
+			Assert.AreEqual(1, node1.Peers.Count, string.Join(", ", node1.Peers.List()));
+			Assert.AreEqual(2, node2.Peers.Count, string.Join(", ", node2.Peers.List()));
+			Assert.AreEqual(1, node3.Peers.Count, string.Join(", ", node3.Peers.List()));
 
 			node3.Discovery();
-			Assert.AreEqual(2, node1.Peers.Count);
-			Assert.AreEqual(2, node2.Peers.Count);
-			Assert.AreEqual(2, node3.Peers.Count, string.Join(", ", node3.Peers.List().Select(p=>p.PublicUrl)));
+			Assert.AreEqual(2, node1.Peers.Count, string.Join(", ", node1.Peers.List()));
+			Assert.AreEqual(2, node2.Peers.Count, string.Join(", ", node2.Peers.List()));
+			Assert.AreEqual(2, node3.Peers.Count, string.Join(", ", node3.Peers.List()));
 		}
 
 		[Test]

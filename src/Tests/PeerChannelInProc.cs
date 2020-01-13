@@ -14,12 +14,6 @@ namespace Tests
 			nodes.Add(node);
 		}
 
-		public void Connect(string myPublicUrl, string targetPublicUrl)
-		{
-			var other = nodes.SingleOrDefault(n => n.PublicUrl == targetPublicUrl);
-			other?.Register(new Peer{PublicUrl = myPublicUrl});
-		}
-
 		public IList<Peer> ListPeers(string publicUrl)
 		{
 			var node = nodes.SingleOrDefault(n => n.PublicUrl == publicUrl);
@@ -73,6 +67,18 @@ namespace Tests
 		public void Send(string publicUrl, Recount recount)
 		{
 			throw new System.NotImplementedException();
+		}
+
+		public Peer GetNodeInfo(string publicUrl)
+		{
+			var other = nodes.SingleOrDefault(n => n.PublicUrl == publicUrl);
+			return other?.Peer;
+		}
+
+		public void Send(string publicUrl, Peer peer)
+		{
+			var other = nodes.SingleOrDefault(n => n.PublicUrl == publicUrl);
+			other?.Register(peer);
 		}
 
 		public Block GetLastBlock(string publicUrl)

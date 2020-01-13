@@ -1,11 +1,14 @@
-﻿namespace Domain
+﻿using System;
+
+namespace Domain
 {
 	public interface INodeConfiguration
 	{
-		string Name { get; }
+		Guid NodeId { get; }
+		string NodeName { get; }
+		string NodePublicUrl { get; }
 		byte BlockchainDificulty { get; }
 		string MinerAddress { get; }
 		int MinerInterval { get; }
-		string PublicUrl { get; }
 	}
 }

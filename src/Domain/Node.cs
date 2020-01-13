@@ -12,7 +12,7 @@ namespace Domain
 	public class Node : INode
 	{
 		private readonly INodeConfiguration configuration;
-		public string PublicUrl => configuration.PublicUrl;
+		public string PublicUrl => configuration.NodePublicUrl;
 
 		private readonly ILogger<Node> logger;
 		private readonly Blockchain blockchain;
@@ -30,7 +30,14 @@ namespace Domain
 		{
 			this.configuration = configuration;
 			this.logger = logger;
-			
+
+			Peer = new Peer
+			{
+				Id = configuration.NodeId,
+				Name = configuration.NodeName,
+				PublicUrl = configuration.NodePublicUrl
+			};
+
 			peers = new Peers(this, channel);
 			
 			blockchain = new Blockchain(new Miner(AddressRewards), blockBuilder, configuration.BlockchainDificulty);
@@ -73,6 +80,7 @@ namespace Domain
 		public IEnumerable<BlockItem> Pendings => pendings.Values;
 		public int ChainLength => blockchain.Trunk.Count();
 		public Blockchain Blockchain => blockchain;
+		public Peer Peer { get; }
 
 
 		public void Start()
@@ -101,7 +109,8 @@ namespace Domain
 
 		public void Connect(string url)
 		{
-			peers.Connect(this.configuration.PublicUrl, url);
+			var peer = peers.GetNodeInfo(url);
+			Register(peer);
 		}
 
 		public void Syncronize()
@@ -111,7 +120,7 @@ namespace Domain
 
 		public void Discovery()
 		{
-			peers.Discovery(this.configuration.PublicUrl);
+			peers.Discovery();
 		}
 
 		public void MinePendingTransactions()

@@ -1,3 +1,4 @@
+using System;
 using Domain;
 
 namespace Tests.Mocks
@@ -6,17 +7,19 @@ namespace Tests.Mocks
 	{
 		public NodeConfiguration(string name, string minerAddress, byte blockchainDificulty, int minerInterval, string publicUrl)
 		{
-			Name = name;
+			NodeId = Guid.NewGuid();
+			NodeName = name;
+			NodePublicUrl = publicUrl;
 			BlockchainDificulty = blockchainDificulty;
 			MinerAddress = minerAddress;
 			MinerInterval = minerInterval;
-			PublicUrl = publicUrl;
 		}
 
-		public string Name { get; }
+		public Guid NodeId { get; }
+		public string NodeName { get; }
+		public string NodePublicUrl { get; }
 		public byte BlockchainDificulty { get; }
 		public string MinerAddress { get; }
 		public int MinerInterval { get; }
-		public string PublicUrl { get; }
 	}
 }

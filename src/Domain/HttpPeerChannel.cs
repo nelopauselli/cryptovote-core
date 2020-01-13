@@ -19,41 +19,18 @@ namespace Domain
 
 		private const int HttpDefaultTimeout = 2000;
 
-		public void Connect(string myPublicUrl, string targetPublicUrl)
+		public Peer GetNodeInfo(string publicUrl)
 		{
-			// TODO: POST a $"{publicUrl}/api/peers/" => {myPublicUrl, targetPublicUrl}
-			throw new System.NotImplementedException();
+			var url = new Uri(new Uri(publicUrl), "api/node");
+			return Get<Peer>(url);
 		}
 
 		public IList<Peer> ListPeers(string publicUrl)
 		{
-			try
-			{
-				// TODO: GET a $"{publicUrl}/api/peers/"
-				using (var client = new HttpClient())
-				{
-					var url = new Uri(new Uri(publicUrl), "api/peers");
-					var task = client.GetAsync(url);
-					task.Wait(HttpDefaultTimeout);
-					if (task.IsCompleted)
-					{
-						var result = task.Result;
-						result.EnsureSuccessStatusCode();
-
-						var bodyTask = result.Content.ReadAsByteArrayAsync();
-						bodyTask.Wait();
-
-						var peers = JsonSerializer.Deserialize<Peer[]>(bodyTask.Result, JsonDefaultSettings.Options);
-						return peers;
-					}
-				}
-			}
-			catch (Exception ex)
-			{
-				logger.LogCritical($"Error al acceder a {publicUrl}: {ex}");
-			}
-			return Array.Empty<Peer>();
+			var url = new Uri(new Uri(publicUrl), "api/peers");
+			return Get<Peer[]>(url) ?? Array.Empty<Peer>();
 		}
+
 
 		public Block GetBlock(string publicUrl, byte[] hash)
 		{
@@ -64,10 +41,100 @@ namespace Domain
 		public void Send(string publicUrl, Block block)
 		{
 			var url = new Uri(new Uri(publicUrl), "api/chain");
-			Send(url, JsonSerializer.Serialize(block, JsonDefaultSettings.Options));
+			Post(url, JsonSerializer.Serialize(block, JsonDefaultSettings.Options));
 		}
 
-		private void Send(Uri url, string body)
+		public void Send(string publicUrl, Community community)
+		{
+			var url = new Uri(new Uri(publicUrl), "api/community");
+			Post(url, JsonSerializer.Serialize(community, JsonDefaultSettings.Options));
+		}
+
+		public void Send(string publicUrl, Question question)
+		{
+			var url = new Uri(new Uri(publicUrl), "api/question");
+			Post(url, JsonSerializer.Serialize(question, JsonDefaultSettings.Options));
+		}
+
+		public void Send(string publicUrl, Member member)
+		{
+			var url = new Uri(new Uri(publicUrl), "api/member");
+			Post(url, JsonSerializer.Serialize(member, JsonDefaultSettings.Options));
+		}
+
+		public void Send(string publicUrl, Document document)
+		{
+			var url = new Uri(new Uri(publicUrl), "api/document");
+			Post(url, JsonSerializer.Serialize(document, JsonDefaultSettings.Options));
+		}
+
+		public void Send(string publicUrl, Vote vote)
+		{
+			var url = new Uri(new Uri(publicUrl), "api/vote");
+			Post(url, JsonSerializer.Serialize(vote, JsonDefaultSettings.Options));
+		}
+
+		public void Send(string publicUrl, Fiscal fiscal)
+		{
+			var url = new Uri(new Uri(publicUrl), "api/fiscal");
+			Post(url, JsonSerializer.Serialize(fiscal, JsonDefaultSettings.Options));
+		}
+
+		public void Send(string publicUrl, Urn urn)
+		{
+			var url = new Uri(new Uri(publicUrl), "api/urn");
+			Post(url, JsonSerializer.Serialize(urn, JsonDefaultSettings.Options));
+		}
+
+		public void Send(string publicUrl, Recount recount)
+		{
+			var url = new Uri(new Uri(publicUrl), "api/recount");
+			Post(url, JsonSerializer.Serialize(recount, JsonDefaultSettings.Options));
+		}
+
+		
+		public void Send(string publicUrl, Peer peer)
+		{
+			var url = new Uri(new Uri(publicUrl), "api/peer");
+			Post(url, JsonSerializer.Serialize(peer, JsonDefaultSettings.Options));
+		}
+
+		public Block GetLastBlock(string publicUrl)
+		{
+			// TODO: GET a $"{publicUrl}/api/chain/"
+			throw new System.NotImplementedException();
+		}
+
+		private T Get<T>(Uri url) where T : class
+		{
+			try
+			{
+				using (var client = new HttpClient())
+				{
+					var task = client.GetAsync(url);
+					task.Wait(HttpDefaultTimeout);
+					if (task.IsCompleted)
+					{
+						var result = task.Result;
+						result.EnsureSuccessStatusCode();
+
+						var bodyTask = result.Content.ReadAsByteArrayAsync();
+						bodyTask.Wait();
+
+						var response = JsonSerializer.Deserialize<T>(bodyTask.Result, JsonDefaultSettings.Options);
+						return response;
+					}
+				}
+			}
+			catch (Exception ex)
+			{
+				logger.LogCritical($"Error al acceder a {url}: {ex}");
+			}
+
+			return null;
+		}
+
+		private void Post(Uri url, string body)
 		{
 			try
 			{
@@ -85,66 +152,6 @@ namespace Domain
 			{
 				logger.LogCritical($"Error al acceder a {url} {ex}");
 			}
-		}
-
-		public void Send(string publicUrl, Community community)
-		{
-			var url = new Uri(new Uri(publicUrl), "api/community");
-			Send(url, JsonSerializer.Serialize(community, JsonDefaultSettings.Options));
-		}
-
-		public void Send(string publicUrl, Question question)
-		{
-			var url = new Uri(new Uri(publicUrl), "api/question");
-			Send(url, JsonSerializer.Serialize(question, JsonDefaultSettings.Options));
-		}
-
-		public void Send(string publicUrl, Member member)
-		{
-			var url = new Uri(new Uri(publicUrl), "api/member");
-			Send(url, JsonSerializer.Serialize(member, JsonDefaultSettings.Options));
-		}
-
-		public void Send(string publicUrl, Document document)
-		{
-			var url = new Uri(new Uri(publicUrl), "api/document");
-			Send(url, JsonSerializer.Serialize(document, JsonDefaultSettings.Options));
-		}
-
-		public void Send(string publicUrl, Vote vote)
-		{
-			var url = new Uri(new Uri(publicUrl), "api/vote");
-			Send(url, JsonSerializer.Serialize(vote, JsonDefaultSettings.Options));
-		}
-
-		public void Send(string publicUrl, Fiscal fiscal)
-		{
-			var url = new Uri(new Uri(publicUrl), "api/fiscal");
-			Send(url, JsonSerializer.Serialize(fiscal, JsonDefaultSettings.Options));
-		}
-
-		public void Send(string publicUrl, Urn urn)
-		{
-			var url = new Uri(new Uri(publicUrl), "api/urn");
-			Send(url, JsonSerializer.Serialize(urn, JsonDefaultSettings.Options));
-		}
-
-		public void Send(string publicUrl, Recount recount)
-		{
-			var url = new Uri(new Uri(publicUrl), "api/recount");
-			Send(url, JsonSerializer.Serialize(recount, JsonDefaultSettings.Options));
-		}
-
-		public void Send(string publicUrl, Peer peer)
-		{
-			var url = new Uri(new Uri(publicUrl), "api/peer");
-			Send(url, JsonSerializer.Serialize(peer, JsonDefaultSettings.Options));
-		}
-
-		public Block GetLastBlock(string publicUrl)
-		{
-			// TODO: GET a $"{publicUrl}/api/chain/"
-			throw new System.NotImplementedException();
 		}
 	}
 }

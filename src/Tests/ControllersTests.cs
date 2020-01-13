@@ -95,6 +95,32 @@ namespace Tests
 		}
 
 		[Test]
+		public void Send_peer()
+		{
+			var node = new Mock<INode>();
+			Peer peerInNode = null;
+			node.Setup(n => n.Register(It.IsAny<Peer>())).Callback<Peer>(v => peerInNode = v);
+			var controller = new PeerController(node.Object, new NullLogger<PeerController>());
+
+			var peer = new Peer
+			{
+				Id = Guid.NewGuid(),
+				Name = "My Node",
+				PublicUrl = "http://mynode:1234"
+			};
+
+			var response = controller.Post(peer);
+
+			Assert.AreEqual((int)HttpStatusCode.Accepted, response.StatusCode);
+
+			node.Verify(n => n.Register(It.IsAny<Peer>()), Times.Once);
+			Assert.IsNotNull(peerInNode);
+			Assert.AreEqual(peer.Name, peerInNode.Name);
+			Assert.AreEqual(peer.PublicUrl, peerInNode.PublicUrl);
+			Assert.AreEqual(peer.Id, peerInNode.Id);
+		}
+
+		[Test]
 		public void Send_block_2048()
 		{
 			var node = new Mock<INode>();
