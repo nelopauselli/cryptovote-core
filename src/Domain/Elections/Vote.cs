@@ -58,11 +58,14 @@ namespace Domain.Elections
 			var member = members[0];
 
 			// TODO: ¿que pasa si los dos votos están entrando en el mismo bloque?
-			var previous = chain.Any(b => b.Votes.Any(v => v.QuestionId.Equals(QuestionId) && v.PublicKey.SequenceEqual(PublicKey)));
-			if (previous)
+			foreach (var block in chain)
 			{
-				Messages.Add($"La persona [{Base58.Encode(PublicKey)}] ya votó");
-				return false;
+				var previous = block.Votes.Any(v => v.QuestionId.Equals(QuestionId) && v.PublicKey.SequenceEqual(PublicKey));
+				if (previous)
+				{
+					Messages.Add($"La persona [{Base58.Encode(PublicKey)}] ya votó");
+					return false;
+				}
 			}
 
 			return true;

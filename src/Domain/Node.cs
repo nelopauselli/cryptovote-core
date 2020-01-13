@@ -151,9 +151,9 @@ namespace Domain
 					}
 
 					var chain = blockchain.Trunk.ToArray();
-					foreach (var invalid in pendingsToMine.Where(p => !p.IsValid(chain)))
+					foreach (var invalid in pendings.Where(p => !p.Value.IsValid(chain)))
 					{
-						logger.LogWarning($"Item inválido: {string.Join("\n\r\t", invalid.Messages)}");
+						logger.LogWarning($"Item inválido: {string.Join("\n\r\t", invalid.Value.Messages)}");
 					}
 				}
 				catch (Exception ex)
