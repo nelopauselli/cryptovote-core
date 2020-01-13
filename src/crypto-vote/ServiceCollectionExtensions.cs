@@ -10,6 +10,7 @@ namespace crypto_vote
 		{
 			services.AddSingleton<INodeConfiguration, NodeConfiguration>();
 			services.AddTransient<IBlockBuilder, BlockBuilder>();
+			services.AddTransient<IPeerChannel, HttpPeerChannel>();
 			services.AddSingleton<INode, Node>();
 
 			return services;

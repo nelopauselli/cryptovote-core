@@ -18,7 +18,7 @@ namespace Tests
 		public void Start_node()
 		{
 			var cfg = new NodeConfiguration("Nodo 1", "1234", 1, 2000, "http://localhost:8000");
-			var node = new Node(cfg, new BlockBuilder(), loggerNode);
+			var node = new Node(cfg, new BlockBuilder(), loggerNode, new PeerChannelInProc());
 
 			loggerNode.LogWarning("Ejecutando test");
 
@@ -38,7 +38,7 @@ namespace Tests
 		public void Stop_node()
 		{
 			var cfg = new NodeConfiguration("Nodo 1", "1234", 1, 2000, "http://localhost:8001");
-			var node = new Node(cfg, new BlockBuilder(), loggerNode);
+			var node = new Node(cfg, new BlockBuilder(), loggerNode, new PeerChannelInProc());
 
 			node.Start();
 			Thread.Sleep(1000);

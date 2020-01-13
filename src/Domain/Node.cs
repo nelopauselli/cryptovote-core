@@ -26,12 +26,12 @@ namespace Domain
 		private Task worker;
 		private readonly CancellationTokenSource cts = new CancellationTokenSource();
 
-		public Node(INodeConfiguration configuration, IBlockBuilder blockBuilder, ILogger<Node> logger, IPeerChannel channel=null)
+		public Node(INodeConfiguration configuration, IBlockBuilder blockBuilder, ILogger<Node> logger, IPeerChannel channel)
 		{
 			this.configuration = configuration;
 			this.logger = logger;
 			
-			peers = new Peers(this, channel ?? new HttpPeerChannel());
+			peers = new Peers(this, channel);
 			
 			blockchain = new Blockchain(new Miner(AddressRewards), blockBuilder, configuration.BlockchainDificulty);
 

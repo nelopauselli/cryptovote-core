@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Domain.Elections;
 
@@ -75,34 +74,40 @@ namespace Domain
 				channel.Send(other.PublicUrl, question);
 		}
 
-		public void Broadcast(Member community)
+		public void Broadcast(Member member)
 		{
-			throw new System.NotImplementedException();
+			foreach (var other in others)
+				channel.Send(other.PublicUrl, member);
 		}
 
-		public void Broadcast(Document community)
+		public void Broadcast(Document document)
 		{
-			throw new System.NotImplementedException();
+			foreach (var other in others)
+				channel.Send(other.PublicUrl, document);
 		}
 
-		public void Broadcast(Vote community)
+		public void Broadcast(Vote vote)
 		{
-			throw new System.NotImplementedException();
+			foreach (var other in others)
+				channel.Send(other.PublicUrl, vote);
 		}
 
-		public void Broadcast(Fiscal community)
+		public void Broadcast(Fiscal fiscal)
 		{
-			throw new System.NotImplementedException();
+			foreach (var other in others)
+				channel.Send(other.PublicUrl, fiscal);
 		}
 
-		public void Broadcast(Urn community)
+		public void Broadcast(Urn urn)
 		{
-			throw new System.NotImplementedException();
+			foreach (var other in others)
+				channel.Send(other.PublicUrl, urn);
 		}
 
-		public void Broadcast(Recount community)
+		public void Broadcast(Recount recount)
 		{
-			throw new System.NotImplementedException();
+			foreach (var other in others)
+				channel.Send(other.PublicUrl, recount);
 		}
 
 		public void GetBlock(byte[] hash)
@@ -126,17 +131,5 @@ namespace Domain
 		{
 			return others;
 		}
-	}
-
-	public interface IPeerChannel
-	{
-		void Connect(string myPublicUrl, string targetPublicUrl);
-		IList<PeerInfo> ListPeers(string publicUrl);
-		Block GetLastBlock(string publicUrl);
-		Block GetBlock(string publicUrl, byte[] hash);
-
-		void Send(string publicUrl, Block block);
-		void Send(string publicUrl, Community community);
-		void Send(string publicUrl, Question question);
 	}
 }
