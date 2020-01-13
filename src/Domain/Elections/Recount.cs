@@ -48,8 +48,8 @@ namespace Domain.Elections
 			var valid = false;
 			foreach (var block in chain)
 			{
-				var urn = block.Urns.SingleOrDefault(u => u.Id == UrnId);
-				if (urn != null)
+				var urn = block.Urns?.SingleOrDefault(u => u.Id == UrnId);
+				if (urn?.Authorities != null)
 				{
 					if (!urn.Authorities.Any(a => a.SequenceEqual(PublicKey)))
 						Messages.Add("El firmante no es autoridad en esta urna");

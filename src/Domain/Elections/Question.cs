@@ -63,7 +63,7 @@ namespace Domain.Elections
 		{
 			if (!base.IsValid(chain)) return false;
 
-			var registered = chain.Any(b => b.Communities.Any(c => c.Address.SequenceEqual(PublicKey)));
+			var registered = chain.Any(b => b.Communities != null && b.Communities.Any(c => c.Address.SequenceEqual(PublicKey)));
 
 			return registered;
 		}

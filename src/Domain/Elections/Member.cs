@@ -40,8 +40,8 @@ namespace Domain.Elections
 		public override bool IsValid(IList<Block> chain)
 		{
 			if (!base.IsValid(chain)) return false;
-			
-			var registered = chain.Any(b =>b.Communities.Any(t =>t.Address.SequenceEqual(PublicKey)));
+
+			var registered = chain.Where(b => b.Communities != null).Any(b => b.Communities.Any(t => t.Address.SequenceEqual(PublicKey)));
 
 			return registered;
 		}

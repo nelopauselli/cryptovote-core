@@ -142,24 +142,30 @@ namespace Domain
 			if (pendingsToMine.Length > 0)
 			{
 				logger.Information($"Minando {pendingsToMine.Length} transacciones");
-
-				var block = blockchain.MineNextBlock(pendingsToMine);
-
-				lock (semaphore)
+				try
 				{
-					if (block != null)
+					var block = blockchain.MineNextBlock(pendingsToMine);
+
+					lock (semaphore)
 					{
-						channel.Broadcast(new SendBlockCommand(block));
-						var transactions = block.GetTransactions();
-						foreach (var item in transactions)
-							pendings.Remove(item.GetKey());
+						if (block != null)
+						{
+							channel.Broadcast(new SendBlockCommand(block));
+							var transactions = block.GetTransactions();
+							foreach (var item in transactions)
+								pendings.Remove(item.GetKey());
+						}
+					}
+
+					var chain = blockchain.Trunk.ToArray();
+					foreach (var invalid in pendingsToMine.Where(p => !p.IsValid(chain)))
+					{
+						logger.Warning($"Item inválido: {string.Join("\n\r\t", invalid.Messages)}");
 					}
 				}
-
-				var chain = blockchain.Trunk.ToArray();
-				foreach (var invalid in pendingsToMine.Where(p => !p.IsValid(chain)))
+				catch (Exception ex)
 				{
-					logger.Warning($"Item inválido: {string.Join("\n\r\t", invalid.Messages)}");
+					logger.Error($"Error minando transacciones pendientes: {ex}");
 				}
 			}
 			else
