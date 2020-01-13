@@ -1,18 +1,9 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Domain;
 using Domain.Converters;
-using Domain.Elections;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 
 namespace crypto_vote
 {
@@ -28,10 +19,7 @@ namespace crypto_vote
 		// This method gets called by the runtime. Use this method to add services to the container.
 		public void ConfigureServices(IServiceCollection services)
 		{
-			var configuration = new NodeConfiguration();
-			var node = new Node(configuration, new BlockBuilder(), new ColoredConsoleLogger());
-			node.Start();
-			services.AddSingleton(node);
+			services.AddBlockchain();
 
 			services.AddControllers()
 				.AddJsonOptions(cfg =>
@@ -45,6 +33,8 @@ namespace crypto_vote
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
 		public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
 		{
+			app.UseBlockchain();
+
 			if (env.IsDevelopment())
 			{
 				app.UseDeveloperExceptionPage();
