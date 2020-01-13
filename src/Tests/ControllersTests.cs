@@ -4,21 +4,14 @@ using System.Net;
 using crypto_vote.Controllers;
 using Domain;
 using Domain.Elections;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Abstractions;
-using Microsoft.AspNetCore.Mvc.Routing;
-using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
 using NUnit.Framework;
 
 namespace Tests
 {
-	public class Tcp_tests : TcpTestBase
+	public class ControllersTests : TestWithServices
 	{
-		private const int DefaultSendTaskTimeout = 2000;
-
 		private string WorkingFolder => TestContext.CurrentContext.TestDirectory;
 
 		[Test]

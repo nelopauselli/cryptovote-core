@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Domain.Elections;
 using Domain.Utils;
+using Microsoft.Extensions.Logging;
 
 namespace Domain
 {
@@ -13,7 +14,7 @@ namespace Domain
 		private readonly INodeConfiguration configuration;
 		public string PublicUrl => configuration.PublicUrl;
 
-		private readonly INodeLogger logger;
+		private readonly ILogger<Node> logger;
 		private readonly Blockchain blockchain;
 		private readonly IDictionary<string, BlockItem> pendings;
 
@@ -25,7 +26,7 @@ namespace Domain
 		private Task worker;
 		private readonly CancellationTokenSource cts = new CancellationTokenSource();
 
-		public Node(INodeConfiguration configuration, IBlockBuilder blockBuilder, INodeLogger logger, IPeerChannel channel=null)
+		public Node(INodeConfiguration configuration, IBlockBuilder blockBuilder, ILogger<Node> logger, IPeerChannel channel=null)
 		{
 			this.configuration = configuration;
 			this.logger = logger;
@@ -49,7 +50,7 @@ namespace Domain
 				var addressRewardsBase58 = configuration.MinerAddress;
 				if (string.IsNullOrWhiteSpace(addressRewardsBase58))
 				{
-					logger.Warning("Falta configurar 'Miner:Address'");
+					logger.LogWarning("Falta configurar 'Miner:Address'");
 				}
 				else
 				{
@@ -59,7 +60,7 @@ namespace Domain
 					}
 					catch (Exception ex)
 					{
-						logger.Error(ex.Message);
+						logger.LogError(ex.Message);
 					}
 				}
 
@@ -80,7 +81,7 @@ namespace Domain
 			{
 				State = NodeState.Running;
 
-				logger.Information("Inicializando Nodo de Blockchain");
+				logger.LogInformation("Inicializando Nodo de Blockchain");
 				while (!stop)
 				{
 					Thread.Sleep(configuration.MinerInterval);
@@ -115,7 +116,7 @@ namespace Domain
 
 		public void MinePendingTransactions()
 		{
-			logger.Information("Buscando transacciones que minar");
+			logger.LogInformation("Buscando transacciones que minar");
 			BlockItem[] pendingsToMine;
 			lock (semaphore)
 			{
@@ -124,7 +125,7 @@ namespace Domain
 
 			if (pendingsToMine.Length > 0)
 			{
-				logger.Information($"Minando {pendingsToMine.Length} transacciones");
+				logger.LogInformation($"Minando {pendingsToMine.Length} transacciones");
 				try
 				{
 					var block = blockchain.MineNextBlock(pendingsToMine);
@@ -143,17 +144,17 @@ namespace Domain
 					var chain = blockchain.Trunk.ToArray();
 					foreach (var invalid in pendingsToMine.Where(p => !p.IsValid(chain)))
 					{
-						logger.Warning($"Item inválido: {string.Join("\n\r\t", invalid.Messages)}");
+						logger.LogWarning($"Item inválido: {string.Join("\n\r\t", invalid.Messages)}");
 					}
 				}
 				catch (Exception ex)
 				{
-					logger.Error($"Error minando transacciones pendientes: {ex}");
+					logger.LogCritical($"Error minando transacciones pendientes: {ex}");
 				}
 			}
 			else
 			{
-				logger.Debug("No se encontraron transacciones que minar");
+				logger.LogDebug("No se encontraron transacciones que minar");
 			}
 		}
 
@@ -263,18 +264,18 @@ namespace Domain
 
 		public void Add(Block block)
 		{
-			logger.Information("Recibiendo bloque");
+			logger.LogInformation("Recibiendo bloque");
 
 			var other = blockchain.GetBlock(block.Hash);
 			if (other != null)
 			{
-				logger.Information("El bloque ya existe");
+				logger.LogInformation("El bloque ya existe");
 				return;
 			}
 
 			if (!blockchain.Last.Hash.SequenceEqual(block.PreviousHash))
 			{
-				logger.Information("El bloque no existe ni es el siguiente al último, buscando más");
+				logger.LogInformation("El bloque no existe ni es el siguiente al último, buscando más");
 				peers.GetBlock(block.PreviousHash);
 				return;
 			}
@@ -285,7 +286,7 @@ namespace Domain
 				stop = true;
 
 				var transactions = block.GetTransactions();
-				logger.Information($"Quitando {transactions.Length} transacciones pendientes");
+				logger.LogInformation($"Quitando {transactions.Length} transacciones pendientes");
 
 				foreach (var item in transactions)
 				{
@@ -296,10 +297,10 @@ namespace Domain
 						pendings.Remove(item.GetKey());
 					}
 
-					logger.Information($"Se quitaron {count} transacciones de la lista de pendientes");
+					logger.LogInformation($"Se quitaron {count} transacciones de la lista de pendientes");
 				}
 
-				logger.Information($"Agregando bloque #{block.BlockNumber} a la cadena");
+				logger.LogInformation($"Agregando bloque #{block.BlockNumber} a la cadena");
 				blockchain.AddBlock(block);
 			}
 

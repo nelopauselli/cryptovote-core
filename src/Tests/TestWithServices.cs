@@ -1,11 +1,13 @@
-using System;
-using System.Threading;
+using Domain;
+using Microsoft.Extensions.Logging;
 using NUnit.Framework;
 
 namespace Tests
 {
-	public class TcpTestBase
+	public class TestWithServices
 	{
+		protected ILogger<Node> loggerNode;
+
 		protected const int TcpDefaultTimeout = 10000;
 
 		protected const string host1 = "localhost";
@@ -14,5 +16,14 @@ namespace Tests
 		protected const int port2 = 8002;
 		protected const string host3 = "localhost";
 		protected const int port3 = 8003;
+
+		[OneTimeSetUp]
+		public void InitLogger()
+		{
+			using (var loggerFactory = LoggerFactory.Create(builder => builder.AddConsole()))
+			{
+				loggerNode = loggerFactory.CreateLogger<Node>();
+			}
+		}
 	}
 }

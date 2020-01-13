@@ -1,14 +1,16 @@
 using System;
 using System.Linq;
+using System.Threading;
 using Domain;
 using Domain.Crypto;
 using Domain.Elections;
+using Microsoft.Extensions.Logging;
 using NUnit.Framework;
 using Tests.Mocks;
 
 namespace Tests
 {
-	public class Node_tests : TcpTestBase
+	public class Tests : TestWithServices
 	{
 		private readonly Signer signer = new Signer(CryptoService.Instance);
 
@@ -16,18 +18,19 @@ namespace Tests
 		public void Start_node()
 		{
 			var cfg = new NodeConfiguration("Nodo 1", "1234", 1, 2000, "http://localhost:8000");
-			var logger = new ConsoleLogger();
-			var node = new Node(cfg, new BlockBuilder(), logger);
+			var node = new Node(cfg, new BlockBuilder(), loggerNode);
+
+			loggerNode.LogWarning("Ejecutando test");
 
 			try
 			{
 				node.Start();
+				Thread.Sleep(1000);
 				Assert.AreEqual(NodeState.Running, node.State);
 			}
 			finally
 			{
 				node.Stop();
-				Assert.AreEqual(NodeState.Stoped, node.State);
 			}
 		}
 
@@ -35,27 +38,24 @@ namespace Tests
 		public void Stop_node()
 		{
 			var cfg = new NodeConfiguration("Nodo 1", "1234", 1, 2000, "http://localhost:8001");
-			var logger = new ConsoleLogger();
-			var node = new Node(cfg, new BlockBuilder(), logger);
+			var node = new Node(cfg, new BlockBuilder(), loggerNode);
 
 			node.Start();
+			Thread.Sleep(1000);
 			Assert.AreEqual(NodeState.Running, node.State);
 
 			node.Stop();
+			Thread.Sleep(1000);
 			Assert.AreEqual(NodeState.Stoped, node.State);
 		}
 
 		[Test]
 		public void Mensaje_entre_red_de_3_nodos()
 		{
-			var logger1 = new ConsoleLogger {Tag = "node-1"};
-			var logger2 = new ConsoleLogger {Tag = "node-2"};
-			var logger3 = new ConsoleLogger {Tag = "node-3"};
-
 			var channel = new PeerChannelInProc();
-			var node1 = new Node(new NodeConfiguration("Nodo 1", "1111", 1, 2000, "http://localhost:8001"), new BlockBuilder(), logger1, channel);
-			var node2 = new Node(new NodeConfiguration("Nodo 2", "2222", 1, 2000, "http://localhost:8002"), new BlockBuilder(), logger2, channel);
-			var node3 = new Node(new NodeConfiguration("Nodo 3", "3333", 1, 2000, "http://localhost:8003"), new BlockBuilder(), logger3, channel);
+			var node1 = new Node(new NodeConfiguration("Nodo 1", "1111", 1, 2000, "http://localhost:8001"), new BlockBuilder(), loggerNode, channel);
+			var node2 = new Node(new NodeConfiguration("Nodo 2", "2222", 1, 2000, "http://localhost:8002"), new BlockBuilder(), loggerNode, channel);
+			var node3 = new Node(new NodeConfiguration("Nodo 3", "3333", 1, 2000, "http://localhost:8003"), new BlockBuilder(), loggerNode, channel);
 			channel.Add(node1);
 			channel.Add(node2);
 			channel.Add(node3);
@@ -86,14 +86,10 @@ namespace Tests
 		[Test]
 		public void Mensaje_entre_red_de_3_nodos_circular()
 		{
-			var logger1 = new ConsoleLogger {Tag = "node-1"};
-			var logger2 = new ConsoleLogger {Tag = "node-2"};
-			var logger3 = new ConsoleLogger {Tag = "node-3"};
-
 			var channel = new PeerChannelInProc();
-			var node1 = new Node(new NodeConfiguration("Nodo 1", "1111", 1, 2000, "http://localhost:8001"), new BlockBuilder(), logger1, channel);
-			var node2 = new Node(new NodeConfiguration("Nodo 2", "2222", 1, 2000, "http://localhost:8002"), new BlockBuilder(), logger2, channel);
-			var node3 = new Node(new NodeConfiguration("Nodo 3", "3333", 1, 2000, "http://localhost:8003"), new BlockBuilder(), logger3, channel);
+			var node1 = new Node(new NodeConfiguration("Nodo 1", "1111", 1, 2000, "http://localhost:8001"), new BlockBuilder(), loggerNode, channel);
+			var node2 = new Node(new NodeConfiguration("Nodo 2", "2222", 1, 2000, "http://localhost:8002"), new BlockBuilder(), loggerNode, channel);
+			var node3 = new Node(new NodeConfiguration("Nodo 3", "3333", 1, 2000, "http://localhost:8003"), new BlockBuilder(), loggerNode, channel);
 			channel.Add(node1);
 			channel.Add(node2);
 			channel.Add(node3);
@@ -112,15 +108,10 @@ namespace Tests
 		[Test]
 		public void Compartiendo_pares_entre_3_nodos()
 		{
-
-			var logger1 = new ConsoleLogger {Tag = "node-1"};
-			var logger2 = new ConsoleLogger {Tag = "node-2"};
-			var logger3 = new ConsoleLogger {Tag = "node-3"};
-
 			var channel = new PeerChannelInProc();
-			var node1 = new Node(new NodeConfiguration("Nodo 1", "1111", 1, 2000, $"http://{host1}:{port1}"), new BlockBuilder(), logger1, channel);
-			var node2 = new Node(new NodeConfiguration("Nodo 2", "2222", 1, 2000, $"http://{host2}:{port2}"), new BlockBuilder(), logger2, channel);
-			var node3 = new Node(new NodeConfiguration("Nodo 3", "3333", 1, 2000, $"http://{host3}:{port3}"), new BlockBuilder(), logger3, channel);
+			var node1 = new Node(new NodeConfiguration("Nodo 1", "1111", 1, 2000, $"http://{host1}:{port1}"), new BlockBuilder(), loggerNode, channel);
+			var node2 = new Node(new NodeConfiguration("Nodo 2", "2222", 1, 2000, $"http://{host2}:{port2}"), new BlockBuilder(), loggerNode, channel);
+			var node3 = new Node(new NodeConfiguration("Nodo 3", "3333", 1, 2000, $"http://{host3}:{port3}"), new BlockBuilder(), loggerNode, channel);
 			channel.Add(node1);
 			channel.Add(node2);
 			channel.Add(node3);
@@ -149,12 +140,9 @@ namespace Tests
 		[Test]
 		public void Copiar_blockchain_de_otro_nodo_en_ejecucion_con_2_bloques()
 		{
-			var logger1 = new ConsoleLogger {Tag = "node-1"};
-			var logger2 = new ConsoleLogger {Tag = "node-2"};
-
 			var channel = new PeerChannelInProc();
-			var node1 = new Node(new NodeConfiguration("Nodo 1", "1111", 1, 2000, "http://localhost:8001"), new BlockBuilder(), logger1, channel);
-			var node2 = new Node(new NodeConfiguration("Nodo 2", "1234", 1, 2000, "http://localhost:8002"), new BlockBuilder(), logger2, channel);
+			var node1 = new Node(new NodeConfiguration("Nodo 1", "1111", 1, 2000, "http://localhost:8001"), new BlockBuilder(), loggerNode, channel);
+			var node2 = new Node(new NodeConfiguration("Nodo 2", "1234", 1, 2000, "http://localhost:8002"), new BlockBuilder(), loggerNode, channel);
 			channel.Add(node1);
 			channel.Add(node2);
 
@@ -182,12 +170,9 @@ namespace Tests
 			var owner = CryptoService.Instance.GeneratePair();
 			var communityKeys = CryptoService.Instance.GeneratePair();
 
-			var logger1 = new ConsoleLogger {Tag = "node-1"};
-			var logger2 = new ConsoleLogger {Tag = "node-2"};
-
 			var channel = new PeerChannelInProc();
-			var node1 = new Node(new NodeConfiguration("Nodo 1", "1234", 1, 2000, "http://localhost:8001"), new BlockBuilder(), logger1, channel);
-			var node2 = new Node(new NodeConfiguration("Nodo 2", "1234", 1, 2000, "http://localhost:8002"), new BlockBuilder(), logger2, channel);
+			var node1 = new Node(new NodeConfiguration("Nodo 1", "1234", 1, 2000, "http://localhost:8001"), new BlockBuilder(), loggerNode, channel);
+			var node2 = new Node(new NodeConfiguration("Nodo 2", "1234", 1, 2000, "http://localhost:8002"), new BlockBuilder(), loggerNode, channel);
 			channel.Add(node1);
 			channel.Add(node2);
 
@@ -226,14 +211,10 @@ namespace Tests
 			var owner = CryptoService.Instance.GeneratePair();
 			var communityKeys = CryptoService.Instance.GeneratePair();
 
-			var logger1 = new ConsoleLogger {Tag = "node-1"};
-			var logger2 = new ConsoleLogger {Tag = "node-2"};
-			var logger3 = new ConsoleLogger {Tag = "node-3"};
-
 			var channel = new PeerChannelInProc();
-			var node1 = new Node(new NodeConfiguration("Nodo 1", "1111", 1, 2000, "http://localhost:8001"), new BlockBuilder(), logger1, channel);
-			var node2 = new Node(new NodeConfiguration("Nodo 2", "2222", 1, 2000, "http://localhost:8002"), new BlockBuilder(), logger2, channel);
-			var node3 = new Node(new NodeConfiguration("Mi Nodo", "3333", 1, 2000, "http://localhost:8003"), new BlockBuilder(), logger3, channel);
+			var node1 = new Node(new NodeConfiguration("Nodo 1", "1111", 1, 2000, "http://localhost:8001"), new BlockBuilder(), loggerNode, channel);
+			var node2 = new Node(new NodeConfiguration("Nodo 2", "2222", 1, 2000, "http://localhost:8002"), new BlockBuilder(), loggerNode, channel);
+			var node3 = new Node(new NodeConfiguration("Mi Nodo", "3333", 1, 2000, "http://localhost:8003"), new BlockBuilder(), loggerNode, channel);
 			channel.Add(node1);
 			channel.Add(node2);
 			channel.Add(node3);

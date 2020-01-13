@@ -15,7 +15,7 @@ using Tests.Mocks;
 
 namespace Tests
 {
-	public class Conversation_tests : TcpTestBase
+	public class Conversation_tests : TestWithServices
 	{
 		private string host = "127.0.0.1";
 		private int port = 14001;
