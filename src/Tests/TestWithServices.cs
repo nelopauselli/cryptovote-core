@@ -8,8 +8,6 @@ namespace Tests
 	{
 		protected ILogger<Node> loggerNode;
 
-		protected const int TcpDefaultTimeout = 10000;
-
 		protected const string host1 = "localhost";
 		protected const int port1 = 8001;
 		protected const string host2 = "localhost";
