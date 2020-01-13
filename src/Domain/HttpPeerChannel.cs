@@ -4,6 +4,7 @@ using System.Net.Http;
 using System.Text.Json;
 using Domain.Converters;
 using Domain.Elections;
+using Domain.Utils;
 using Microsoft.Extensions.Logging;
 
 namespace Domain
@@ -34,8 +35,14 @@ namespace Domain
 
 		public Block GetBlock(string publicUrl, byte[] hash)
 		{
-			// TODO: GET a $"{publicUrl}/api/chain/{Base58.Encode(hash)}"
-			throw new System.NotImplementedException();
+			var url = new Uri(new Uri(publicUrl), $"api/chain/{Base58.Encode(hash)}");
+			return Get<Block>(url);
+		}
+
+		public Block GetLastBlock(string publicUrl)
+		{
+			var url = new Uri(new Uri(publicUrl), "api/chain");
+			return Get<Block>(url);
 		}
 
 		public void Send(string publicUrl, Block block)
@@ -97,12 +104,6 @@ namespace Domain
 		{
 			var url = new Uri(new Uri(publicUrl), "api/peer");
 			Post(url, JsonSerializer.Serialize(peer, JsonDefaultSettings.Options));
-		}
-
-		public Block GetLastBlock(string publicUrl)
-		{
-			// TODO: GET a $"{publicUrl}/api/chain/"
-			throw new System.NotImplementedException();
 		}
 
 		private T Get<T>(Uri url) where T : class
