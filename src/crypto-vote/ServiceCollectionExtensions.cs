@@ -8,9 +8,10 @@ namespace crypto_vote
 	{
 		public static IServiceCollection AddBlockchain(this IServiceCollection services)
 		{
-			var configuration = new NodeConfiguration();
-			var node = new Node(configuration, new BlockBuilder(), new ColoredConsoleLogger());
-			services.AddSingleton<INode>(node);
+			services.AddSingleton<INodeConfiguration, NodeConfiguration>();
+			services.AddTransient<IBlockBuilder, BlockBuilder>();
+			services.AddSingleton<INodeLogger, ColoredConsoleLogger>();
+			services.AddSingleton<INode, Node>();
 
 			return services;
 		}
