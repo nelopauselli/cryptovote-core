@@ -60,12 +60,12 @@ namespace Tests
 			channel.Add(node2);
 			channel.Add(node3);
 
-			node1.Connect(node2.PublicUrl);
+			node1.Connect(node2.Peer.PublicUrl);
 			Assert.AreEqual(1, node1.Peers.Count);
 			Assert.AreEqual(1, node2.Peers.Count);
 			Assert.AreEqual(0, node3.Peers.Count);
 
-			node2.Connect(node3.PublicUrl);
+			node2.Connect(node3.Peer.PublicUrl);
 			Assert.AreEqual(1, node1.Peers.Count);
 			Assert.AreEqual(2, node2.Peers.Count);
 			Assert.AreEqual(1, node3.Peers.Count);
@@ -94,9 +94,9 @@ namespace Tests
 			channel.Add(node2);
 			channel.Add(node3);
 
-			node1.Connect(node2.PublicUrl);
-			node2.Connect(node3.PublicUrl);
-			node3.Connect(node1.PublicUrl);
+			node1.Connect(node2.Peer.PublicUrl);
+			node2.Connect(node3.Peer.PublicUrl);
+			node3.Connect(node1.Peer.PublicUrl);
 
 			node1.Add(new Community {Address = new byte[] {1, 2, 3}});
 
@@ -120,13 +120,13 @@ namespace Tests
 			Assert.AreEqual(0, node2.Peers.Count);
 			Assert.AreEqual(0, node3.Peers.Count);
 
-			node1.Connect(node2.PublicUrl);
+			node1.Connect(node2.Peer.PublicUrl);
 
 			Assert.AreEqual(1, node1.Peers.Count, string.Join(", ", node1.Peers.List()));
 			Assert.AreEqual(1, node2.Peers.Count, string.Join(", ", node2.Peers.List()));
 			Assert.AreEqual(0, node3.Peers.Count, string.Join(", ", node3.Peers.List()));
 
-			node2.Connect(node3.PublicUrl);
+			node2.Connect(node3.Peer.PublicUrl);
 			Assert.AreEqual(1, node1.Peers.Count, string.Join(", ", node1.Peers.List()));
 			Assert.AreEqual(2, node2.Peers.Count, string.Join(", ", node2.Peers.List()));
 			Assert.AreEqual(1, node3.Peers.Count, string.Join(", ", node3.Peers.List()));
@@ -158,7 +158,7 @@ namespace Tests
 			Assert.AreEqual(2, node1.ChainLength);
 
 			Assert.AreEqual(1, node2.ChainLength);
-			node2.Connect(node1.PublicUrl);
+			node2.Connect(node1.Peer.PublicUrl);
 			node2.Syncronize();
 
 			Assert.AreEqual(2, node2.ChainLength);

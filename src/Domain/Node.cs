@@ -12,7 +12,6 @@ namespace Domain
 	public class Node : INode
 	{
 		private readonly INodeConfiguration configuration;
-		public string PublicUrl => configuration.NodePublicUrl;
 
 		private readonly ILogger<Node> logger;
 		private readonly Blockchain blockchain;
