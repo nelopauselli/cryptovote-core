@@ -8,10 +8,10 @@ namespace crypto_vote.Controllers
 	[Route("api/[controller]")]
 	public class ChainController : ControllerBase
 	{
-		private readonly Node node;
+		private readonly INode node;
 		private readonly ILogger<ChainController> _logger;
 
-		public ChainController(Node node, ILogger<ChainController> logger)
+		public ChainController(INode node, ILogger<ChainController> logger)
 		{
 			this.node = node;
 			_logger = logger;

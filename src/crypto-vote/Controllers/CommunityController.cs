@@ -12,10 +12,10 @@ namespace crypto_vote.Controllers
 	[Route("api/[controller]")]
 	public class CommunityController : ControllerBase
 	{
-		private readonly Node node;
+		private readonly INode node;
 		private readonly ILogger<CommunityController> logger;
 
-		public CommunityController(Node node, ILogger<CommunityController> logger)
+		public CommunityController(INode node, ILogger<CommunityController> logger)
 		{
 			this.node = node;
 			this.logger = logger;

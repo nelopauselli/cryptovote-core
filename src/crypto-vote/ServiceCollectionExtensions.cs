@@ -10,7 +10,7 @@ namespace crypto_vote
 		{
 			var configuration = new NodeConfiguration();
 			var node = new Node(configuration, new BlockBuilder(), new ColoredConsoleLogger());
-			services.AddSingleton(node);
+			services.AddSingleton<INode>(node);
 
 			return services;
 		}

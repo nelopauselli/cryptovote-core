@@ -13,9 +13,9 @@ namespace crypto_vote.Controllers
 	public class MemberController : ControllerBase
 	{
 		private readonly ILogger<MemberController> logger;
-		private readonly Node node;
+		private readonly INode node;
 
-		public MemberController(Node node, ILogger<MemberController> logger)
+		public MemberController(INode node, ILogger<MemberController> logger)
 		{
 			this.node = node;
 			this.logger = logger;

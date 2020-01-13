@@ -7,6 +7,8 @@ namespace Domain
 	{
 		Blockchain Blockchain { get; }
 
+		void Start();
+
 		void Add(Document document);
 		void Add(Community community);
 		void Add(Member member);
