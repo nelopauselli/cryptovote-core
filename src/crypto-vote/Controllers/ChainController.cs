@@ -1,4 +1,6 @@
 ﻿using Domain;
+using Domain.Queries;
+using Domain.Utils;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
@@ -9,20 +11,36 @@ namespace crypto_vote.Controllers
 	public class ChainController : ControllerBase
 	{
 		private readonly INode node;
-		private readonly ILogger<ChainController> _logger;
+		private readonly ILogger<ChainController> logger;
 
 		public ChainController(INode node, ILogger<ChainController> logger)
 		{
 			this.node = node;
-			_logger = logger;
+			this.logger = logger;
 		}
 
 		[HttpGet]
+		public Block GetLast()
+		{
+			logger.LogDebug("Consuntado último bloque");
+			var query = new LastBlockQuery(node.Blockchain);
+			return query.Execute();
+		}
+
+		[HttpGet("{id}")]
 		public Block Get(string id)
 		{
-			_logger.LogDebug("Consuntado último bloque");
-			return node.Blockchain.Last;
-			
+			logger.LogDebug("Consuntado último bloque");
+			var query = new BlockQuery(node.Blockchain);
+			return query.Execute(Base58.Decode(id));
+		}
+
+		[HttpPost]
+		public ObjectResult Post(Block block)
+		{
+			node.Add(block);
+			//var url = Url.Action("Get", new {id = block.Hash});
+			return Accepted(block);
 		}
 	}
 }

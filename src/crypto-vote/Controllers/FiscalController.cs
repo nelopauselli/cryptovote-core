@@ -32,8 +32,8 @@ namespace crypto_vote.Controllers
 		public ObjectResult Post(Fiscal fiscal)
 		{
 			node.Add(fiscal);
-			var url = Url.Action("Get", new { communityId = fiscal.QuestionId, FiscalId = fiscal.Id });
-			return Accepted(url);
+			//var url = Url.Action("Get", new { communityId = fiscal.QuestionId, FiscalId = fiscal.Id });
+			return Accepted(fiscal);
 		}
 	}
 }

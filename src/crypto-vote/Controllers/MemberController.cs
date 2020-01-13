@@ -22,7 +22,7 @@ namespace crypto_vote.Controllers
 		}
 
 		[HttpGet("{communityId}")]
-		public IEnumerable<Member> Get(Guid communityId)
+		public IEnumerable<Member> List(Guid communityId)
 		{
 			var query = new MembersQuery(node.Blockchain);
 			return query.Execute(communityId);
@@ -40,8 +40,8 @@ namespace crypto_vote.Controllers
 		{
 			node.Add(member);
 
-			var url = Url.Action("Get", new { communityId = member.CommunityId, memberId = member.Id });
-			return Accepted(url);
+			//var url = Url.Action("List", new { communityId = member.CommunityId, memberId = member.Id });
+			return Accepted(member);
 		}
 	}
 }

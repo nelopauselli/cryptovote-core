@@ -14,10 +14,11 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.4.0" />
-    <PackageReference Include="Portable.BouncyCastle" Version="1.8.5.2" />
+    <PackageReference Include="Portable.BouncyCastle" Version="1.8.5" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\crypto-vote\crypto-vote.csproj" />
     <ProjectReference Include="..\Domain\Domain.csproj" />
   </ItemGroup>
 

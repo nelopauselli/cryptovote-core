@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using Domain.Elections;
 
@@ -14,21 +13,17 @@ namespace Domain.Queries
 			this.blockchain = blockchain;
 		}
 
-		public Recount Execute(string content)
+		public Recount Execute(Guid urnId)
 		{
-			if (!Guid.TryParse(content, out var urnId))
-				return null;
-
 			foreach (var block in blockchain.Trunk)
 			{
-				if (block?.Recounts == null) continue;
-				
-				var recount = block.Recounts.FirstOrDefault(i => i.UrnId == urnId);
-				if(recount!=null)
+				var recount = block?.Recounts?.FirstOrDefault(i => i.UrnId == urnId);
+				if (recount != null)
 					return recount;
 			}
 
 			return null;
 		}
+
 	}
 }

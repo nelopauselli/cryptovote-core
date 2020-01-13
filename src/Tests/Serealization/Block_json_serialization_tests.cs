@@ -37,8 +37,8 @@ namespace Tests.Serealization
 
 			var block2 = JsonSerializer.Deserialize<Block>(json, JsonDefaultSettings.Options);
 			Assert.AreEqual(7, block2.BlockNumber);
-			Assert.AreEqual(1, block2.Communities.Count);
-			Assert.AreEqual(1, block2.Questions.Count);
+			Assert.AreEqual(1, block2.Communities?.Count);
+			Assert.AreEqual(1, block2.Questions?.Count);
 			Assert.AreEqual(2, block2.GetTransactions().Length);
 		}
 	}

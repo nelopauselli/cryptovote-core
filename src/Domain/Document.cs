@@ -5,9 +5,13 @@ namespace Domain
 {
 	public class Document : BlockItem
 	{
-		public string Text { get; }
-		public DateTimeOffset Time { get; }
+		public string Text { get; set; }
+		public DateTimeOffset Time { get; set; }
 
+		public Document()
+		{
+		}
+		
 		public Document(string text)
 		{
 			Text = text;

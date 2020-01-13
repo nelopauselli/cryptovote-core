@@ -34,7 +34,7 @@ namespace Tests.Serealization
 		[Test]
 		public void Data()
 		{
-			var recount = JsonSerializer.Deserialize<Recount>(raw);
+			var recount = JsonSerializer.Deserialize<Recount>(raw, JsonDefaultSettings.Options);
 
 			var dataRaw = "2PUvrcNWrVPFZ8TMZhjsX61ef85RcEqG3nQSor17XbtMZbkd9Tsj9SATPRK2KyFFGHsSMGjD8D7H2bqLgvmuP1sZjeE78Yx3qTttmjwb4sVCsF2uKkhAXF76T84ZHFg6fSRcoM88ABrSyYDDsuzUx6KM5rLSttnY3KDbio5GT2Bsg2daLrojJ";
 			var data = Base58.Decode(dataRaw);

@@ -41,8 +41,11 @@ namespace crypto_vote.Controllers
 		public ObjectResult Post(Community model)
 		{
 			logger.LogInformation($"Agregando comunidad '{model.Name}' con Id {model.Id}");
+			
 			node.Add(model);
-			return Accepted(Url.Action("Get", new { id = model.Id}), model);
+			
+			//var url = Url.Action("Get", new {id = model.Id});
+			return Accepted(model);
 		}
 	}
 }

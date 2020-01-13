@@ -43,7 +43,7 @@ namespace Tests
 			Assert.AreEqual(1, blockchain.Trunk.Count());
 
 			var block = blockchain.GetBlock(0);
-			Assert.IsTrue(block.PreviousHash.SequenceEqual(Array.Empty<byte>()));
+			Assert.IsNull(block.PreviousHash);
 			Assert.IsFalse(block.Hash.SequenceEqual(Array.Empty<byte>()));
 
 			var buffer = new byte[2];
@@ -242,7 +242,7 @@ namespace Tests
 			blockchain.MineNextBlock(pendings2);
 
 			var query = new VotesQuery(blockchain);
-			var result = query.Execute(question.Id.ToString("n")).ToArray();
+			var result = query.Execute(question.Id).ToArray();
 
 			Assert.AreEqual(3, result.Length);
 		}

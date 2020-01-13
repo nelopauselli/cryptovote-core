@@ -27,21 +27,11 @@ namespace CryptoVote
 				? interval
 				: 60 * 1000;
 
-		public string MyName => configuration["My:Name"];
+		public string PublicUrl => configuration["My:PublicUrl"];
 
 		public string MyHost => configuration["My:Host"];
 
-		public int MyPort =>
-			int.TryParse(configuration["My:Port"], out var port)
-				? port
-				: 13000;
-
-		public string PeerHost => configuration["Peer:Host"];
-
-		public int PeerPort =>
-			int.TryParse(configuration["Peer:Port"], out var port)
-				? port
-				: 13000;
+		public string PeerUrl => configuration["Peer:Host"];
 
 		public bool ConsoleColored => configuration["Console:Colored"]?.ToLower() == "true" || configuration["Console:Colored"] == "1";
 

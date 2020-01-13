@@ -11,5 +11,6 @@ namespace Domain
 		int Port { get; }
 		Task SendAsync(byte[] data, CancellationToken ctsToken);
 		bool IsReady { get; }
+		void GetBlock(byte[] hash);
 	}
 }

@@ -1,14 +1,14 @@
 using System;
+using System.Linq;
 using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
+using crypto_vote.Controllers;
 using Domain;
-using Domain.Channels;
-using Domain.Channels.Protocol;
 using Domain.Crypto;
-using Domain.Protocol;
-using Domain.Queries;
 using Domain.Elections;
+using Domain.Utils;
+using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
 using NUnit.Framework;
 using Tests.Mocks;
@@ -68,45 +68,13 @@ namespace Tests
 		{
 			var node = new Mock<INode>();
 			node.SetupGet(n => n.Blockchain).Returns(blockchain);
-			var channel = new TcpChannel("server", host, port, node.Object, new ConsoleLogger());
+			var controller = new ChainController(node.Object, new NullLogger<ChainController>());
 
-			Task.Run(() => channel.Listen());
-			WaitFor(() => channel.State != ChannelState.Stop);
-			Assert.AreEqual(ChannelState.Listening, channel.State);
+			var block = controller.GetLast();
 
-			try
-			{
-				var command = new GetLastBlockCommand();
-
-				using (var client = new TcpClient(host, port))
-				{
-					using (var stream = client.GetStream())
-					{
-						command.Send(stream);
-
-						Thread.Sleep(1000);
-
-						var header = CommandHeader.Parse(stream);
-						Assert.IsNotNull(header);
-						Assert.AreEqual(CommandIds.SendBlock, header.CommandId);
-
-						var buffer = new byte[header.Length];
-						stream.Read(buffer, 0, header.Length);
-
-						var block = Serializer.Parse<Block>(buffer);
-
-						Assert.IsNotNull(block);
-						Assert.AreEqual(1, block.Questions.Count);
-						Assert.AreEqual(1, block.Members.Count);
-					}
-				}
-			}
-			finally
-			{
-				Task.Run(() => channel.Stop());
-				WaitFor(() => channel.State != ChannelState.Listening);
-				Assert.AreEqual(ChannelState.Stop, channel.State);
-			}
+			Assert.IsNotNull(block);
+			Assert.AreEqual(1, block.Questions.Count);
+			Assert.AreEqual(1, block.Members.Count);
 		}
 
 		[Test]
@@ -114,44 +82,12 @@ namespace Tests
 		{
 			var node = new Mock<INode>();
 			node.SetupGet(n => n.Blockchain).Returns(blockchain);
-			var channel = new TcpChannel("server", host, port, node.Object, new ConsoleLogger());
+			var controller = new ChainController(node.Object, new NullLogger<ChainController>());
 
-			Task.Run(() => channel.Listen());
-			WaitFor(() => channel.State != ChannelState.Stop);
-			Assert.AreEqual(ChannelState.Listening, channel.State);
-
-			try
-			{
-				var command = new GetBlockCommand(block1Hash);
-
-				using (var client = new TcpClient(host, port))
-				{
-					using (var stream = client.GetStream())
-					{
-						command.Send(stream);
-
-						Thread.Sleep(1000);
-
-						var header = CommandHeader.Parse(stream);
-						Assert.IsNotNull(header);
-						Assert.AreEqual(CommandIds.SendBlock, header.CommandId);
-
-						var buffer = new byte[header.Length];
-						stream.Read(buffer, 0, header.Length);
-
-						var block = Serializer.Parse<Block>(buffer);
-						Assert.IsNotNull(block);
-						Assert.AreEqual(1, block.Questions.Count);
-						Assert.AreEqual(1, block.Members.Count);
-					}
-				}
-			}
-			finally
-			{
-				Task.Run(() => channel.Stop());
-				WaitFor(() => channel.State != ChannelState.Listening);
-				Assert.AreEqual(ChannelState.Stop, channel.State);
-			}
+			var block = controller.Get(Base58.Encode(block1Hash));
+			Assert.IsNotNull(block);
+			Assert.AreEqual(1, block.Questions.Count);
+			Assert.AreEqual(1, block.Members.Count);
 		}
 
 		[Test]
@@ -159,42 +95,12 @@ namespace Tests
 		{
 			var node = new Mock<INode>();
 			node.SetupGet(n => n.Blockchain).Returns(blockchain);
-			var channel = new TcpChannel("server", host, port, node.Object, new ConsoleLogger());
+			var controller = new CommunityController(node.Object, new NullLogger<CommunityController>());
 
-			Task.Run(() => channel.Listen());
-			WaitFor(() => channel.State != ChannelState.Stop);
-			Assert.AreEqual(ChannelState.Listening, channel.State);
+			var communities = controller.List();
 
-			try
-			{
-				var command = new CommunitiesQueryCommand();
-
-				using (var client = new TcpClient(host, port))
-				{
-					using (var stream = client.GetStream())
-					{
-						command.Send(stream);
-
-						Thread.Sleep(1000);
-
-						var header = CommandHeader.Parse(stream);
-						Assert.IsNotNull(header);
-						Assert.AreEqual(CommandIds.QueryResponse, header.CommandId);
-
-						var communities = command.Parse(stream, header.Length);
-
-						Assert.IsNotNull(communities);
-						Assert.AreEqual(2, communities.Length);
-
-					}
-				}
-			}
-			finally
-			{
-				Task.Run(() => channel.Stop());
-				WaitFor(() => channel.State != ChannelState.Listening);
-				Assert.AreEqual(ChannelState.Stop, channel.State);
-			}
+			Assert.IsNotNull(communities);
+			Assert.AreEqual(2, communities.Count());
 		}
 
 		[Test]
@@ -202,41 +108,12 @@ namespace Tests
 		{
 			var node = new Mock<INode>();
 			node.SetupGet(n => n.Blockchain).Returns(blockchain);
-			var channel = new TcpChannel("server", host, port, node.Object, new ConsoleLogger());
+			var controller = new CommunityController(node.Object, new NullLogger<CommunityController>());
 
-			Task.Run(() => channel.Listen());
-			WaitFor(() => channel.State != ChannelState.Stop);
-			Assert.AreEqual(ChannelState.Listening, channel.State);
+			var community = controller.Get(cryptoVoteId);
 
-			try
-			{
-				var command = new CommunityQueryCommand(cryptoVoteId);
-
-				using (var client = new TcpClient(host, port))
-				{
-					using (var stream = client.GetStream())
-					{
-						command.Send(stream);
-
-						Thread.Sleep(1000);
-
-						var header = CommandHeader.Parse(stream);
-						Assert.IsNotNull(header);
-						Assert.AreEqual(CommandIds.QueryResponse, header.CommandId);
-
-						var community = command.Parse(stream, header.Length);
-
-						Assert.IsNotNull(community);
-						Assert.AreEqual("Crypto Vote", community.Name);
-					}
-				}
-			}
-			finally
-			{
-				Task.Run(() => channel.Stop());
-				WaitFor(() => channel.State != ChannelState.Listening);
-				Assert.AreEqual(ChannelState.Stop, channel.State);
-			}
+			Assert.IsNotNull(community);
+			Assert.AreEqual("Crypto Vote", community.Name);
 		}
 
 		[Test]
@@ -244,47 +121,15 @@ namespace Tests
 		{
 			var node = new Mock<INode>();
 			node.SetupGet(n => n.Blockchain).Returns(blockchain);
-			var channel = new TcpChannel("server", host, port, node.Object, new ConsoleLogger());
+			var controller = new QuestionController(node.Object, new NullLogger<QuestionController>());
 
-			Task.Run(() => channel.Listen());
-			WaitFor(() => channel.State != ChannelState.Stop);
-			Assert.AreEqual(ChannelState.Listening, channel.State);
+			var questions = controller.List(cryptoVoteId).ToArray();
 
-			try
-			{
-				var command = new QuestionsQueryCommand(cryptoVoteId);
+			Assert.AreEqual(1, questions.Length);
 
-				using (var client = new TcpClient(host, port))
-				{
-					using (var stream = client.GetStream())
-					{
-						command.Send(stream);
-
-						Thread.Sleep(1000);
-
-						var header = CommandHeader.Parse(stream);
-						Assert.IsNotNull(header);
-						Assert.AreEqual(CommandIds.QueryResponse, header.CommandId);
-
-						var buffer = new byte[header.Length];
-						stream.Read(buffer, 0, header.Length);
-
-						var questions = Serializer.Parse<Question[]>(buffer);
-
-						Assert.AreEqual(1, questions.Length);
-
-						var question = questions[0];
-						Assert.IsNotNull(question);
-						Assert.AreEqual("¿el nodo debe poder ejecutarse en una Raspberry?", question.Name);
-					}
-				}
-			}
-			finally
-			{
-				Task.Run(() => channel.Stop());
-				WaitFor(() => channel.State != ChannelState.Listening);
-				Assert.AreEqual(ChannelState.Stop, channel.State);
-			}
+			var question = questions[0];
+			Assert.IsNotNull(question);
+			Assert.AreEqual("¿el nodo debe poder ejecutarse en una Raspberry?", question.Name);
 		}
 
 		[Test]
@@ -292,44 +137,13 @@ namespace Tests
 		{
 			var node = new Mock<INode>();
 			node.SetupGet(n => n.Blockchain).Returns(blockchain);
-			var channel = new TcpChannel("server", host, port, node.Object, new ConsoleLogger());
+			var controller = new QuestionController(node.Object, new NullLogger<QuestionController>());
 
-			Task.Run(() => channel.Listen());
-			WaitFor(() => channel.State != ChannelState.Stop);
-			Assert.AreEqual(ChannelState.Listening, channel.State);
 
-			try
-			{
-				var command = new QuestionQueryCommand(cryptoVoteId, questionId);
+			var question = controller.Get(cryptoVoteId, questionId);
 
-				using (var client = new TcpClient(host, port))
-				{
-					using (var stream = client.GetStream())
-					{
-						command.Send(stream);
-
-						Thread.Sleep(1000);
-
-						var header = CommandHeader.Parse(stream);
-						Assert.IsNotNull(header);
-						Assert.AreEqual(CommandIds.QueryResponse, header.CommandId);
-
-						var buffer = new byte[header.Length];
-						stream.Read(buffer, 0, header.Length);
-
-						var question = Serializer.Parse<Question>(buffer);
-
-						Assert.IsNotNull(question);
-						Assert.AreEqual("¿el nodo debe poder ejecutarse en una Raspberry?", question.Name);
-					}
-				}
-			}
-			finally
-			{
-				Task.Run(() => channel.Stop());
-				WaitFor(() => channel.State != ChannelState.Listening);
-				Assert.AreEqual(ChannelState.Stop, channel.State);
-			}
+			Assert.IsNotNull(question);
+			Assert.AreEqual("¿el nodo debe poder ejecutarse en una Raspberry?", question.Name);
 		}
 
 		[Test]
@@ -337,47 +151,16 @@ namespace Tests
 		{
 			var node = new Mock<INode>();
 			node.SetupGet(n => n.Blockchain).Returns(blockchain);
-			var channel = new TcpChannel("server", host, port, node.Object, new ConsoleLogger());
+			var controller = new MemberController(node.Object, new NullLogger<MemberController>());
 
-			Task.Run(() => channel.Listen());
-			WaitFor(() => channel.State != ChannelState.Stop);
-			Assert.AreEqual(ChannelState.Listening, channel.State);
+			var members = controller.List(cryptoVoteId).ToArray();
 
-			try
-			{
-				var command = new MembersQueryCommand(cryptoVoteId);
+			Assert.AreEqual(1, members.Length);
 
-				using (var client = new TcpClient(host, port))
-				{
-					using (var stream = client.GetStream())
-					{
-						command.Send(stream);
+			var member = members[0];
+			Assert.IsNotNull(member);
+			Assert.AreEqual("Nelo", member.Name);
 
-						Thread.Sleep(1000);
-
-						var header = CommandHeader.Parse(stream);
-						Assert.IsNotNull(header);
-						Assert.AreEqual(CommandIds.QueryResponse, header.CommandId);
-
-						var buffer = new byte[header.Length];
-						stream.Read(buffer, 0, header.Length);
-
-						var members = Serializer.Parse<Member[]>(buffer);
-
-						Assert.AreEqual(1, members.Length);
-
-						var member = members[0];
-						Assert.IsNotNull(member);
-						Assert.AreEqual("Nelo", member.Name);
-					}
-				}
-			}
-			finally
-			{
-				Task.Run(() => channel.Stop());
-				WaitFor(() => channel.State != ChannelState.Listening);
-				Assert.AreEqual(ChannelState.Stop, channel.State);
-			}
 		}
 
 		[Test]
@@ -385,44 +168,12 @@ namespace Tests
 		{
 			var node = new Mock<INode>();
 			node.SetupGet(n => n.Blockchain).Returns(blockchain);
-			var channel = new TcpChannel("server", host, port, node.Object, new ConsoleLogger());
+			var controller = new MemberController(node.Object, new NullLogger<MemberController>());
 
-			Task.Run(() => channel.Listen());
-			WaitFor(() => channel.State != ChannelState.Stop);
-			Assert.AreEqual(ChannelState.Listening, channel.State);
+			var member = controller.Get(cryptoVoteId, neloId);
 
-			try
-			{
-				var command = new MemberQueryCommand(cryptoVoteId, neloId);
-
-				using (var client = new TcpClient(host, port))
-				{
-					using (var stream = client.GetStream())
-					{
-						command.Send(stream);
-
-						Thread.Sleep(1000);
-
-						var header = CommandHeader.Parse(stream);
-						Assert.IsNotNull(header);
-						Assert.AreEqual(CommandIds.QueryResponse, header.CommandId);
-
-						var buffer = new byte[header.Length];
-						stream.Read(buffer, 0, header.Length);
-
-						var member = Serializer.Parse<Member>(buffer);
-
-						Assert.IsNotNull(member);
-						Assert.AreEqual("Nelo", member.Name);
-					}
-				}
-			}
-			finally
-			{
-				Task.Run(() => channel.Stop());
-				WaitFor(() => channel.State != ChannelState.Listening);
-				Assert.AreEqual(ChannelState.Stop, channel.State);
-			}
+			Assert.IsNotNull(member);
+			Assert.AreEqual("Nelo", member.Name);
 		}
 	}
 }

@@ -28,21 +28,18 @@ namespace CryptoVote
 			logger.Information($"miner:interval: {configuration.MinerInterval} ms");
 			logger.Information($"blockchain:dificulty: {configuration.BlockchainDificulty}");
 			logger.Information($"my:host: {configuration.MyHost}");
-			logger.Information($"my:port: {configuration.MyPort}");
-			logger.Information($"peer:host: {configuration.PeerHost}");
-			logger.Information($"peer:port: {configuration.PeerPort}");
+			logger.Information($"peer:url: {configuration.PeerUrl}");
 			logger.Information($"console:colored: {configuration.ConsoleColored}");
 			logger.Information($"verbosity: {configuration.Verbosity}");
 			
 			var node = new Node(configuration, new BlockBuilder(), logger);
 
-			node.Listen();
 			node.Start();
 
-			if (!string.IsNullOrWhiteSpace(configuration.PeerHost))
+			if (!string.IsNullOrWhiteSpace(configuration.PeerUrl))
 			{
-				logger.Information($"Intentando conectar con: {configuration.PeerHost}:{configuration.PeerPort}");
-				node.Connect(configuration.PeerHost, configuration.PeerPort);
+				logger.Information($"Intentando conectar con: {configuration.PeerUrl}");
+				node.Connect(configuration.PeerUrl);
 				node.Syncronize();
 
 				node.Discovery();
@@ -53,7 +50,7 @@ namespace CryptoVote
 				Thread.Sleep(100);
 
 			Console.WriteLine("Stoping...");
-			node.Stop(2000);
+			node.Stop();
 			Console.WriteLine("Stoped");
 		}
 

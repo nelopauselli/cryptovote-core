@@ -3,9 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Domain.Channels;
-using Domain.Protocol;
-using Domain.Queries;
 using Domain.Elections;
 using Domain.Utils;
 
@@ -14,28 +11,32 @@ namespace Domain
 	public class Node : INode
 	{
 		private readonly INodeConfiguration configuration;
+		public string PublicUrl => configuration.PublicUrl;
+
 		private readonly INodeLogger logger;
 		private readonly Blockchain blockchain;
 		private readonly IDictionary<string, BlockItem> pendings;
 
+		private readonly Peers peers;
+		public Peers Peers => peers;
+
 		private bool stop;
 		private readonly object semaphore = new object();
 		private Task worker;
-		private readonly TcpChannel channel;
-		private Task channelTask;
-		private CancellationTokenSource cts = new CancellationTokenSource();
+		private readonly CancellationTokenSource cts = new CancellationTokenSource();
 
-		public Node(INodeConfiguration configuration, IBlockBuilder blockBuilder, INodeLogger logger)
+		public Node(INodeConfiguration configuration, IBlockBuilder blockBuilder, INodeLogger logger, IPeerChannel channel=null)
 		{
 			this.configuration = configuration;
 			this.logger = logger;
-
+			
+			peers = new Peers(this, channel ?? new HttpPeerChannel());
+			
 			blockchain = new Blockchain(new Miner(AddressRewards), blockBuilder, configuration.BlockchainDificulty);
 
 			var path = "genesis.block";
 			blockchain.LoadGenesisBlock(path);
 
-			channel = new TcpChannel(configuration.Name, configuration.MyHost, configuration.MyPort, this, logger);
 			pendings = new Dictionary<string, BlockItem>();
 		}
 
@@ -71,8 +72,7 @@ namespace Domain
 		public IEnumerable<BlockItem> Pendings => pendings.Values;
 		public int ChainLength => blockchain.Trunk.Count();
 		public Blockchain Blockchain => blockchain;
-		public ChannelState ChannelState => channel.State;
-		public IChannel Channel => channel;
+
 
 		public void Start()
 		{
@@ -88,46 +88,29 @@ namespace Domain
 				}
 
 				State = NodeState.Stoped;
-			});
+			}, cts.Token);
 			Thread.Sleep(10);
 		}
 
-		public void Listen(int timeout = 1000)
+		public void Stop()
 		{
-			channelTask = Task.Run(() => channel.Listen(), cts.Token);
+			stop = true;
+			cts.Cancel();
 		}
 
-		public void Connect(string host, int port)
+		public void Connect(string url)
 		{
-			channel.Connect(host, port);
+			peers.Connect(this.configuration.PublicUrl, url);
 		}
 
 		public void Syncronize()
 		{
-			channel.Broadcast(new GetLastBlockCommand());
+			peers.GetLastBlock();
 		}
 
 		public void Discovery()
 		{
-			channel.Discovery();
-		}
-
-		public void Stop(int timeout = 1000)
-		{
-			stop = true;
-
-			var startAt = DateTime.Now;
-
-			Task.Run(() => channel.Stop());
-
-			while (ChannelState == ChannelState.Listening)
-			{
-				Thread.Sleep(100);
-				if (DateTime.Now.Subtract(startAt).TotalMilliseconds > timeout)
-					break;
-			}
-
-			cts.Cancel();
+			peers.Discovery(this.configuration.PublicUrl);
 		}
 
 		public void MinePendingTransactions()
@@ -150,7 +133,7 @@ namespace Domain
 					{
 						if (block != null)
 						{
-							channel.Broadcast(new SendBlockCommand(block));
+							peers.Broadcast(block);
 							var transactions = block.GetTransactions();
 							foreach (var item in transactions)
 								pendings.Remove(item.GetKey());
@@ -184,7 +167,7 @@ namespace Domain
 				pendings.Add(community.GetKey(), community);
 			}
 
-			channel.Broadcast(new SendCommunityCommand(community));
+			peers.Broadcast(community);
 		}
 
 		public void Add(Question question)
@@ -197,7 +180,7 @@ namespace Domain
 				pendings.Add(question.GetKey(), question);
 			}
 
-			channel.Broadcast(new SendQuestionCommand(question));
+			peers.Broadcast(question);
 		}
 
 		public void Add(Member member)
@@ -210,7 +193,7 @@ namespace Domain
 				pendings.Add(member.GetKey(), member);
 			}
 
-			channel.Broadcast(new SendMemberCommand(member));
+			peers.Broadcast(member);
 		}
 
 		public void Add(Vote vote)
@@ -223,7 +206,7 @@ namespace Domain
 				pendings.Add(vote.GetKey(), vote);
 			}
 
-			channel.Broadcast(new SendVoteCommand(vote));
+			peers.Broadcast(vote);
 		}
 
 		public void Add(Fiscal fiscal)
@@ -236,7 +219,7 @@ namespace Domain
 				pendings.Add(fiscal.GetKey(), fiscal);
 			}
 
-			channel.Broadcast(new SendFiscalCommand(fiscal));
+			peers.Broadcast(fiscal);
 		}
 
 		public void Add(Urn urn)
@@ -249,7 +232,7 @@ namespace Domain
 				pendings.Add(urn.GetKey(), urn);
 			}
 
-			channel.Broadcast(new SendUrnCommand(urn));
+			peers.Broadcast(urn);
 		}
 
 		public void Add(Recount recount)
@@ -262,7 +245,7 @@ namespace Domain
 				pendings.Add(recount.GetKey(), recount);
 			}
 
-			channel.Broadcast(new SendRecountCommand(recount));
+			peers.Broadcast(recount);
 		}
 
 		public void Add(Document document)
@@ -275,10 +258,10 @@ namespace Domain
 				pendings.Add(document.GetKey(), document);
 			}
 
-			channel.Broadcast(new SendDocumentCommand(document));
+			peers.Broadcast(document);
 		}
 
-		public void Add(Block block, TcpPeer peer)
+		public void Add(Block block)
 		{
 			logger.Information("Recibiendo bloque");
 
@@ -292,7 +275,7 @@ namespace Domain
 			if (!blockchain.Last.Hash.SequenceEqual(block.PreviousHash))
 			{
 				logger.Information("El bloque no existe ni es el siguiente al último, buscando más");
-				peer.Send(new GetBlockCommand(block.PreviousHash));
+				peers.GetBlock(block.PreviousHash);
 				return;
 			}
 
@@ -320,7 +303,12 @@ namespace Domain
 				blockchain.AddBlock(block);
 			}
 
-			channel.Broadcast(new GetLastBlockCommand());
+			peers.GetLastBlock();
+		}
+
+		public void Add(PeerInfo peer)
+		{
+			peers.Add(peer);
 		}
 	}
 }

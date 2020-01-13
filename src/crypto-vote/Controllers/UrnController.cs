@@ -32,8 +32,8 @@ namespace crypto_vote.Controllers
 		public ObjectResult Post(Urn urn)
 		{
 			node.Add(urn);
-			var url = Url.Action("Get", new { communityId = urn.QuestionId, UrnId = urn.Id });
-			return Accepted(url);
+			//var url = Url.Action("Get", new { communityId = urn.QuestionId, UrnId = urn.Id });
+			return Accepted(urn);
 		}
 	}
 }

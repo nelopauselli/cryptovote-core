@@ -16,29 +16,20 @@ namespace Domain
 		{
 			PreviousHash = previousHash;
 			BlockNumber = blockNumber;
-			Documents = new List<Document>();
-			Communities = new List<Community>();
-			Members = new List<Member>();
-			Questions = new List<Question>();
-			Urns = new List<Urn>();
-			Fiscals = new List<Fiscal>();
-			Votes = new List<Vote>();
-			Recounts = new List<Recount>();
-			Recognitions = new List<Recognition>();
 		}
 
 		public int BlockNumber { get; set; }
 		public byte Dificulty { get; set; }
 
-		public IList<Document> Documents { get; }
-		public IList<Community> Communities { get; }
-		public IList<Member> Members { get; }
-		public IList<Question> Questions { get; }
-		public IList<Urn> Urns { get; }
-		public IList<Fiscal> Fiscals { get; }
-		public IList<Vote> Votes { get; }
-		public IList<Recount> Recounts { get; }
-		public IList<Recognition> Recognitions { get; }
+		public List<Document> Documents { get; set; } = new List<Document>();
+		public List<Community> Communities { get; set; } = new List<Community>();
+		public List<Member> Members { get; set; } = new List<Member>();
+		public List<Question> Questions { get; set; } = new List<Question>();
+		public List<Urn> Urns { get; set; } = new List<Urn>();
+		public List<Fiscal> Fiscals { get; set; } = new List<Fiscal>();
+		public List<Vote> Votes { get; set; } = new List<Vote>();
+		public List<Recount> Recounts { get; set; } = new List<Recount>();
+		public List<Recognition> Recognitions { get; set; }  = new List<Recognition>();
 
 		public int Nonce { get; set; }
 		public byte[] MinerPublicKey { get; set; }

@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29609.76
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Web", "Web\Web.csproj", "{DB1ABC00-9AF5-423E-8AEC-4CE0600821FB}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Domain", "Domain\Domain.csproj", "{87AF6640-B88C-45B6-B50E-B4D1F2493125}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tests", "Tests\Tests.csproj", "{82259298-BA48-47F1-8CA8-473DC50A117D}"
@@ -23,7 +21,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		Readme.md = Readme.md
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "crypto-vote", "crypto-vote\crypto-vote.csproj", "{DA301949-4694-46D8-A1C3-D7D5A0A85222}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "crypto-vote", "crypto-vote\crypto-vote.csproj", "{DA301949-4694-46D8-A1C3-D7D5A0A85222}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -31,10 +29,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{DB1ABC00-9AF5-423E-8AEC-4CE0600821FB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{DB1ABC00-9AF5-423E-8AEC-4CE0600821FB}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{DB1ABC00-9AF5-423E-8AEC-4CE0600821FB}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{DB1ABC00-9AF5-423E-8AEC-4CE0600821FB}.Release|Any CPU.Build.0 = Release|Any CPU
 		{87AF6640-B88C-45B6-B50E-B4D1F2493125}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{87AF6640-B88C-45B6-B50E-B4D1F2493125}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{87AF6640-B88C-45B6-B50E-B4D1F2493125}.Release|Any CPU.ActiveCfg = Release|Any CPU

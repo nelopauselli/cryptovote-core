@@ -1,6 +1,4 @@
-﻿using System.Net;
-
-namespace Domain
+﻿namespace Domain
 {
 	public interface INodeConfiguration
 	{
@@ -8,7 +6,6 @@ namespace Domain
 		byte BlockchainDificulty { get; }
 		string MinerAddress { get; }
 		int MinerInterval { get; }
-		string MyHost { get; }
-		int MyPort { get; }
+		string PublicUrl { get; }
 	}
 }

@@ -16,14 +16,9 @@ namespace Domain.Converters
 		{
 			var value = reader.GetString();
 			if (value != null)
-			{
 				return Base58.Decode(value);
-			}
 
-			if (typeToConvert == typeof(byte[]))
-				return Array.Empty<byte>();
-
-			return null;
+			return Array.Empty<byte>();
 		}
 
 		public override void Write(Utf8JsonWriter writer, byte[] value, JsonSerializerOptions options)
