@@ -140,7 +140,11 @@ namespace Domain
 
 		public void MinePendingTransactions()
 		{
-			logger.LogInformation("Buscando transacciones que minar");
+			logger.LogInformation($"Buscando transacciones que minar.\n" +
+			                      $"\tÚltimo bloque #{blockchain.Last.BlockNumber}.\n" +
+			                      $"\tCadenas secundarias #{blockchain.BranchesCount}"
+			);
+
 			BlockItem[] pendingsToMine;
 			lock (semaphore)
 			{
@@ -166,7 +170,12 @@ namespace Domain
 					}
 
 					var chain = blockchain.Trunk.ToArray();
-					var invalids = pendings.Where(p => !p.Value.IsValid(chain)).ToArray();
+					KeyValuePair<string, BlockItem>[] invalids;
+					lock (semaphore)
+					{
+						invalids = pendings.Where(p => !p.Value.IsValid(chain)).ToArray();
+					}
+
 					foreach (var invalid in invalids)
 					{
 						logger.LogWarning($"Item {invalid.Value.GetType().Name} inválido: {string.Join("\n\r\t", invalid.Value.Messages)}");
