@@ -13,15 +13,16 @@ namespace crypto_vote
 			this.configuration = configuration;
 		}
 
-		public Guid NodeId => Guid.TryParse(configuration["Node:Id"], out var value) ? value : Guid.NewGuid();
-		public string NodeName => configuration["Node:Name"] ?? "nodo sin nombre";
-		public string NodePublicUrl => configuration["Node:PublicUrl"] ?? "localhost:8000";
+		public Guid NodeId => Guid.TryParse(configuration["NodeId"], out var value) ? value : Guid.NewGuid();
+		public string NodeName => configuration["NodeName"] ?? "nodo sin nombre";
+		public string NodePublicUrl => configuration["NodePublicUrl"];
 
-		public byte BlockchainDificulty => (byte)(byte.TryParse(configuration["Blockchain:Dificulty"] ?? "1", out var value) ? value : 1);
+		public string PeerUrl => configuration["PeerUrl"];
 
-		public string MinerAddress => configuration["Miner:Address"];
+		public byte BlockchainDificulty => (byte)(byte.TryParse(configuration["BlockchainDificulty"] ?? "1", out var value) ? value : 1);
 
-		public int MinerInterval => int.TryParse(configuration["Miner:Interval"] ?? "10000", out var value) ? value : 10000;
+		public string MinerAddress => configuration["MinerAddress"];
 
+		public int MinerInterval => int.TryParse(configuration["MinerInterval"] ?? "10000", out var value) ? value : 10000;
 	}
 }

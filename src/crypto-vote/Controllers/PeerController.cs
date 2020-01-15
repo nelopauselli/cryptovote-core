@@ -35,7 +35,7 @@ namespace crypto_vote.Controllers
 		[HttpPost]
 		public ObjectResult Post(Peer model)
 		{
-			logger.LogInformation($"Agregando comunidad '{model.Name}' en la url {model.PublicUrl}");
+			logger.LogInformation($"Agregando peer '{model.Name}' en la url {model.PublicUrl}");
 
 			node.Register(model);
 

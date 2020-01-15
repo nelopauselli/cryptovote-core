@@ -43,7 +43,7 @@ namespace Tests
 			Assert.AreEqual(1, blockchain.Trunk.Count());
 
 			var block = blockchain.GetBlock(0);
-			Assert.IsNull(block.PreviousHash);
+			Assert.IsTrue(block.PreviousHash.SequenceEqual(Array.Empty<byte>()));
 			Assert.IsFalse(block.Hash.SequenceEqual(Array.Empty<byte>()));
 
 			var buffer = new byte[2];

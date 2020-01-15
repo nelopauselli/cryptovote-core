@@ -63,7 +63,9 @@ namespace Domain.Elections
 		{
 			if (!base.IsValid(chain)) return false;
 
-			var registered = chain.Any(b => b.Communities != null && b.Communities.Any(c => c.Address.SequenceEqual(PublicKey)));
+			var registered = chain.Where(b => b.Communities != null).Any(b => b.Communities.Any(t => t.Id == CommunityId && t.Address.SequenceEqual(PublicKey)));
+			if (!registered)
+				Messages.Add($"La PublicKey {PublicKey.ByteArrayToHexString()} no es dueña de la comunidad {CommunityId:n}");
 
 			return registered;
 		}

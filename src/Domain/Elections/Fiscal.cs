@@ -36,7 +36,10 @@ namespace Domain.Elections
 		public override bool IsValid(IList<Block> chain)
 		{
 			if (!base.IsValid(chain)) return false;
-			var registered = chain.Any(b => b.Questions!=null && b.Questions.Any(i => i.Id == QuestionId));
+			var registered = chain.Any(b => b.Questions != null && b.Questions.Any(i => i.Id == QuestionId));
+			if (!registered)
+				Messages.Add($"No existe la question {QuestionId}");
+
 			return registered;
 		}
 	}

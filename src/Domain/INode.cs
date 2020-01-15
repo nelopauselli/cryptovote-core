@@ -6,7 +6,7 @@ namespace Domain
 	{
 		Peers Peers { get; }
 		Blockchain Blockchain { get; }
-		Peer Peer { get; }
+		Peer Host { get; }
 
 		void Start();
 

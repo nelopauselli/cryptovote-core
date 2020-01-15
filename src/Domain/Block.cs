@@ -34,7 +34,7 @@ namespace Domain
 		public int Nonce { get; set; }
 		public byte[] MinerPublicKey { get; set; }
 		public byte[] Hash { get; set; }
-		public byte[] PreviousHash { get; }
+		public byte[] PreviousHash { get; set; } = Array.Empty<byte>();
 
 		public BlockItem[] GetTransactions()
 		{

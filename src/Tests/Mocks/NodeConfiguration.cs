@@ -21,5 +21,6 @@ namespace Tests.Mocks
 		public byte BlockchainDificulty { get; }
 		public string MinerAddress { get; }
 		public int MinerInterval { get; }
+		public string PeerUrl { get; }
 	}
 }

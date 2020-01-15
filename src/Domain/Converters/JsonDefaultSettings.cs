@@ -9,6 +9,7 @@ namespace Domain.Converters
 			get
 			{
 				var settings = new JsonSerializerOptions();
+				settings.PropertyNameCaseInsensitive = true;
 				settings.Converters.Add(new GuidJsonConverter());
 				settings.Converters.Add(new DatetimeOffsetJsonConverter());
 				settings.Converters.Add(new ByteArrayJsonConverter());

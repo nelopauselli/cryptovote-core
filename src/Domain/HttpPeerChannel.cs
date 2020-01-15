@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Text;
 using System.Text.Json;
 using Domain.Converters;
 using Domain.Elections;
@@ -119,7 +121,7 @@ namespace Domain
 						var result = task.Result;
 						result.EnsureSuccessStatusCode();
 
-						var bodyTask = result.Content.ReadAsByteArrayAsync();
+						var bodyTask = result.Content.ReadAsStringAsync();
 						bodyTask.Wait();
 
 						var response = JsonSerializer.Deserialize<T>(bodyTask.Result, JsonDefaultSettings.Options);
@@ -141,7 +143,8 @@ namespace Domain
 			{
 				using (var client = new HttpClient())
 				{
-					var content = new StringContent(body);
+					client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+					var content = new StringContent(body, Encoding.UTF8, "application/json");
 					var task = client.PostAsync(url, content);
 					task.Wait(HttpDefaultTimeout);
 

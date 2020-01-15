@@ -2,6 +2,10 @@
   "iisSettings": {
     "windowsAuthentication": false,
     "anonymousAuthentication": true,
+    "iis": {
+      "applicationUrl": "http://localhost/crypto-vote",
+      "sslPort": 0
+    },
     "iisExpress": {
       "applicationUrl": "http://localhost:49689",
       "sslPort": 44387
@@ -9,25 +13,12 @@
   },
   "$schema": "http://json.schemastore.org/launchsettings.json",
   "profiles": {
-    "IIS Express": {
+    "Kestrel": {
       "commandName": "Project",
+      "commandLineArgs": "PeerUrl=http://localhost:7000/ NodeName=VisualStudio NodeId=95125E7E-A6FF-45AC-B359-BE371721E7E8 MinerInterval=10000 MinerAddress=QXuwUXRhANuouMkHTc2tbcZhkcucShZQKEhs7XSfseSd6Rq8q2G3sSZc1Q1z5jdj4Nz8dQuieiiyDVLiKWDmtJVp NodePublicUrl=http://localhost:5000/ ASPNETCORE_ENVIRONMENT=Development",
       "launchBrowser": true,
       "launchUrl": "api/chain",
-      "environmentVariables": {
-        "PublicUrl": "localhost:8000",
-        "Miner:Address": "QXuwUXRhANuouMkHTc2tbcZhkcucShZQKEhs7XSfseSd6Rq8q2G3sSZc1Q1z5jdj4Nz8dQuieiiyDVLiKWDmtJVp ",
-        "ASPNETCORE_ENVIRONMENT": "Development"
-      },
-      "applicationUrl": "http://localhost:5000/"
-    },
-    "crypto_vote": {
-      "commandName": "Project",
-      "launchBrowser": true,
-      "launchUrl": "weatherforecast",
-      "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
-      },
-      "applicationUrl": "https://localhost:5001;http://localhost:5000"
+      "applicationUrl": "http://localhost:5000"
     }
   }
 }

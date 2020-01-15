@@ -10,5 +10,6 @@ namespace Domain
 		byte BlockchainDificulty { get; }
 		string MinerAddress { get; }
 		int MinerInterval { get; }
+		string PeerUrl { get; }
 	}
 }

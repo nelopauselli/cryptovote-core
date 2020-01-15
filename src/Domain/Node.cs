@@ -17,6 +17,7 @@ namespace Domain
 		private readonly Blockchain blockchain;
 		private readonly IDictionary<string, BlockItem> pendings;
 
+		private readonly IList<string> searchingBlocks = new List<string>();
 		private readonly Peers peers;
 		public Peers Peers => peers;
 
@@ -25,20 +26,32 @@ namespace Domain
 		private Task worker;
 		private readonly CancellationTokenSource cts = new CancellationTokenSource();
 
-		public Node(INodeConfiguration configuration, IBlockBuilder blockBuilder, ILogger<Node> logger, IPeerChannel channel)
+		public Node(INodeConfiguration configuration, IBlockBuilder blockBuilder, ILoggerFactory loggerFactory, IPeerChannel channel)
 		{
 			this.configuration = configuration;
-			this.logger = logger;
+			this.logger = loggerFactory.CreateLogger<Node>();
 
-			Peer = new Peer
+			logger.LogInformation($"Configuración del nodo:\n"+
+			                      $"NodeId: {configuration.NodeId}\n" +
+			                      $"NodeName: {configuration.NodeName}\n" +
+			                      $"NodePublicUrl: {configuration.NodePublicUrl}\n" +
+			                      $"PeerUrl: {configuration.PeerUrl}\n" +
+			                      $"MinerAddress: {configuration.MinerAddress}\n" +
+			                      $"BlockchainDificulty: {configuration.BlockchainDificulty}");
+
+			Host = new Peer
 			{
 				Id = configuration.NodeId,
 				Name = configuration.NodeName,
 				PublicUrl = configuration.NodePublicUrl
 			};
 
-			peers = new Peers(this, channel);
-			
+			peers = new Peers(this, channel, loggerFactory.CreateLogger<Peers>());
+			if (!string.IsNullOrWhiteSpace(configuration.PeerUrl))
+			{
+				Connect(configuration.PeerUrl);
+			}
+
 			blockchain = new Blockchain(new Miner(AddressRewards), blockBuilder, configuration.BlockchainDificulty);
 
 			var path = "genesis.block";
@@ -53,7 +66,7 @@ namespace Domain
 			{
 				byte[] addressRewards = null;
 
-				var addressRewardsBase58 = configuration.MinerAddress.Trim();
+				var addressRewardsBase58 = configuration.MinerAddress?.Trim();
 				if (string.IsNullOrWhiteSpace(addressRewardsBase58))
 				{
 					logger.LogWarning("Falta configurar 'Miner:Address'");
@@ -79,7 +92,7 @@ namespace Domain
 		public IEnumerable<BlockItem> Pendings => pendings.Values;
 		public int ChainLength => blockchain.Trunk.Count();
 		public Blockchain Blockchain => blockchain;
-		public Peer Peer { get; }
+		public Peer Host { get; }
 
 
 		public void Start()
@@ -109,7 +122,10 @@ namespace Domain
 		public void Connect(string url)
 		{
 			var peer = peers.GetNodeInfo(url);
-			Register(peer);
+			if (peer != null)
+				Register(peer);
+			else
+				logger.LogWarning($"No se pudo establecer la conexión con {url}");
 		}
 
 		public void Syncronize()
@@ -150,9 +166,10 @@ namespace Domain
 					}
 
 					var chain = blockchain.Trunk.ToArray();
-					foreach (var invalid in pendings.Where(p => !p.Value.IsValid(chain)))
+					var invalids = pendings.Where(p => !p.Value.IsValid(chain)).ToArray();
+					foreach (var invalid in invalids)
 					{
-						logger.LogWarning($"Item inválido: {string.Join("\n\r\t", invalid.Value.Messages)}");
+						logger.LogWarning($"Item {invalid.Value.GetType().Name} inválido: {string.Join("\n\r\t", invalid.Value.Messages)}");
 					}
 				}
 				catch (Exception ex)
@@ -272,7 +289,7 @@ namespace Domain
 
 		public void Add(Block block)
 		{
-			logger.LogInformation("Recibiendo bloque");
+			logger.LogInformation($"Recibiendo bloque {block.BlockNumber} con hash {block.Hash.ByteArrayToHexString()}");
 
 			var other = blockchain.GetBlock(block.Hash);
 			if (other != null)
@@ -283,8 +300,14 @@ namespace Domain
 
 			if (!blockchain.Last.Hash.SequenceEqual(block.PreviousHash))
 			{
-				logger.LogInformation("El bloque no existe ni es el siguiente al último, buscando más");
-				peers.GetBlock(block.PreviousHash);
+				var hashAsHex = block.PreviousHash.ByteArrayToHexString();
+				if (!searchingBlocks.Contains(hashAsHex))
+				{
+					logger.LogInformation("El bloque no existe ni es el siguiente al último, buscando más");
+					searchingBlocks.Add(hashAsHex);
+					peers.GetBlock(block.PreviousHash);
+					searchingBlocks.Remove(hashAsHex);
+				}
 				return;
 			}
 

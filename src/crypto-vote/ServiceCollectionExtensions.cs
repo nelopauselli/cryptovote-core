@@ -9,8 +9,8 @@ namespace crypto_vote
 		public static IServiceCollection AddBlockchain(this IServiceCollection services)
 		{
 			services.AddSingleton<INodeConfiguration, NodeConfiguration>();
-			services.AddTransient<IBlockBuilder, BlockBuilder>();
-			services.AddTransient<IPeerChannel, HttpPeerChannel>();
+			services.AddSingleton<IBlockBuilder, BlockBuilder>();
+			services.AddSingleton<IPeerChannel, HttpPeerChannel>();
 			services.AddSingleton<INode, Node>();
 
 			return services;

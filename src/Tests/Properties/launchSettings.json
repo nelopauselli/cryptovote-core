@@ -2,11 +2,12 @@
   "profiles": {
     "Tests": {
       "commandName": "Project",
-      "environmentVariables": {
-        "Node:Name": "Tests",
-        "Node:Id": "Value",
-        "Node:PublicUrl": "http://localhost.test/"
-      }
+        "environmentVariables": {
+            "NodeName": "Tests",
+            "NodeId": "Value",
+            "NodePublicUrl": "http://localhost.test/",
+            "PeerUrl": "http://localhost:7000/"
+        }
     }
   }
 }
