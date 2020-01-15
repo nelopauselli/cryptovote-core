@@ -69,7 +69,7 @@ namespace Domain
 				var addressRewardsBase58 = configuration.MinerAddress?.Trim();
 				if (string.IsNullOrWhiteSpace(addressRewardsBase58))
 				{
-					logger.LogWarning("Falta configurar 'Miner:Address'");
+					logger.LogWarning("Falta configurar 'MinerAddress'");
 				}
 				else
 				{
