@@ -31,18 +31,23 @@ namespace Domain
 		public Block MineNextBlock(BlockItem[] transactions)
 		{
 			var block = blockBuilder.BuildNextBlock(transactions.Where(i => i.IsValid(trunk)).ToArray(), Last, dificulty);
+			if (!block.IsNotEmpty()) return null;
 
-			if (block.IsNotEmpty())
-			{
-				if (miner.Mine(block, dificulty))
-				{
-					AddBlock(block);
-				}
+			if (!miner.Mine(block, dificulty)) 
+				return null;
 
-				return block;
-			}
+			// Verificando que nadie nos ganó al minar y que no paramos a tiempo nuestro minado
+			if (Last != null && !Last.Hash.SequenceEqual(block.PreviousHash))
+				return null;
 
-			return null;
+			AddBlock(block);
+			return block;
+
+		}
+
+		public void StopMine()
+		{
+			miner.Stop();
 		}
 
 		public Block GetBlock(int index)

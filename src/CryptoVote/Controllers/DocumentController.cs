@@ -40,7 +40,7 @@ namespace CryptoVote.Controllers
 		[HttpPost]
 		public ObjectResult Post(Document model)
 		{
-			logger.LogInformation($"Recibiendo document: {JsonSerializer.Serialize(model)}");
+			logger.LogInformation($"Recibiendo document: {JsonSerializer.Serialize(model)} desde '{Request?.HttpContext?.Connection?.RemoteIpAddress}:{Request?.HttpContext?.Connection?.RemotePort}'");
 
 			node.Add(model);
 			return Accepted(model);

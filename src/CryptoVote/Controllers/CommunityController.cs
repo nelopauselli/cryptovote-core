@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json;
 using Domain;
 using Domain.Elections;
 using Domain.Queries;
@@ -40,8 +41,8 @@ namespace CryptoVote.Controllers
 		[HttpPost]
 		public ObjectResult Post(Community model)
 		{
-			logger.LogInformation($"Agregando comunidad '{model.Name}' con Id {model.Id}");
-			
+			logger.LogInformation($"Recibiendo comunidad: {JsonSerializer.Serialize(model)} desde '{Request?.HttpContext?.Connection?.RemoteIpAddress}:{Request?.HttpContext?.Connection?.RemotePort}'");
+
 			node.Add(model);
 			
 			//var url = Url.Action("Get", new {id = model.Id});

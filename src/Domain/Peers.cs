@@ -51,6 +51,7 @@ namespace Domain
 
 		public void Broadcast(Block block)
 		{
+			logger.LogInformation($"Enviando block a {others.Count} pares");
 			foreach (var other in others)
 				channel.Send(other.PublicUrl, block);
 		}

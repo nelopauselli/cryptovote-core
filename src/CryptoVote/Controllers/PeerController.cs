@@ -35,7 +35,7 @@ namespace CryptoVote.Controllers
 		[HttpPost]
 		public ObjectResult Post(Peer model)
 		{
-			logger.LogInformation($"Recibiendo peer '{model.Name}' en la url {model.PublicUrl}");
+			logger.LogInformation($"Recibiendo peer '{model.Name}' en la url {model.PublicUrl} esde '{Request?.HttpContext?.Connection?.RemoteIpAddress}:{Request?.HttpContext?.Connection?.RemotePort}:{Request?.HttpContext?.Connection?.RemotePort}'");
 
 			node.Register(model);
 

@@ -1,11 +1,13 @@
 using System;
 using System.Security.Cryptography;
+using System.Threading;
 
 namespace Domain
 {
 	public class Miner
 	{
 		private readonly byte[] publicKey;
+		private bool stop;
 
 		public Miner(byte[] publicKey)
 		{
@@ -19,7 +21,8 @@ namespace Domain
 
 			var data = block.GetData();
 
-			while (true)
+			stop = false;
+			while (!stop)
 			{
 				using (var sha256 = new SHA256Managed())
 				{
@@ -35,9 +38,16 @@ namespace Domain
 
 				block.Nonce++;
 				Buffer.BlockCopy(BitConverter.GetBytes(block.Nonce), 0, data, data.Length - 4, 4);
+
+				//Thread.Sleep(1);
 			}
 
 			return false;
+		}
+
+		public void Stop()
+		{
+			stop = true;
 		}
 	}
 }

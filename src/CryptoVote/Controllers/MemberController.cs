@@ -39,7 +39,7 @@ namespace CryptoVote.Controllers
 		[HttpPost]
 		public ObjectResult Post(Member member)
 		{
-			logger.LogInformation($"Recibiendo member: {JsonSerializer.Serialize(member)}");
+			logger.LogInformation($"Recibiendo member: {JsonSerializer.Serialize(member)} desde '{Request?.HttpContext?.Connection?.RemoteIpAddress}:{Request?.HttpContext?.Connection?.RemotePort}'");
 
 			node.Add(member);
 

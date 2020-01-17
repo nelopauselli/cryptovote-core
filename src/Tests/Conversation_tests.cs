@@ -1,8 +1,5 @@
 using System;
 using System.Linq;
-using System.Net.Sockets;
-using System.Threading;
-using System.Threading.Tasks;
 using CryptoVote.Controllers;
 using Domain;
 using Domain.Crypto;
@@ -11,7 +8,6 @@ using Domain.Utils;
 using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
 using NUnit.Framework;
-using Tests.Mocks;
 
 namespace Tests
 {
@@ -84,7 +80,10 @@ namespace Tests
 			node.SetupGet(n => n.Blockchain).Returns(blockchain);
 			var controller = new ChainController(node.Object, new NullLogger<ChainController>());
 
-			var block = controller.Get(Base58.Encode(block1Hash));
+			var response = controller.Get(Base58.Encode(block1Hash));
+			Assert.AreEqual(200, response.StatusCode);
+
+			var block = (Block) response.Value;
 			Assert.IsNotNull(block);
 			Assert.AreEqual(1, block.Questions.Count);
 			Assert.AreEqual(1, block.Members.Count);

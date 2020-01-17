@@ -95,22 +95,23 @@ namespace Domain
 
 		public void Start()
 		{
+			logger.LogInformation("Inicializando Nodo de Blockchain");
 			worker = Task.Run(() =>
 			{
 				var scheduler = new Scheduler(configuration.MinerInterval, configuration.PeersCheckInterval, configuration.SyncronizeInterval);
 
 				State = NodeState.Running;
 
-				logger.LogInformation("Inicializando Nodo de Blockchain");
-				
+				logger.LogInformation("Nodo Iniciado");
+
 				while (!stop)
 				{
 					Thread.Sleep(1000);
-					
+
 					if (scheduler.IsTimeToCheckPeers())
 						CheckPeers();
 					if (scheduler.IsTimeToSyncronize())
-						Syncronize(); 
+						Syncronize();
 					if (scheduler.IsTimeToMine())
 						MinePendingTransactions();
 
@@ -186,15 +187,20 @@ namespace Domain
 				{
 					var block = Blockchain.MineNextBlock(pendingsToMine);
 
-					lock (semaphore)
+					if (block != null)
 					{
-						if (block != null)
+						lock (semaphore)
 						{
+							logger.LogInformation("Hemos minado un bloque!!!");
 							Peers.Broadcast(block);
 							var transactions = block.GetTransactions();
 							foreach (var item in transactions)
 								pendings.Remove(item.GetKey());
 						}
+					}
+					else
+					{
+						logger.LogInformation("No hemos logrado minado el bloque antes que otro :(");
 					}
 
 					var chain = Blockchain.Trunk.ToArray();
@@ -351,7 +357,7 @@ namespace Domain
 			lock (semaphore)
 			{
 				//TODO: stop miner
-				stop = true;
+				Blockchain.StopMine();
 
 				var transactions = block.GetTransactions();
 				logger.LogInformation($"Quitando {transactions.Length} transacciones pendientes");

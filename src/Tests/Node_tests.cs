@@ -24,7 +24,7 @@ namespace Tests
 				try
 				{
 					node.Start();
-					Thread.Sleep(1000);
+					Thread.Sleep(2500);
 					Assert.AreEqual(NodeState.Running, node.State);
 				}
 				finally

@@ -29,17 +29,21 @@ namespace CryptoVote.Controllers
 		}
 
 		[HttpGet("{id}")]
-		public Block Get(string id)
+		public ObjectResult Get(string id)
 		{
 			logger.LogDebug("Consuntado último bloque");
 			var query = new BlockQuery(node.Blockchain);
-			return query.Execute(Base58.Decode(id));
+			var block = query.Execute(Base58.Decode(id));
+			if (block == null)
+				return NotFound("No tengo ningún bloque con ese hash");
+			
+			return Ok(block);
 		}
 
 		[HttpPost]
 		public ObjectResult Post(Block block)
 		{
-			logger.LogInformation($"Recibiendo block: {JsonSerializer.Serialize(block)}");
+			logger.LogInformation($"Recibiendo block: {JsonSerializer.Serialize(block)} desde '{Request?.HttpContext?.Connection?.RemoteIpAddress}:{Request?.HttpContext?.Connection?.RemotePort}'");
 
 			node.Add(block);
 			//var url = Url.Action("Get", new {id = block.Hash});

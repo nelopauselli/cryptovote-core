@@ -110,6 +110,7 @@ namespace Domain
 
 		private T Get<T>(Uri url) where T : class
 		{
+			string body = null;
 			try
 			{
 				using (var client = new HttpClient())
@@ -123,15 +124,17 @@ namespace Domain
 
 						var bodyTask = result.Content.ReadAsStringAsync();
 						bodyTask.Wait();
+						body = bodyTask.Result;
 
-						var response = JsonSerializer.Deserialize<T>(bodyTask.Result, JsonDefaultSettings.Options);
+						var response = JsonSerializer.Deserialize<T>(body, JsonDefaultSettings.Options);
 						return response;
 					}
 				}
 			}
 			catch (Exception ex)
 			{
-				logger.LogCritical($"Error al acceder a {url}: {ex}");
+				logger.LogWarning($"Body: {body}");
+				logger.LogCritical($"Error al obtener de '{url}'. {ex}");
 			}
 
 			return null;
@@ -154,7 +157,7 @@ namespace Domain
 			}
 			catch (Exception ex)
 			{
-				logger.LogCritical($"Error al acceder a {url} {ex}");
+				logger.LogCritical($"Error al enviar {body} a '{url}'. {ex}");
 			}
 		}
 	}
