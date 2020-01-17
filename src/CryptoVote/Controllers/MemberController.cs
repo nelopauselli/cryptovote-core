@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json;
 using Domain;
 using Domain.Elections;
 using Domain.Queries;
@@ -38,6 +39,8 @@ namespace CryptoVote.Controllers
 		[HttpPost]
 		public ObjectResult Post(Member member)
 		{
+			logger.LogInformation($"Recibiendo member: {JsonSerializer.Serialize(member)}");
+
 			node.Add(member);
 
 			//var url = Url.Action("List", new { communityId = member.CommunityId, memberId = member.Id });

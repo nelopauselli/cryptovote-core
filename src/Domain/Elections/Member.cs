@@ -47,5 +47,10 @@ namespace Domain.Elections
 
 			return registered;
 		}
+
+		public override string ToString()
+		{
+			return $"{Name} ({PublicKey.ByteArrayToHexString()})";
+		}
 	}
 }

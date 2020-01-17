@@ -7,6 +7,8 @@ namespace Domain.Utils
 	{
 		public static string ByteArrayToHexString(this byte[] bytes)
 		{
+			if (bytes == null) return null;
+
 			StringBuilder result = new StringBuilder(bytes.Length * 2);
 			const string hexAlphabet = "0123456789abcdef";
 

@@ -42,7 +42,7 @@ namespace CryptoVote.Controllers
 		[HttpPost]
 		public ObjectResult Post(Vote vote)
 		{
-			logger.LogInformation("Vote: " + JsonSerializer.Serialize(vote));
+			logger.LogInformation($"Recibiendo vote {JsonSerializer.Serialize(vote)}");
 
 			node.Add(vote);
 

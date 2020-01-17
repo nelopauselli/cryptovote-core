@@ -1,4 +1,5 @@
-﻿using Domain;
+﻿using System.Text.Json;
+using Domain;
 using Domain.Queries;
 using Domain.Utils;
 using Microsoft.AspNetCore.Mvc;
@@ -38,6 +39,8 @@ namespace CryptoVote.Controllers
 		[HttpPost]
 		public ObjectResult Post(Block block)
 		{
+			logger.LogInformation($"Recibiendo block: {JsonSerializer.Serialize(block)}");
+
 			node.Add(block);
 			//var url = Url.Action("Get", new {id = block.Hash});
 			return Accepted(block);

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json;
 using Domain;
 using Domain.Queries;
 using Microsoft.AspNetCore.Mvc;
@@ -31,7 +32,7 @@ namespace CryptoVote.Controllers
 		[HttpGet("{id}")]
 		public Document Get(Guid id)
 		{
-			logger.LogDebug($"Buscando comunidad con Id {id}");
+			logger.LogDebug($"Buscando documento con Id {id}");
 			var query = new DocumentQuery(node.Blockchain);
 			return query.Execute(id);
 		}
@@ -39,7 +40,8 @@ namespace CryptoVote.Controllers
 		[HttpPost]
 		public ObjectResult Post(Document model)
 		{
-			logger.LogInformation($"Agregando documento");
+			logger.LogInformation($"Recibiendo document: {JsonSerializer.Serialize(model)}");
+
 			node.Add(model);
 			return Accepted(model);
 		}
