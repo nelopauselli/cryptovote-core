@@ -21,6 +21,11 @@ namespace CryptoVote
 		{
 			services.AddBlockchain();
 
+			services.AddCors(options =>
+			{
+				options.AddDefaultPolicy(builder => { builder.AllowAnyOrigin(); });
+			});
+
 			services.AddControllers()
 				.AddJsonOptions(cfg =>
 				{
@@ -41,9 +46,9 @@ namespace CryptoVote
 			}
 
 			//app.UseHttpsRedirection();
+			app.UseCors();
 
 			app.UseRouting();
-
 			app.UseAuthorization();
 
 			app.UseEndpoints(endpoints =>
