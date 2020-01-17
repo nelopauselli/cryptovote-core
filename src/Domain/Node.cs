@@ -347,6 +347,8 @@ namespace Domain
 				if (!searchingBlocks.Contains(hashAsHex))
 				{
 					logger.LogInformation("El bloque no existe ni es el siguiente al último, buscando más");
+					Blockchain.AddBlock(block);
+
 					searchingBlocks.Add(hashAsHex);
 					Peers.GetBlock(block.PreviousHash);
 					searchingBlocks.Remove(hashAsHex);
