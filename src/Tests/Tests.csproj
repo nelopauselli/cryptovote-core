@@ -19,7 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\crypto-vote\crypto-vote.csproj" />
+    <ProjectReference Include="..\CryptoVote\CryptoVote.csproj" />
     <ProjectReference Include="..\Domain\Domain.csproj" />
   </ItemGroup>
 

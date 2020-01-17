@@ -19,6 +19,5 @@ mv ./src/crypto-vote/bin/Release/netcoreapp3.1/linux-x64/publish ./publish/crypt
 tar -C ./publish/crypto-vote-linux-x64 -czvf ./publish/crypto-vote-linux-x64.tar.gz .
 rm -r ./publish/crypto-vote-linux-x64
 
-
 cp ./Dockerfile ./publish
 cp ./docker-compose.yml ./publish

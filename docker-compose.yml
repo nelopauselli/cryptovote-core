@@ -4,16 +4,16 @@ services:
     image: nelo/cryptovote
     container_name: cryptovote1
     environment:
-      ASPNETCORE_URLS: http://0.0.0.0:8080
+      #ASPNETCORE_URLS: http://*:80
       NodeName: cryptovote1 
       #NodeId: 95125E7E-A6FF-45AC-B359-BE371721E7E1 
       MinerInterval: 60000 
       MinerAddress: QXuwUXRhANuouMkHTc2tbcZhkcucShZQKEhs7XSfseSd6Rq8q2G3sSZc1Q1z5jdj4Nz8dQuieiiyDVLiKWDmtJVp
-      NodePublicUrl: http://cryptovote1:5000/
+      NodePublicUrl: http://cryptovote1/
       BlockchainDificulty: 2
-      PeerUrl: http://cryptovote2:5000
+      PeerUrl: http://cryptovote2/
     ports:
-      - 8001:80
+      - 8081:80
     networks:
     - cryptonet
 
@@ -21,16 +21,16 @@ services:
     image: nelo/cryptovote
     container_name: cryptovote2
     environment:
-      ASPNETCORE_URLS: http://0.0.0.0:8080
+      #ASPNETCORE_URLS: http://*:80
       NodeName: cryptovote2 
       #NodeId: 95125E7E-A6FF-45AC-B359-BE371721E7E2
       MinerInterval: 5000 
       MinerAddress: QXuwUXRhANuouMkHTc2tbcZhkcucShZQKEhs7XSfseSd6Rq8q2G3sSZc1Q1z5jdj4Nz8dQuieiiyDVLiKWDmtJVp
-      NodePublicUrl: http://cryptovote2:5000/
+      NodePublicUrl: http://cryptovote2/
       BlockchainDificulty: 2
-      PeerUrl: http://cryptovote3:5000
+      PeerUrl: http://cryptovote3/
     ports:
-      - 8002:80
+      - 8082:80
     networks:
     - cryptonet
 
@@ -38,16 +38,16 @@ services:
     image: nelo/cryptovote
     container_name: cryptovote3
     environment:
-      ASPNETCORE_URLS: http://0.0.0.0:8080
+      #ASPNETCORE_URLS: http://*:80
       NodeName: cryptovote3
       #NodeId: 95125E7E-A6FF-45AC-B359-BE371721E7E3
       MinerInterval: 17000 
       MinerAddress: QXuwUXRhANuouMkHTc2tbcZhkcucShZQKEhs7XSfseSd6Rq8q2G3sSZc1Q1z5jdj4Nz8dQuieiiyDVLiKWDmtJVp
-      NodePublicUrl: http://cryptovote3:5000/
+      NodePublicUrl: http://cryptovote3/
       BlockchainDificulty: 2
-      PeerUrl: http://cryptovote1:5000
+      PeerUrl: http://cryptovote1/
     ports:
-      - 8003:80
+      - 8083:80
     networks:
     - cryptonet
 

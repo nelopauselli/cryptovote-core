@@ -3,7 +3,7 @@ using System.Linq;
 using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
-using crypto_vote.Controllers;
+using CryptoVote.Controllers;
 using Domain;
 using Domain.Crypto;
 using Domain.Elections;

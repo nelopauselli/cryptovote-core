@@ -149,5 +149,10 @@ namespace Domain
 		{
 			return channel.GetNodeInfo(url);
 		}
+
+		public bool Contains(string peerUrl)
+		{
+			return others.Any(p => p.PublicUrl == peerUrl);
+		}
 	}
 }

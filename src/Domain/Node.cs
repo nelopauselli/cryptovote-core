@@ -47,10 +47,6 @@ namespace Domain
 			};
 
 			peers = new Peers(this, channel, loggerFactory.CreateLogger<Peers>());
-			if (!string.IsNullOrWhiteSpace(configuration.PeerUrl))
-			{
-				Connect(configuration.PeerUrl);
-			}
 
 			blockchain = new Blockchain(new Miner(AddressRewards), blockBuilder, configuration.BlockchainDificulty);
 
@@ -102,8 +98,10 @@ namespace Domain
 				State = NodeState.Running;
 
 				logger.LogInformation("Inicializando Nodo de Blockchain");
+				
 				while (!stop)
 				{
+					EnsureDefaultPeerConnection();
 					Thread.Sleep(configuration.MinerInterval);
 					MinePendingTransactions();
 				}
@@ -111,6 +109,15 @@ namespace Domain
 				State = NodeState.Stoped;
 			}, cts.Token);
 			Thread.Sleep(10);
+		}
+
+		private void EnsureDefaultPeerConnection()
+		{
+			if (!string.IsNullOrWhiteSpace(configuration.PeerUrl))
+			{
+				if(!peers.Contains(configuration.PeerUrl))
+					Connect(configuration.PeerUrl);
+			}
 		}
 
 		public void Stop()
@@ -121,6 +128,8 @@ namespace Domain
 
 		public void Connect(string url)
 		{
+			logger.LogInformation($"Conectando con el peer: {url}");
+
 			var peer = peers.GetNodeInfo(url);
 			if (peer != null)
 				Register(peer);
@@ -142,8 +151,10 @@ namespace Domain
 		{
 			logger.LogInformation($"Buscando transacciones que minar.\n" +
 			                      $"\tÚltimo bloque #{blockchain.Last.BlockNumber}.\n" +
-			                      $"\tCadenas secundarias #{blockchain.BranchesCount}"
-			);
+			                      $"\tCadenas secundarias #{blockchain.BranchesCount}\n"+
+			                      $"\tTransacciones pendientes #{pendings.Count}\n"+
+			                      $"\tPares registrados #{peers.Count}: {string.Join(", ",peers.List())}"
+				                      );
 
 			BlockItem[] pendingsToMine;
 			lock (semaphore)
