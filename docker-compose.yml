@@ -7,8 +7,8 @@ services:
       #ASPNETCORE_URLS: http://*:80
       NodeName: cryptovote1 
       #NodeId: 95125E7E-A6FF-45AC-B359-BE371721E7E1 
-      MinerInterval: 60000 
-      MinerAddress: QXuwUXRhANuouMkHTc2tbcZhkcucShZQKEhs7XSfseSd6Rq8q2G3sSZc1Q1z5jdj4Nz8dQuieiiyDVLiKWDmtJVp
+      MinerInterval: 5000 
+      MinerAddress: PXikqz1jNKw4hKticmNsvnwBNdpmBUJZWGbiPz7cQ3t8f2y1Qgcz431eanuUcqazirjuaoWJ6cjpLvXEENguQ5UK
       NodePublicUrl: http://cryptovote1/
       BlockchainDificulty: 2
       PeerUrl: http://cryptovote2/
@@ -25,7 +25,7 @@ services:
       NodeName: cryptovote2 
       #NodeId: 95125E7E-A6FF-45AC-B359-BE371721E7E2
       MinerInterval: 5000 
-      MinerAddress: QXuwUXRhANuouMkHTc2tbcZhkcucShZQKEhs7XSfseSd6Rq8q2G3sSZc1Q1z5jdj4Nz8dQuieiiyDVLiKWDmtJVp
+      MinerAddress: QMiBLQnRDJCf2v7DwATbq46f8o9XZkua9GKeq4wucJW6SqQ6pQ3zBzBjoXt8G76AJvFHeRva7bUv1qg23McRH4GB
       NodePublicUrl: http://cryptovote2/
       BlockchainDificulty: 2
       PeerUrl: http://cryptovote3/
@@ -41,8 +41,8 @@ services:
       #ASPNETCORE_URLS: http://*:80
       NodeName: cryptovote3
       #NodeId: 95125E7E-A6FF-45AC-B359-BE371721E7E3
-      MinerInterval: 17000 
-      MinerAddress: QXuwUXRhANuouMkHTc2tbcZhkcucShZQKEhs7XSfseSd6Rq8q2G3sSZc1Q1z5jdj4Nz8dQuieiiyDVLiKWDmtJVp
+      MinerInterval: 5000 
+      MinerAddress: QCWderiVdAVDLTxipfHnRY7gmpAU8sdC9pd5NQmkd8eDjMyPC2haiVjZDqaEi7xDrAQzk91FMRrT82TGu1GwWaCZ
       NodePublicUrl: http://cryptovote3/
       BlockchainDificulty: 2
       PeerUrl: http://cryptovote1/
