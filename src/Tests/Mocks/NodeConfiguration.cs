@@ -22,5 +22,7 @@ namespace Tests.Mocks
 		public string MinerAddress { get; }
 		public int MinerInterval { get; }
 		public string PeerUrl { get; }
+		public int PeersCheckInterval { get; } = 10000;
+		public int SyncronizeInterval { get; } = 5000;
 	}
 }

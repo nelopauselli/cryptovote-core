@@ -24,5 +24,7 @@ namespace CryptoVote
 		public string MinerAddress => configuration["MinerAddress"];
 
 		public int MinerInterval => int.TryParse(configuration["MinerInterval"] ?? "10000", out var value) ? value : 10000;
+		public int PeersCheckInterval => int.TryParse(configuration["PeersCheckInterval"] ?? "60000", out var value) ? value : 60000;
+		public int SyncronizeInterval => int.TryParse(configuration["SyncronizeInterval"] ?? "30000", out var value) ? value : 30000;
 	}
 }

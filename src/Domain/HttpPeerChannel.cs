@@ -30,7 +30,7 @@ namespace Domain
 
 		public IList<Peer> ListPeers(string publicUrl)
 		{
-			var url = new Uri(new Uri(publicUrl), "api/peers");
+			var url = new Uri(new Uri(publicUrl), "api/peer");
 			return Get<Peer[]>(url) ?? Array.Empty<Peer>();
 		}
 

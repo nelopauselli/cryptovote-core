@@ -11,5 +11,8 @@ namespace Domain
 		string MinerAddress { get; }
 		int MinerInterval { get; }
 		string PeerUrl { get; }
+		int PeersCheckInterval { get; }
+		int SyncronizeInterval { get; }
+		
 	}
 }

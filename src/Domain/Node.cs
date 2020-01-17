@@ -11,52 +11,26 @@ namespace Domain
 {
 	public class Node : INode
 	{
+		private readonly ILogger<Node> logger;
+		private readonly object semaphore = new object();
+
 		private readonly INodeConfiguration configuration;
 
-		private readonly ILogger<Node> logger;
-		private readonly Blockchain blockchain;
 		private readonly IDictionary<string, BlockItem> pendings;
-
+		public IEnumerable<BlockItem> Pendings => pendings.Values;
 		private readonly IList<string> searchingBlocks = new List<string>();
-		private readonly Peers peers;
-		public Peers Peers => peers;
+
+		public Blockchain Blockchain { get; }
+		public int ChainLength => Blockchain.Trunk.Count();
+		
+		public Peer Host { get; }
+		public Peers Peers { get; }
 
 		private bool stop;
-		private readonly object semaphore = new object();
 		private Task worker;
 		private readonly CancellationTokenSource cts = new CancellationTokenSource();
 
-		public Node(INodeConfiguration configuration, IBlockBuilder blockBuilder, ILoggerFactory loggerFactory, IPeerChannel channel)
-		{
-			this.configuration = configuration;
-			this.logger = loggerFactory.CreateLogger<Node>();
-
-			logger.LogInformation($"Configuración del nodo:\n"+
-			                      $"NodeId: {configuration.NodeId}\n" +
-			                      $"NodeName: {configuration.NodeName}\n" +
-			                      $"NodePublicUrl: {configuration.NodePublicUrl}\n" +
-			                      $"PeerUrl: {configuration.PeerUrl}\n" +
-			                      $"MinerAddress: {configuration.MinerAddress}\n" +
-			                      $"BlockchainDificulty: {configuration.BlockchainDificulty}");
-
-			Host = new Peer
-			{
-				Id = configuration.NodeId,
-				Name = configuration.NodeName,
-				PublicUrl = configuration.NodePublicUrl
-			};
-
-			peers = new Peers(this, channel, loggerFactory.CreateLogger<Peers>());
-
-			blockchain = new Blockchain(new Miner(AddressRewards), blockBuilder, configuration.BlockchainDificulty);
-
-			var path = "genesis.block";
-			blockchain.LoadGenesisBlock(path);
-
-			pendings = new Dictionary<string, BlockItem>();
-		}
-
-		protected byte[] AddressRewards
+		private byte[] AddressRewards
 		{
 			get
 			{
@@ -83,27 +57,63 @@ namespace Domain
 			}
 		}
 
-		public NodeState State { get; set; }
+		public NodeState State { get; private set; }
 
-		public IEnumerable<BlockItem> Pendings => pendings.Values;
-		public int ChainLength => blockchain.Trunk.Count();
-		public Blockchain Blockchain => blockchain;
-		public Peer Host { get; }
+		
+
+		public Node(INodeConfiguration configuration, IBlockBuilder blockBuilder, ILoggerFactory loggerFactory, IPeerChannel channel)
+		{
+			this.configuration = configuration;
+			this.logger = loggerFactory.CreateLogger<Node>();
+
+			logger.LogInformation($"Configuración del nodo:\n"+
+			                      $"NodeId: {configuration.NodeId}\n" +
+			                      $"NodeName: {configuration.NodeName}\n" +
+			                      $"NodePublicUrl: {configuration.NodePublicUrl}\n" +
+			                      $"PeerUrl: {configuration.PeerUrl}\n" +
+			                      $"MinerAddress: {configuration.MinerAddress}\n" +
+			                      $"BlockchainDificulty: {configuration.BlockchainDificulty}");
+
+			Host = new Peer
+			{
+				Id = configuration.NodeId,
+				Name = configuration.NodeName,
+				PublicUrl = configuration.NodePublicUrl
+			};
+
+			Peers = new Peers(this, channel, loggerFactory.CreateLogger<Peers>());
+
+			Blockchain = new Blockchain(new Miner(AddressRewards), blockBuilder, configuration.BlockchainDificulty);
+
+			var path = "genesis.block";
+			Blockchain.LoadGenesisBlock(path);
+
+			pendings = new Dictionary<string, BlockItem>();
+		}
+
 
 
 		public void Start()
 		{
 			worker = Task.Run(() =>
 			{
+				var scheduler = new Scheduler(configuration.MinerInterval, configuration.PeersCheckInterval, configuration.SyncronizeInterval);
+
 				State = NodeState.Running;
 
 				logger.LogInformation("Inicializando Nodo de Blockchain");
 				
 				while (!stop)
 				{
-					EnsureDefaultPeerConnection();
-					Thread.Sleep(configuration.MinerInterval);
-					MinePendingTransactions();
+					Thread.Sleep(1000);
+					
+					if (scheduler.IsTimeToCheckPeers())
+						CheckPeers();
+					if (scheduler.IsTimeToSyncronize())
+						Syncronize(); 
+					if (scheduler.IsTimeToMine())
+						MinePendingTransactions();
+
 				}
 
 				State = NodeState.Stoped;
@@ -111,13 +121,17 @@ namespace Domain
 			Thread.Sleep(10);
 		}
 
-		private void EnsureDefaultPeerConnection()
+		private void CheckPeers()
 		{
+			logger.LogInformation("Verificando conexiones con pares");
+
 			if (!string.IsNullOrWhiteSpace(configuration.PeerUrl))
 			{
-				if(!peers.Contains(configuration.PeerUrl))
+				if(!Peers.Contains(configuration.PeerUrl))
 					Connect(configuration.PeerUrl);
 			}
+
+			Discovery();
 		}
 
 		public void Stop()
@@ -130,7 +144,7 @@ namespace Domain
 		{
 			logger.LogInformation($"Conectando con el peer: {url}");
 
-			var peer = peers.GetNodeInfo(url);
+			var peer = Peers.GetNodeInfo(url);
 			if (peer != null)
 				Register(peer);
 			else
@@ -139,21 +153,24 @@ namespace Domain
 
 		public void Syncronize()
 		{
-			peers.GetLastBlock();
+			logger.LogInformation("Sincronizando blockchain con pares");
+			Peers.GetLastBlock();
 		}
 
 		public void Discovery()
 		{
-			peers.Discovery();
+			logger.LogInformation("Descubriendo nuevos pares");
+
+			Peers.Discovery();
 		}
 
 		public void MinePendingTransactions()
 		{
 			logger.LogInformation($"Buscando transacciones que minar.\n" +
-			                      $"\tÚltimo bloque #{blockchain.Last.BlockNumber}.\n" +
-			                      $"\tCadenas secundarias #{blockchain.BranchesCount}\n"+
+			                      $"\tÚltimo bloque #{Blockchain.Last.BlockNumber}.\n" +
+			                      $"\tCadenas secundarias #{Blockchain.BranchesCount}\n"+
 			                      $"\tTransacciones pendientes #{pendings.Count}\n"+
-			                      $"\tPares registrados #{peers.Count}: {string.Join(", ",peers.List())}"
+			                      $"\tPares registrados #{Peers.Count}: {string.Join(", ",Peers.List())}"
 				                      );
 
 			BlockItem[] pendingsToMine;
@@ -167,20 +184,20 @@ namespace Domain
 				logger.LogInformation($"Minando {pendingsToMine.Length} transacciones");
 				try
 				{
-					var block = blockchain.MineNextBlock(pendingsToMine);
+					var block = Blockchain.MineNextBlock(pendingsToMine);
 
 					lock (semaphore)
 					{
 						if (block != null)
 						{
-							peers.Broadcast(block);
+							Peers.Broadcast(block);
 							var transactions = block.GetTransactions();
 							foreach (var item in transactions)
 								pendings.Remove(item.GetKey());
 						}
 					}
 
-					var chain = blockchain.Trunk.ToArray();
+					var chain = Blockchain.Trunk.ToArray();
 					KeyValuePair<string, BlockItem>[] invalids;
 					lock (semaphore)
 					{
@@ -213,7 +230,7 @@ namespace Domain
 				pendings.Add(community.GetKey(), community);
 			}
 
-			peers.Broadcast(community);
+			Peers.Broadcast(community);
 		}
 
 		public void Add(Question question)
@@ -226,7 +243,7 @@ namespace Domain
 				pendings.Add(question.GetKey(), question);
 			}
 
-			peers.Broadcast(question);
+			Peers.Broadcast(question);
 		}
 
 		public void Add(Member member)
@@ -239,7 +256,7 @@ namespace Domain
 				pendings.Add(member.GetKey(), member);
 			}
 
-			peers.Broadcast(member);
+			Peers.Broadcast(member);
 		}
 
 		public void Add(Vote vote)
@@ -252,7 +269,7 @@ namespace Domain
 				pendings.Add(vote.GetKey(), vote);
 			}
 
-			peers.Broadcast(vote);
+			Peers.Broadcast(vote);
 		}
 
 		public void Add(Fiscal fiscal)
@@ -265,7 +282,7 @@ namespace Domain
 				pendings.Add(fiscal.GetKey(), fiscal);
 			}
 
-			peers.Broadcast(fiscal);
+			Peers.Broadcast(fiscal);
 		}
 
 		public void Add(Urn urn)
@@ -278,7 +295,7 @@ namespace Domain
 				pendings.Add(urn.GetKey(), urn);
 			}
 
-			peers.Broadcast(urn);
+			Peers.Broadcast(urn);
 		}
 
 		public void Add(Recount recount)
@@ -291,7 +308,7 @@ namespace Domain
 				pendings.Add(recount.GetKey(), recount);
 			}
 
-			peers.Broadcast(recount);
+			Peers.Broadcast(recount);
 		}
 
 		public void Add(Document document)
@@ -304,28 +321,28 @@ namespace Domain
 				pendings.Add(document.GetKey(), document);
 			}
 
-			peers.Broadcast(document);
+			Peers.Broadcast(document);
 		}
 
 		public void Add(Block block)
 		{
 			logger.LogInformation($"Recibiendo bloque {block.BlockNumber} con hash {block.Hash.ByteArrayToHexString()}");
 
-			var other = blockchain.GetBlock(block.Hash);
+			var other = Blockchain.GetBlock(block.Hash);
 			if (other != null)
 			{
 				logger.LogInformation("El bloque ya existe");
 				return;
 			}
 
-			if (!blockchain.Last.Hash.SequenceEqual(block.PreviousHash))
+			if (!Blockchain.Last.Hash.SequenceEqual(block.PreviousHash))
 			{
 				var hashAsHex = block.PreviousHash.ByteArrayToHexString();
 				if (!searchingBlocks.Contains(hashAsHex))
 				{
 					logger.LogInformation("El bloque no existe ni es el siguiente al último, buscando más");
 					searchingBlocks.Add(hashAsHex);
-					peers.GetBlock(block.PreviousHash);
+					Peers.GetBlock(block.PreviousHash);
 					searchingBlocks.Remove(hashAsHex);
 				}
 				return;
@@ -352,15 +369,15 @@ namespace Domain
 				}
 
 				logger.LogInformation($"Agregando bloque #{block.BlockNumber} a la cadena");
-				blockchain.AddBlock(block);
+				Blockchain.AddBlock(block);
 			}
 
-			peers.GetLastBlock();
+			Peers.GetLastBlock();
 		}
 
 		public void Register(Peer peer)
 		{
-			peers.Add(peer);
+			Peers.Add(peer);
 		}
 	}
 }
