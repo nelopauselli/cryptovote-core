@@ -18,10 +18,20 @@ namespace CryptoVote.Controllers
 		}
 
 		[HttpGet]
-		public Peer Get()
+		public ObjectResult Get()
 		{
 			logger.LogDebug("Mostrando información del nodo");
-			return node.Host;
+			var nodeInfo = new
+			{
+				node.Host.Id,
+				node.Host.Name,
+				node.Host.PublicUrl,
+				Branches = node.Blockchain.BranchesCount,
+				LastBlockNumber = node.Blockchain.Last.BlockNumber,
+				LastBlockHash = node.Blockchain.Last.Hash
+			};
+
+			return Ok(nodeInfo);
 		}
 	}
 }

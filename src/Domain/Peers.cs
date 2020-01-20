@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Domain.Elections;
 using Microsoft.Extensions.Logging;
@@ -25,7 +26,10 @@ namespace Domain
 			{
 				var block = channel.GetLastBlock(other.PublicUrl);
 				if (block != null)
+				{
 					node.Add(block);
+					other.LastActivity= DateTimeOffset.UtcNow;
+				}
 			}
 		}
 
@@ -45,6 +49,7 @@ namespace Domain
 							Add(peer);
 						}
 					}
+					target.LastActivity = DateTimeOffset.UtcNow;
 				}
 			}
 		}
@@ -53,70 +58,100 @@ namespace Domain
 		{
 			logger.LogInformation($"Enviando block a {others.Count} pares");
 			foreach (var other in others)
+			{
 				channel.Send(other.PublicUrl, block);
+				other.LastActivity = DateTimeOffset.UtcNow;
+			}
 		}
 
 		public void Broadcast(Community community)
 		{
 			logger.LogInformation($"Enviando community a {others.Count} pares");
 			foreach (var other in others)
+			{
 				channel.Send(other.PublicUrl, community);
+				other.LastActivity = DateTimeOffset.UtcNow;
+			}
 		}
 
 		public void Broadcast(Question question)
 		{
 			logger.LogInformation($"Enviando question a {others.Count} pares");
 			foreach (var other in others)
+			{
 				channel.Send(other.PublicUrl, question);
+				other.LastActivity = DateTimeOffset.UtcNow;
+			}
 		}
 
 		public void Broadcast(Member member)
 		{
 			logger.LogInformation($"Enviando member a {others.Count} pares");
 			foreach (var other in others)
+			{
 				channel.Send(other.PublicUrl, member);
+				other.LastActivity = DateTimeOffset.UtcNow;
+			}
 		}
 
 		public void Broadcast(Document document)
 		{
 			logger.LogInformation($"Enviando document a {others.Count} pares");
 			foreach (var other in others)
+			{
 				channel.Send(other.PublicUrl, document);
+				other.LastActivity = DateTimeOffset.UtcNow;
+			}
 		}
 
 		public void Broadcast(Vote vote)
 		{
 			logger.LogInformation($"Enviando vote a {others.Count} pares");
 			foreach (var other in others)
+			{
 				channel.Send(other.PublicUrl, vote);
+				other.LastActivity = DateTimeOffset.UtcNow;
+			}
 		}
 
 		public void Broadcast(Fiscal fiscal)
 		{
 			logger.LogInformation($"Enviando fiscal a {others.Count} pares");
 			foreach (var other in others)
+			{
 				channel.Send(other.PublicUrl, fiscal);
+				other.LastActivity = DateTimeOffset.UtcNow;
+			}
 		}
 
 		public void Broadcast(Urn urn)
 		{
 			logger.LogInformation($"Enviando urn a {others.Count} pares");
 			foreach (var other in others)
+			{
 				channel.Send(other.PublicUrl, urn);
+				other.LastActivity = DateTimeOffset.UtcNow;
+			}
 		}
 
 		public void Broadcast(Recount recount)
 		{
 			logger.LogInformation($"Enviando recount a {others.Count} pares");
 			foreach (var other in others)
+			{
 				channel.Send(other.PublicUrl, recount);
+				other.LastActivity = DateTimeOffset.UtcNow;
+			}
 		}
 
 		public void Broadcast(Peer peer)
 		{
 			logger.LogInformation($"Enviando peer a {others.Count} pares");
 			foreach (var other in others)
+			{
 				channel.Send(other.PublicUrl, peer);
+				other.LastActivity = DateTimeOffset.UtcNow;
+			}
 		}
 
 		public void GetBlock(byte[] hash)
@@ -125,7 +160,10 @@ namespace Domain
 			{
 				var block = channel.GetBlock(other.PublicUrl, hash);
 				if (block != null)
+				{
 					node.Add(block);
+					other.LastActivity = DateTimeOffset.UtcNow;
+				}
 			}
 		}
 
