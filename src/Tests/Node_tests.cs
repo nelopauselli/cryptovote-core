@@ -24,18 +24,22 @@ namespace Tests
 				try
 				{
 					node.Start();
-					Thread.Sleep(2500);
+					int count = 20;
+					while(node.State != NodeState.Running && count-->0)
+						Thread.Sleep(500);
 					Assert.AreEqual(NodeState.Running, node.State);
 				}
 				finally
 				{
 					node.Stop();
+					int count = 20;
+					while (node.State != NodeState.Stoped && count-- > 0)
+						Thread.Sleep(500);
 				}
 			}
 		}
 
 		[Test]
-		[Explicit("Falta implementar funcionalidad")]
 		public void Stop_node()
 		{
 			using (var loggerFactory = CreateLoggerFactory())
@@ -44,11 +48,15 @@ namespace Tests
 				var node = new Node(cfg, new BlockBuilder(), loggerFactory, new PeerChannelInProc());
 
 				node.Start();
-				Thread.Sleep(1000);
+				int countStart = 20;
+				while (node.State != NodeState.Running && countStart-- > 0)
+					Thread.Sleep(500);
 				Assert.AreEqual(NodeState.Running, node.State);
 
 				node.Stop();
-				Thread.Sleep(1000);
+				int countStop = 20;
+				while (node.State != NodeState.Stoped && countStop-- > 0)
+					Thread.Sleep(500);
 				Assert.AreEqual(NodeState.Stoped, node.State);
 			}
 		}
