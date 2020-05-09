@@ -5,7 +5,6 @@ using Domain;
 using Domain.Crypto;
 using Domain.Elections;
 using NUnit.Framework;
-using Tests.Mocks;
 
 namespace Tests
 {
@@ -18,7 +17,7 @@ namespace Tests
 		{
 			using (var loggerFactory = CreateLoggerFactory())
 			{
-				var cfg = new NodeConfiguration("Nodo 1", "1234", 1, 2000, "http://localhost:8000");
+				var cfg = new NodeOptions("Nodo 1", "1234", 1, 2000, "http://localhost:8000");
 				var node = new Node(cfg, new BlockBuilder(), loggerFactory, new PeerChannelInProc());
 
 				try
@@ -44,7 +43,7 @@ namespace Tests
 		{
 			using (var loggerFactory = CreateLoggerFactory())
 			{
-				var cfg = new NodeConfiguration("Nodo 1", "1234", 1, 2000, "http://localhost:8001");
+				var cfg = new NodeOptions("Nodo 1", "1234", 1, 2000, "http://localhost:8001");
 				var node = new Node(cfg, new BlockBuilder(), loggerFactory, new PeerChannelInProc());
 
 				node.Start();
@@ -67,9 +66,9 @@ namespace Tests
 			using (var loggerFactory = CreateLoggerFactory())
 			{
 				var channel = new PeerChannelInProc();
-				var node1 = new Node(new NodeConfiguration("Nodo 1", "1111", 1, 2000, "http://localhost:8001"), new BlockBuilder(), loggerFactory, channel);
-				var node2 = new Node(new NodeConfiguration("Nodo 2", "2222", 1, 2000, "http://localhost:8002"), new BlockBuilder(), loggerFactory, channel);
-				var node3 = new Node(new NodeConfiguration("Nodo 3", "3333", 1, 2000, "http://localhost:8003"), new BlockBuilder(), loggerFactory, channel);
+				var node1 = new Node(new NodeOptions("Nodo 1", "1111", 1, 2000, "http://localhost:8001"), new BlockBuilder(), loggerFactory, channel);
+				var node2 = new Node(new NodeOptions("Nodo 2", "2222", 1, 2000, "http://localhost:8002"), new BlockBuilder(), loggerFactory, channel);
+				var node3 = new Node(new NodeOptions("Nodo 3", "3333", 1, 2000, "http://localhost:8003"), new BlockBuilder(), loggerFactory, channel);
 				channel.Add(node1);
 				channel.Add(node2);
 				channel.Add(node3);
@@ -104,9 +103,9 @@ namespace Tests
 			using (var loggerFactory = CreateLoggerFactory())
 			{
 				var channel = new PeerChannelInProc();
-				var node1 = new Node(new NodeConfiguration("Nodo 1", "1111", 1, 2000, "http://localhost:8001"), new BlockBuilder(), loggerFactory, channel);
-				var node2 = new Node(new NodeConfiguration("Nodo 2", "2222", 1, 2000, "http://localhost:8002"), new BlockBuilder(), loggerFactory, channel);
-				var node3 = new Node(new NodeConfiguration("Nodo 3", "3333", 1, 2000, "http://localhost:8003"), new BlockBuilder(), loggerFactory, channel);
+				var node1 = new Node(new NodeOptions("Nodo 1", "1111", 1, 2000, "http://localhost:8001"), new BlockBuilder(), loggerFactory, channel);
+				var node2 = new Node(new NodeOptions("Nodo 2", "2222", 1, 2000, "http://localhost:8002"), new BlockBuilder(), loggerFactory, channel);
+				var node3 = new Node(new NodeOptions("Nodo 3", "3333", 1, 2000, "http://localhost:8003"), new BlockBuilder(), loggerFactory, channel);
 				channel.Add(node1);
 				channel.Add(node2);
 				channel.Add(node3);
@@ -129,9 +128,9 @@ namespace Tests
 			using (var loggerFactory = CreateLoggerFactory())
 			{
 				var channel = new PeerChannelInProc();
-				var node1 = new Node(new NodeConfiguration("Nodo 1", "1111", 1, 2000, $"http://{host1}:{port1}"), new BlockBuilder(), loggerFactory, channel);
-				var node2 = new Node(new NodeConfiguration("Nodo 2", "2222", 1, 2000, $"http://{host2}:{port2}"), new BlockBuilder(), loggerFactory, channel);
-				var node3 = new Node(new NodeConfiguration("Nodo 3", "3333", 1, 2000, $"http://{host3}:{port3}"), new BlockBuilder(), loggerFactory, channel);
+				var node1 = new Node(new NodeOptions("Nodo 1", "1111", 1, 2000, $"http://{host1}:{port1}"), new BlockBuilder(), loggerFactory, channel);
+				var node2 = new Node(new NodeOptions("Nodo 2", "2222", 1, 2000, $"http://{host2}:{port2}"), new BlockBuilder(), loggerFactory, channel);
+				var node3 = new Node(new NodeOptions("Nodo 3", "3333", 1, 2000, $"http://{host3}:{port3}"), new BlockBuilder(), loggerFactory, channel);
 				channel.Add(node1);
 				channel.Add(node2);
 				channel.Add(node3);
@@ -164,8 +163,8 @@ namespace Tests
 			using (var loggerFactory = CreateLoggerFactory())
 			{
 				var channel = new PeerChannelInProc();
-				var node1 = new Node(new NodeConfiguration("Nodo 1", "1111", 1, 2000, "http://localhost:8001"), new BlockBuilder(), loggerFactory, channel);
-				var node2 = new Node(new NodeConfiguration("Nodo 2", "1234", 1, 2000, "http://localhost:8002"), new BlockBuilder(), loggerFactory, channel);
+				var node1 = new Node(new NodeOptions("Nodo 1", "1111", 1, 2000, "http://localhost:8001"), new BlockBuilder(), loggerFactory, channel);
+				var node2 = new Node(new NodeOptions("Nodo 2", "1234", 1, 2000, "http://localhost:8002"), new BlockBuilder(), loggerFactory, channel);
 				channel.Add(node1);
 				channel.Add(node2);
 
@@ -197,8 +196,8 @@ namespace Tests
 				var communityKeys = CryptoService.Instance.GeneratePair();
 
 				var channel = new PeerChannelInProc();
-				var node1 = new Node(new NodeConfiguration("Nodo 1", "1234", 1, 2000, "http://localhost:8001"), new BlockBuilder(), loggerFactory, channel);
-				var node2 = new Node(new NodeConfiguration("Nodo 2", "1234", 1, 2000, "http://localhost:8002"), new BlockBuilder(), loggerFactory, channel);
+				var node1 = new Node(new NodeOptions("Nodo 1", "1234", 1, 2000, "http://localhost:8001"), new BlockBuilder(), loggerFactory, channel);
+				var node2 = new Node(new NodeOptions("Nodo 2", "1234", 1, 2000, "http://localhost:8002"), new BlockBuilder(), loggerFactory, channel);
 				channel.Add(node1);
 				channel.Add(node2);
 
@@ -241,9 +240,9 @@ namespace Tests
 				var communityKeys = CryptoService.Instance.GeneratePair();
 
 				var channel = new PeerChannelInProc();
-				var node1 = new Node(new NodeConfiguration("Nodo 1", "1111", 1, 2000, "http://localhost:8001"), new BlockBuilder(), loggerFactory, channel);
-				var node2 = new Node(new NodeConfiguration("Nodo 2", "2222", 1, 2000, "http://localhost:8002"), new BlockBuilder(), loggerFactory, channel);
-				var node3 = new Node(new NodeConfiguration("Mi Nodo", "3333", 1, 2000, "http://localhost:8003"), new BlockBuilder(), loggerFactory, channel);
+				var node1 = new Node(new NodeOptions("Nodo 1", "1111", 1, 2000, "http://localhost:8001"), new BlockBuilder(), loggerFactory, channel);
+				var node2 = new Node(new NodeOptions("Nodo 2", "2222", 1, 2000, "http://localhost:8002"), new BlockBuilder(), loggerFactory, channel);
+				var node3 = new Node(new NodeOptions("Mi Nodo", "3333", 1, 2000, "http://localhost:8003"), new BlockBuilder(), loggerFactory, channel);
 				channel.Add(node1);
 				channel.Add(node2);
 				channel.Add(node3);

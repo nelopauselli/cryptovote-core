@@ -15,9 +15,11 @@
   "profiles": {
     "Kestrel": {
       "commandName": "Project",
-      "commandLineArgs": "PeerUrl=http://192.168.0.128:8081/ NodeName=VisualStudio NodeId=95125E7E-A6FF-45AC-B359-BE371721E7E8 MinerInterval=10000 MinerAddress=QXuwUXRhANuouMkHTc2tbcZhkcucShZQKEhs7XSfseSd6Rq8q2G3sSZc1Q1z5jdj4Nz8dQuieiiyDVLiKWDmtJVp NodePublicUrl=http://192.168.0.9:5000/ ASPNETCORE_ENVIRONMENT=Development",
       "launchBrowser": true,
       "launchUrl": "api/chain",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
       "applicationUrl": "http://localhost:5000/;http://0.0.0.0:5000;"
     }
   }

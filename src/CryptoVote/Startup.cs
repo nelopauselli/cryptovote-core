@@ -1,3 +1,4 @@
+using Domain;
 using Domain.Converters;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -19,6 +20,10 @@ namespace CryptoVote
 		// This method gets called by the runtime. Use this method to add services to the container.
 		public void ConfigureServices(IServiceCollection services)
 		{
+			var options = new NodeOptions();
+			Configuration.GetSection("Node").Bind(options);
+			services.AddSingleton(options);
+
 			services.AddBlockchain();
 
 			services.AddCors(options =>

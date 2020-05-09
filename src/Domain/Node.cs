@@ -14,7 +14,7 @@ namespace Domain
 		private readonly ILogger<Node> logger;
 		private readonly object semaphore = new object();
 
-		private readonly INodeConfiguration configuration;
+		private readonly NodeOptions options;
 
 		private readonly IDictionary<string, BlockItem> pendings;
 		public IEnumerable<BlockItem> Pendings => pendings.Values;
@@ -36,7 +36,7 @@ namespace Domain
 			{
 				byte[] addressRewards = null;
 
-				var addressRewardsBase58 = configuration.MinerAddress?.Trim();
+				var addressRewardsBase58 = options.MinerAddress?.Trim();
 				if (string.IsNullOrWhiteSpace(addressRewardsBase58))
 				{
 					logger.LogWarning("Falta configurar 'MinerAddress'");
@@ -61,29 +61,29 @@ namespace Domain
 
 		
 
-		public Node(INodeConfiguration configuration, IBlockBuilder blockBuilder, ILoggerFactory loggerFactory, IPeerChannel channel)
+		public Node(NodeOptions options, IBlockBuilder blockBuilder, ILoggerFactory loggerFactory, IPeerChannel channel)
 		{
-			this.configuration = configuration;
+			this.options = options;
 			this.logger = loggerFactory.CreateLogger<Node>();
 
 			logger.LogInformation($"Configuración del nodo:\n"+
-			                      $"NodeId: {configuration.NodeId}\n" +
-			                      $"NodeName: {configuration.NodeName}\n" +
-			                      $"NodePublicUrl: {configuration.NodePublicUrl}\n" +
-			                      $"PeerUrl: {configuration.PeerUrl}\n" +
-			                      $"MinerAddress: {configuration.MinerAddress}\n" +
-			                      $"BlockchainDificulty: {configuration.BlockchainDificulty}");
+			                      $"NodeId: {options.NodeId}\n" +
+			                      $"NodeName: {options.NodeName}\n" +
+			                      $"NodePublicUrl: {options.NodePublicUrl}\n" +
+			                      $"PeerUrl: {options.PeerUrl}\n" +
+			                      $"MinerAddress: {options.MinerAddress}\n" +
+			                      $"BlockchainDificulty: {options.BlockchainDificulty}");
 
 			Host = new Peer
 			{
-				Id = configuration.NodeId,
-				Name = configuration.NodeName,
-				PublicUrl = configuration.NodePublicUrl
+				Id = options.NodeId,
+				Name = options.NodeName,
+				PublicUrl = options.NodePublicUrl
 			};
 
 			Peers = new Peers(this, channel, loggerFactory.CreateLogger<Peers>());
 
-			Blockchain = new Blockchain(new Miner(AddressRewards), blockBuilder, configuration.BlockchainDificulty);
+			Blockchain = new Blockchain(new Miner(AddressRewards), blockBuilder, options.BlockchainDificulty);
 
 			var path = "genesis.block";
 			Blockchain.LoadGenesisBlock(path);
@@ -98,7 +98,7 @@ namespace Domain
 			logger.LogInformation("Inicializando Nodo de Blockchain");
 			worker = Task.Run(() =>
 			{
-				var scheduler = new Scheduler(configuration.MinerInterval, configuration.PeersCheckInterval, configuration.SyncronizeInterval);
+				var scheduler = new Scheduler(options.MinerInterval, options.PeersCheckInterval, options.SyncronizeInterval);
 
 				State = NodeState.Running;
 
@@ -126,10 +126,10 @@ namespace Domain
 		{
 			logger.LogInformation("Verificando conexiones con pares");
 
-			if (!string.IsNullOrWhiteSpace(configuration.PeerUrl))
+			if (!string.IsNullOrWhiteSpace(options.PeerUrl))
 			{
-				if(!Peers.Contains(configuration.PeerUrl))
-					Connect(configuration.PeerUrl);
+				if(!Peers.Contains(options.PeerUrl))
+					Connect(options.PeerUrl);
 			}
 
 			Discovery();
